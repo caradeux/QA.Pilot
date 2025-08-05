@@ -547,7 +547,7 @@ import os
 import sys
 import time
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
+from browser_use import ChatAnthropic
 
 # Cargar variables de entorno
 load_dotenv()

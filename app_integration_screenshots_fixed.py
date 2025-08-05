@@ -64,7 +64,7 @@ def run_test_background_with_browser_use_direct(task_id, url, instrucciones, hea
             
             # ⭐ IMPORTAR BROWSER-USE
             print(f"🔄 [DIRECT] Importando browser-use...")
-            from langchain_anthropic import ChatAnthropic
+            from browser_use import ChatAnthropic
             from browser_use import Agent, Browser, BrowserConfig, BrowserContextConfig
             
             # ⭐ CONFIGURAR LLM

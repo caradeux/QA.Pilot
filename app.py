@@ -31,7 +31,7 @@ from browser_use import Agent, Browser, BrowserConfig, BrowserContextConfig # Ne
 import base64 # Necesario para generar_script_test
 import platform
 from langchain_openai import ChatOpenAI # Para OpenAI y DeepSeek
-from langchain_anthropic import ChatAnthropic # Para Anthropic
+from browser_use import ChatAnthropic # Para Anthropic con browser-use 0.4.5
 from pydantic import SecretStr # Para manejar claves API seguras
 import json
 import json as json_module
@@ -1263,6 +1263,51 @@ def update_test_name():
         logger.error(f"Error al actualizar el nombre para el test {test_id}: {message}")
         return jsonify({'status': 'error', 'message': message}), 500
 
+@app.route('/update_test_details', methods=['POST'])
+def update_test_details():
+    """Actualizar detalles completos de un test (nombre e instrucciones)."""
+    logger.debug(f"Received request for /update_test_details")
+    
+    if not request.is_json:
+        logger.error("Request is not JSON")
+        return jsonify({'status': 'error', 'message': 'Formato incorrecto, se esperaba JSON'}), 415
+
+    data = request.get_json()
+    logger.debug(f"Request JSON data: {data}")
+    
+    test_id = data.get('test_id')
+    test_name = data.get('test_name')
+    test_instructions = data.get('test_instructions')
+    
+    if not test_id or not test_name or not test_instructions:
+        logger.error(f"Datos incompletos en la solicitud: {data}")
+        return jsonify({'status': 'error', 'message': 'Todos los campos son requeridos'}), 400
+    
+    try:
+        history_service = get_history_service()
+        
+        # Verificar si el servicio está disponible
+        if not history_service or not history_service.db_integration or not history_service.db_integration.is_connected():
+            return jsonify({'status': 'error', 'message': 'Base de datos no disponible'}), 503
+        
+        # Actualizar en la base de datos
+        with history_service.db_integration.get_session() as session:
+            from db_models import TestExecution
+            
+            execution = session.query(TestExecution).filter_by(id=test_id).first()
+            if execution:
+                execution.test_name = test_name
+                execution.instructions = test_instructions
+                session.commit()
+                logger.info(f"Test {test_id} actualizado: nombre='{test_name}', instrucciones actualizada")
+                return jsonify({'status': 'success', 'message': 'Test actualizado correctamente'})
+            else:
+                return jsonify({'status': 'error', 'message': 'Test no encontrado'}), 404
+                
+    except Exception as e:
+        logger.error(f"Error actualizando detalles del test: {e}")
+        return jsonify({'status': 'error', 'message': f'Error interno: {str(e)}'}), 500
+
 @app.route('/reload_history', methods=['POST'])
 def reload_history():
     """Recarga el historial desde la base de datos (útil para debugging)"""
@@ -2376,12 +2421,12 @@ async def tomar_captura_navegador(agent, descripcion, paso_num=None):
             for num, desc in pasos_numerados
         ])
 
-    # Template base para script usando browser-use 0.2.6 (API corregida con capturas del navegador)
+    # Template base para script usando browser-use 0.4.5 (API actualizada con capturas del navegador)
     script_template = f"""# -*- coding: utf-8 -*-
 import sys, os, asyncio, base64, traceback, re, time, random, json, pyautogui
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
-from browser_use import Agent, Browser, BrowserConfig
+from browser_use import ChatAnthropic
+from browser_use import Agent, Browser, BrowserConfig, BrowserContextConfig
 
 load_dotenv()
 
@@ -2390,7 +2435,14 @@ browser = Browser(
     config=BrowserConfig(
         headless={str(headless)},  # Usar parámetro dinámico
         browser_class='chromium',
-        extra_browser_args=[]
+        extra_browser_args=[],
+        new_context_config=BrowserContextConfig(
+            browser_window_size={{"width": 1280, "height": 720}},
+            minimum_wait_page_load_time=1.0,
+            wait_for_network_idle_page_load_time=2.0,
+            maximum_wait_page_load_time=15.0,
+            wait_between_actions=0.5
+        )
         # No especificar browser_binary_path para usar navegador built-in de Playwright
     )
 )
@@ -3103,7 +3155,9 @@ def generar_playwright_con_contexto(instrucciones, log_ejecucion, language="pyth
             print("ERROR: ANTHROPIC_API_KEY no encontrada en entorno para generar Playwright.")
             return f"# Error: ANTHROPIC_API_KEY no configurada."
         
-        llm = ChatAnthropic(
+        # Para generación de código usamos langchain_anthropic (no browser_use)
+        from langchain_anthropic import ChatAnthropic as LangChainChatAnthropic
+        llm = LangChainChatAnthropic(
             model="claude-3-5-sonnet-20241022", # Usar Claude 3.5 Sonnet más reciente
             api_key=anthropic_key,
             temperature=0.1, # Baja temperatura para código más determinista
@@ -5179,28 +5233,54 @@ def ejecutar_caso_playwright_real(case, headless=True):
     try:
         codigo = case.get('codigo')
         if not codigo:
+            logger.error("❌ No se proporcionó código para el caso")
             return None
+        
+        logger.info(f"🔍 Buscando script para código: {codigo}")
         
         # Mapa de traducción: códigos de BD -> scripts con capturas Playwright REALES
         # Estos scripts están en test_scripts/ y SÍ generan capturas de pantalla
         codigo_map = {
-            'AUTO-90690fb8': 'd0d8c216-290e-45f6-a64f-9763d4d6a9d2',  # Script con capturas Playwright
-            'AUTO-7093dadc': '86ebcbba-352c-4f59-8426-4c79cf316159',  # Script con capturas Playwright  
-            'AUTO-662959d8': 'ae777621-ebe6-40b7-a62a-88b331ab3e02',  # Script con capturas Playwright
-            # Estos scripts usan tomar_captura_navegador() con Playwright
+            'AUTO-940de307': '940de307-d212-45fc-9e43-310963f5d578',
+            'AUTO-d4e7b8f2': 'd4e7b8f2-dcca-4d9a-8b47-3dd9d7dbd0a7', 
+            'AUTO-e0f0823d': 'e0f0823d-7be9-4ae4-bd37-9923655ee191',
+            'AUTO-7cc1eb2e': '7cc1eb2e-66d3-4398-b5a0-124862ae80e7',
+            'AUTO-bc4aec13': 'bc4aec13-0967-428c-8c4e-357243605e76',
+            'AUTO-90690fb8': 'd0d8c216-290e-45f6-a64f-9763d4d6a9d2',
+            'AUTO-7093dadc': '86ebcbba-352c-4f59-8426-4c79cf316159',  
+            'AUTO-662959d8': 'ae777621-ebe6-40b7-a62a-88b331ab3e02',
         }
         
         # Intentar diferentes formatos de nombres de archivos
-        script_names = [
-            f"test_{codigo}.py",  # Formato original: test_AUTO-90690fb8.py
-            f"test_{codigo.replace('AUTO-', '')}.py",  # Sin prefijo: test_90690fb8.py
-            f"test_{codigo.split('-')[-1]}.py" if '-' in codigo else f"test_{codigo}.py",  # Solo la parte después del guión
-        ]
+        script_names = []
         
-        # Agregar mapeo específico si existe
+        # 1. Agregar mapeo específico si existe
         if codigo in codigo_map:
-            script_names.insert(0, f"test_{codigo_map[codigo]}.py")
-            logger.info(f"🔄 Usando mapeo específico para {codigo} -> {codigo_map[codigo]} (CON CAPTURAS)")
+            script_names.append(f"test_{codigo_map[codigo]}.py")
+            logger.info(f"🔄 Usando mapeo específico para {codigo} -> {codigo_map[codigo]}")
+        
+        # 2. Formato original: test_AUTO-940de307.py
+        script_names.append(f"test_{codigo}.py")
+        
+        # 3. Sin prefijo: test_940de307.py
+        script_names.append(f"test_{codigo.replace('AUTO-', '')}.py")
+        
+        # 4. Solo la parte después del guión: test_940de307.py
+        if '-' in codigo:
+            script_names.append(f"test_{codigo.split('-')[-1]}.py")
+        
+        # 5. Buscar por coincidencia parcial en test_scripts
+        test_scripts_dir = 'test_scripts'
+        if os.path.exists(test_scripts_dir):
+            existing_scripts = [f for f in os.listdir(test_scripts_dir) if f.startswith('test_') and f.endswith('.py')]
+            for script in existing_scripts:
+                script_id = script.replace('test_', '').replace('.py', '')
+                if codigo.replace('AUTO-', '') in script_id or script_id in codigo:
+                    script_names.append(script)
+                    logger.info(f"🎯 Coincidencia parcial encontrada: {script}")
+        
+        # Eliminar duplicados manteniendo el orden
+        script_names = list(dict.fromkeys(script_names))
         
         script_path = None
         # BUSCAR PRIMERO EN test_scripts (scripts con capturas Playwright)
@@ -5221,8 +5301,21 @@ def ejecutar_caso_playwright_real(case, headless=True):
                     break
         
         if not script_path:
-            logger.error(f"❌ Script Playwright no encontrado. Intenté con: {script_names}")
-            logger.info(f"💡 Para solucionar: crear archivo test_{codigo.replace('AUTO-', '')}.py en playwright_scripts/casos/")
+            logger.error(f"❌ Script Playwright no encontrado para código: {codigo}")
+            logger.error(f"🔍 Intenté con estos nombres: {script_names}")
+            
+            # Mostrar scripts disponibles para debugging
+            test_scripts_available = []
+            if os.path.exists('test_scripts'):
+                test_scripts_available = [f for f in os.listdir('test_scripts') if f.startswith('test_') and f.endswith('.py')]
+            
+            playwright_scripts_available = []
+            if os.path.exists('playwright_scripts/casos'):
+                playwright_scripts_available = [f for f in os.listdir('playwright_scripts/casos') if f.startswith('test_') and f.endswith('.py')]
+            
+            logger.info(f"📁 Scripts disponibles en test_scripts: {test_scripts_available[:5]}...")
+            logger.info(f"📁 Scripts disponibles en playwright_scripts/casos: {playwright_scripts_available[:5]}...")
+            
             return None
         report_id = str(uuid.uuid4())
         report_dir = os.path.join('playwright_scripts', 'reports')

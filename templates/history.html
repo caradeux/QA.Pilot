@@ -157,6 +157,26 @@
         line-height: 1.6;
     }
     
+    .info-item {
+        margin-bottom: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--tech-border);
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-item i {
+        width: 20px;
+        text-align: center;
+    }
+    
+    .font-monospace {
+        font-family: var(--tech-font-mono) !important;
+        font-size: 0.9em;
+    }
+    
     .test-actions {
         display: flex;
         flex-wrap: wrap;
@@ -333,17 +353,6 @@
                     <i class="fas fa-history"></i>
                     Historial de Vuelos
                 </h1>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-info btn-sm" onclick="syncTestNames()" title="Sincronizar nombres con base de datos">
-                        <i class="fas fa-database me-1"></i> Sincronizar DB
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="reloadHistory()" title="Recargar historial desde base de datos">
-                        <i class="fas fa-sync-alt me-1"></i> Recargar
-                    </button>
-                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="debugSyncData()" title="Analizar datos de sincronización">
-                        <i class="fas fa-bug me-1"></i> Debug
-                    </button>
-                </div>
             </div>
         </div>
         
@@ -410,7 +419,7 @@
                             <div id="history-{{ loop.index }}" class="collapse">
                                 <div class="history-content">
                                     <div class="row g-4">
-                                        <div class="col-lg-6">
+                                        <div class="col-12">
                                             <!-- Instrucciones -->
                                             <div class="content-section">
                                                 <div class="section-title">
@@ -431,8 +440,8 @@
                                                 </div>
                                             </div>
                                             
-                                            <!-- Acciones del test -->
-                                            <div class="content-section">
+                                            <!-- Acciones del test - OCULTA -->
+                                            <div class="content-section" style="display: none;">
                                                 <div class="section-title">
                                                     <i class="fas fa-tools"></i>
                                                     Acciones Disponibles
@@ -442,114 +451,62 @@
                                                         <i class="fas fa-file-alt me-1"></i> Reporte
                                                     </button> -->
                                                     
-                                                    <button class="btn btn-warning action-btn" onclick="generateWordEvidence('{{ item.id }}')">
-                                                        <i class="fas fa-file-word me-1"></i> Evidencia
+                                                    <button class="btn btn-info action-btn edit-test-btn" data-testid="{{ item.id }}" data-testname="{{ item.name|e }}" data-testinstructions="{{ item.instructions|e }}">
+                                                        <i class="fas fa-edit me-1"></i> Editar Test
                                                     </button>
                                                     
-                                                    {% if not item.playwright_case %}
-                                                        <!-- <button class="btn btn-success action-btn" onclick="saveAsPlaywrightCase('{{ item.id }}')">
-                                                            <i class="fas fa-save me-1"></i> Guardar Caso
-                                                        </button> -->
-                                                    {% else %}
-                                                        <button class="btn btn-success action-btn" onclick="runPlaywrightCase('{{ item.playwright_case }}')">
-                                                            <i class="fas fa-play me-1"></i> Ejecutar
-                                                        </button>
-                                                        <button class="btn btn-danger action-btn" onclick="deletePlaywrightCase('{{ item.id }}', '{{ item.playwright_case }}')">
-                                                            <i class="fas fa-trash-alt me-1"></i> Eliminar Script
-                                                        </button>
-                                                    {% endif %}
-                                                    
-                                                    <!-- <button class="btn btn-outline-danger action-btn delete-history-btn" data-testid="{{ item.id }}">
+                                                    <button class="btn btn-outline-danger action-btn delete-history-btn" data-testid="{{ item.id }}">
                                                         <i class="fas fa-trash me-1"></i> Eliminar
-                                                    </button> -->
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <div class="screenshots-section">
-                                                <div class="screenshots-header">
-                                                    <div class="section-title mb-0">
-                                                        <i class="fas fa-camera"></i>
-                                                        Capturas de Pantalla
+                                        
+                                        <!-- Información adicional del test -->
+                                        <div class="col-12 mt-3">
+                                            <div class="content-section">
+                                                <div class="section-title">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    Información del Test
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <i class="fas fa-clock text-primary me-2"></i>
+                                                            <strong>Fecha de Ejecución:</strong>
+                                                            <span class="text-muted">{{ item.timestamp }}</span>
+                                                        </div>
                                                     </div>
-                                                    <div class="screenshots-controls">
-                                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleEditMode('{{ item.id }}')">
-                                                            <i class="fas fa-edit me-1"></i> Editar
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-danger btn-sm d-none" id="delete-selected-{{ item.id }}" onclick="deleteSelectedScreenshots('{{ item.id }}')">
-                                                            <i class="fas fa-trash-alt me-1"></i> Eliminar
-                                                        </button>
-                                                        <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="cancel-edit-{{ item.id }}" onclick="cancelEditMode('{{ item.id }}')">
-                                                            <i class="fas fa-times me-1"></i> Cancelar
-                                                        </button>
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <i class="fas fa-globe text-primary me-2"></i>
+                                                            <strong>URL:</strong>
+                                                            {% if item.url %}
+                                                                <a href="{{ item.url }}" target="_blank" class="text-info">{{ item.url }}</a>
+                                                            {% else %}
+                                                                <span class="text-muted">No especificada</span>
+                                                            {% endif %}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            <div class="accordion accordion-flush" id="ejecuciones-{{ item.id }}">
-                                                {% if item.executions and item.executions|length > 0 %}
-                                                    <!-- Historial de ejecuciones -->
-                                                    {% for execution in item.executions %}
-                                                        <div class="accordion-item bg-dark">
-                                                            <h2 class="accordion-header">
-                                                                <button class="accordion-button collapsed bg-dark text-white" type="button" 
-                                                                        data-bs-toggle="collapse" 
-                                                                        data-bs-target="#ejecucion-{{ item.id }}-{{ loop.index }}" 
-                                                                        aria-expanded="false">
-                                                                    <i class="fas {% if execution.success %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} me-2"></i>
-                                                                    Ejecución {{ execution.timestamp }}
-                                                                </button>
-                                                            </h2>
-                                                            <div id="ejecucion-{{ item.id }}-{{ loop.index }}" 
-                                                                class="accordion-collapse collapse" 
-                                                                data-bs-parent="#ejecuciones-{{ item.id }}">
-                                                                <div class="accordion-body bg-dark">
-                                                                    <p class="text-white">{{ execution.message }}</p>
-                                                                    {% if execution.screenshots and execution.screenshots|length > 0 %}
-                                                                        <div class="row row-cols-2 g-2" id="screenshots-container-{{ item.id }}-{{ loop.index }}">
-                                                                            {% for ss in execution.screenshots %}
-                                                                                <div class="col screenshot-item" data-screenshot-path="{{ ss.path if ss.path else ss.url }}">
-                                                                                    <div class="position-relative">
-                                                                                        <input type="checkbox" class="form-check-input position-absolute top-0 start-0 m-2 screenshot-checkbox d-none" 
-                                                                                               data-test-id="{{ item.id }}" data-screenshot="{{ ss.path if ss.path else ss.url }}" 
-                                                                                               style="z-index: 10;">
-                                                                                        <a href="{{ ss.url }}" target="_blank" class="d-block">
-                                                                                            <img src="{{ ss.url }}" class="img-thumbnail" alt="{{ ss.name }}">
-                                                                                        </a>
-                                                                                        <div class="text-center mt-1">
-                                                                                            <small class="text-light">{{ ss.name }}</small>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            {% endfor %}
-                                                                        </div>
-                                                                    {% else %}
-                                                                        <p class="text-light">No hay capturas disponibles para esta ejecución.</p>
-                                                                    {% endif %}
-                                                                </div>
-                                                            </div>
+                                                <div class="row mt-2">
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <i class="fas fa-tag text-primary me-2"></i>
+                                                            <strong>ID del Test:</strong>
+                                                            <span class="text-muted font-monospace">{{ item.id }}</span>
                                                         </div>
-                                                    {% endfor %}
-                                                {% elif item.screenshots and item.screenshots|length > 0 %}
-                                                    <!-- Mostrar capturas para compatibilidad con registros antiguos -->
-                                                <div class="row row-cols-2 g-2" id="screenshots-container-{{ item.id }}">
-                                                    {% for ss in item.screenshots %}
-                                                        <div class="col screenshot-item" data-screenshot-path="{{ ss.path if ss.path else ss.url }}">
-                                                            <div class="position-relative">
-                                                                <input type="checkbox" class="form-check-input position-absolute top-0 start-0 m-2 screenshot-checkbox d-none" 
-                                                                       data-test-id="{{ item.id }}" data-screenshot="{{ ss.path if ss.path else ss.url }}" 
-                                                                       style="z-index: 10;">
-                                                                <a href="{{ ss.url }}" target="_blank" class="d-block">
-                                                                    <img src="{{ ss.url }}" class="img-thumbnail" alt="{{ ss.name }}">
-                                                                </a>
-                                                                <div class="text-center mt-1">
-                                                                    <small class="text-light">{{ ss.name }}</small>
-                                                                </div>
-                                                            </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="info-item">
+                                                            <i class="fas fa-{{ 'check-circle text-success' if item.message and 'completado' in item.message.lower() else 'exclamation-circle text-warning' }} me-2"></i>
+                                                            <strong>Estado:</strong>
+                                                            <span class="badge bg-{{ 'success' if item.message and 'completado' in item.message.lower() else 'warning' }}">
+                                                                {{ 'Exitoso' if item.message and 'completado' in item.message.lower() else 'Con observaciones' }}
+                                                            </span>
                                                         </div>
-                                                    {% endfor %}
+                                                    </div>
                                                 </div>
-                                            {% else %}
-                                                <p class="text-light">No hay capturas disponibles.</p>
-                                            {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -1079,115 +1036,208 @@
 
 {% block scripts_extra %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+// === FUNCIONES GLOBALES ===
+var pendingDelete = null; // Stores the button that is awaiting confirmation
+var pendingDeleteTimeout = null;
 
-    // --- Toast Notification System ---
-    function showToast(message, type = 'info') {
-        let toastContainer = document.getElementById('toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.id = 'toast-container';
-            document.body.appendChild(toastContainer);
-        }
-        
-        const toast = document.createElement('div');
-        toast.className = `toast-tech toast-tech-${type}`;
-        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i> ${message}`;
-        
-        toastContainer.appendChild(toast);
-        
-        setTimeout(() => toast.classList.add('show'), 100);
-                setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 500);
-        }, 5000);
+// --- Toast Notification System ---
+function showToast(message, type = 'info') {
+    let toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        document.body.appendChild(toastContainer);
     }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-tech toast-tech-${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i> ${message}`;
+    
+    toastContainer.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+}
 
-    // --- History Deletion Logic (Simplified, no modal) ---
-    let pendingDelete = null; // Stores the button that is awaiting confirmation
-    let pendingDeleteTimeout = null;
+window.showToast = showToast;
 
-    function resetDeleteButton(button) {
-        if (!button) return;
-        button.classList.remove('btn-danger');
-        button.classList.add('btn-outline-danger');
-        button.innerHTML = '<i class="fas fa-trash me-1"></i> Eliminar';
-        if (button === pendingDelete) {
-            pendingDelete = null;
-        }
-    }
-
-    function handleDeleteClick(event) {
-        const button = event.currentTarget;
-        const testId = button.dataset.testid;
-
-        if (pendingDelete && pendingDelete === button) {
-            // This is the second click (confirmation)
-            clearTimeout(pendingDeleteTimeout);
-            executeDelete(testId, button);
-        } else {
-            // This is the first click
-            // Reset any other button that might be in a pending state
-            if (pendingDelete) {
-                resetDeleteButton(pendingDelete);
-            }
-
-            // Set this button to pending state
-            pendingDelete = button;
-            button.classList.remove('btn-outline-danger');
-            button.classList.add('btn-danger');
-            button.innerHTML = '<i class="fas fa-question-circle me-1"></i> ¿Confirmar?';
-
-            // Set a timeout to revert the button if not clicked again
-            pendingDeleteTimeout = setTimeout(() => {
-                resetDeleteButton(button);
-            }, 4000); // Reverts after 4 seconds
-        }
-    }
-
-    function executeDelete(testId, button) {
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Eliminando...';
-
-        fetch('/delete_test_from_history', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ id: testId })
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw new Error(err.message || `Error del servidor: ${response.status}`) });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                showToast('Test eliminado con éxito.', 'success');
-                const historyItem = button.closest('.history-item');
-                if (historyItem) {
-                    historyItem.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-                    historyItem.style.transform = 'scale(0.95)';
-                    historyItem.style.opacity = '0';
-                    setTimeout(() => historyItem.remove(), 300);
-                }
-            } else {
-                showToast(data.message || 'Ocurrió un error inesperado.', 'danger');
-                resetDeleteButton(button); // Reset on failure
-                button.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error al eliminar el test:', error);
-            showToast(error.message || 'Error de conexión.', 'danger');
-            resetDeleteButton(button); // Reset on error
-            button.disabled = false;
-        });
-        
+function resetDeleteButton(button) {
+    if (!button) return;
+    button.classList.remove('btn-danger');
+    button.classList.add('btn-outline-danger');
+    button.innerHTML = '<i class="fas fa-trash me-1"></i> Eliminar';
+    if (button === pendingDelete) {
         pendingDelete = null;
     }
+}
+
+window.resetDeleteButton = resetDeleteButton;
+
+// Función global para el onclick del botón
+function handleDeleteClick(event) {
+    const button = event.currentTarget;
+    const testId = button.dataset.testid;
+
+    if (pendingDelete && pendingDelete === button) {
+        // This is the second click (confirmation)
+        clearTimeout(pendingDeleteTimeout);
+        executeDelete(testId, button);
+    } else {
+        // This is the first click
+        // Reset any other button that might be in a pending state
+        if (pendingDelete) {
+            resetDeleteButton(pendingDelete);
+        }
+
+        // Set this button to pending state
+        pendingDelete = button;
+        button.classList.remove('btn-outline-danger');
+        button.classList.add('btn-danger');
+        button.innerHTML = '<i class="fas fa-question-circle me-1"></i> ¿Confirmar?';
+
+        // Set a timeout to revert the button if not clicked again
+        pendingDeleteTimeout = setTimeout(() => {
+            resetDeleteButton(button);
+        }, 4000); // Reverts after 4 seconds
+    }
+}
+
+// Alias global para mayor compatibilidad
+window.handleDeleteClick = handleDeleteClick;
+
+function executeDelete(testId, button) {
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Eliminando...';
+
+    fetch('/delete_test_from_history', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ id: testId })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message || `Error del servidor: ${response.status}`) });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showToast('Test eliminado con éxito.', 'success');
+            const historyItem = button.closest('.history-item');
+            if (historyItem) {
+                historyItem.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                historyItem.style.transform = 'scale(0.95)';
+                historyItem.style.opacity = '0';
+                setTimeout(() => historyItem.remove(), 300);
+            }
+        } else {
+            showToast(data.message || 'Ocurrió un error inesperado.', 'danger');
+            resetDeleteButton(button); // Reset on failure
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar el test:', error);
+        showToast(error.message || 'Error de conexión.', 'danger');
+        resetDeleteButton(button); // Reset on error
+        button.disabled = false;
+    });
+    
+    pendingDelete = null;
+}
+
+window.executeDelete = executeDelete;
+
+// --- Edit Modal Functions ---
+function showEditTestModal(testId, testName, testInstructions) {
+    // Escape HTML entities and line breaks properly
+    testInstructions = testInstructions.replace(/&quot;/g, '"').replace(/&#x27;/g, "'");
+    
+    document.getElementById('editTestId').value = testId;
+    document.getElementById('editTestName').value = testName;
+    document.getElementById('editTestInstructions').value = testInstructions;
+    
+    var editModal = new bootstrap.Modal(document.getElementById('editTestModal'));
+    editModal.show();
+}
+
+window.showEditTestModal = showEditTestModal;
+
+function saveTestChanges() {
+    const form = document.getElementById('editTestForm');
+    const formData = new FormData(form);
+    
+    const testData = {
+        test_id: formData.get('test_id'),
+        test_name: formData.get('test_name'),
+        test_instructions: formData.get('test_instructions')
+    };
+    
+    // Deshabilitar botón durante el guardado
+    const saveButton = event.target;
+    saveButton.disabled = true;
+    saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Guardando...';
+    
+    fetch('/update_test_details', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(testData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message || `Error del servidor: ${response.status}`) });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showToast('Test actualizado correctamente.', 'success');
+            // Cerrar modal
+            bootstrap.Modal.getInstance(document.getElementById('editTestModal')).hide();
+            // Recargar página para mostrar cambios
+            window.location.reload();
+        } else {
+            showToast(data.message || 'Error al actualizar el test.', 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error al actualizar el test:', error);
+        showToast(error.message || 'Error de conexión.', 'danger');
+    })
+    .finally(() => {
+        // Rehabilitar botón
+        saveButton.disabled = false;
+        saveButton.innerHTML = '<i class="fas fa-save me-1"></i>Guardar Cambios';
+    });
+}
+
+window.saveTestChanges = saveTestChanges;
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Asignar event listeners a todos los botones de eliminar
+    document.querySelectorAll('.delete-history-btn').forEach(function(button) {
+        button.addEventListener('click', handleDeleteClick);
+    });
+    
+    // Asignar event listeners a todos los botones de editar
+    document.querySelectorAll('.edit-test-btn').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            const testId = button.dataset.testid;
+            const testName = button.dataset.testname;
+            const testInstructions = button.dataset.testinstructions;
+            showEditTestModal(testId, testName, testInstructions);
+        });
+    });
 
     // --- Name Editing Logic ---
     function guardarNombre(element) {
@@ -1284,6 +1334,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }, true); // Use capture phase to catch all clicks
 
 });
+
+});
 </script>
 
 <style>
@@ -1322,4 +1374,44 @@ document.addEventListener('DOMContentLoaded', function() {
     color: white;
 }
 </style>
+
+<!-- Modal para editar test -->
+<div class="modal fade" id="editTestModal" tabindex="-1" aria-labelledby="editTestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light" id="editTestModalLabel">
+                    <i class="fas fa-edit me-2"></i>Editar Test
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTestForm">
+                    <input type="hidden" id="editTestId" name="test_id">
+                    
+                    <div class="mb-3">
+                        <label for="editTestName" class="form-label text-light">Nombre del Test</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="editTestName" name="test_name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editTestInstructions" class="form-label text-light">Instrucciones</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" id="editTestInstructions" name="test_instructions" rows="5" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="saveTestChanges()">
+                    <i class="fas fa-save me-1"></i>Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock %}
