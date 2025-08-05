@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endpoint Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
+        .error { background-color: #f2dede; color: #a94442; border: 1px solid #ebccd1; }
+        .info { background-color: #d9edf7; color: #31708f; border: 1px solid #bce8f1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Endpoint Tests</h1>
+        
+        <div>
+            <button onclick="testEndpoint('list_test_suites')">Test /list_test_suites</button>
+            <button onclick="testEndpoint('list_test_suites:1')">Test /list_test_suites:1</button>
+            <button onclick="testEndpoint('list_playwright_cases')">Test /list_playwright_cases</button>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <label for="suiteId">Suite ID:</label>
+            <input type="text" id="suiteId" style="padding: 5px; width: 200px;" placeholder="Enter suite ID">
+            <button onclick="testGetSuite()">Test /get_test_suite/&lt;id&gt;</button>
+        </div>
+        
+        <div id="status" class="status info">
+            Click a button above to test an endpoint.
+        </div>
+        
+        <div>
+            <h3>Response:</h3>
+            <pre id="response">No data yet.</pre>
+        </div>
+    </div>
+    
+    <script>
+        function testEndpoint(endpoint) {
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            
+            // Clear previous response
+            statusDiv.textContent = 'Testing...';
+            statusDiv.className = 'status info';
+            responseDiv.textContent = 'Fetching...';
+            
+            // Make the fetch request
+            fetch('/' + endpoint.replace(/^\//, ''))
+                .then(response => {
+                    // Display status info
+                    if (response.ok) {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = `Success: ${response.status} ${response.statusText}`;
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = `Error: ${response.status} ${response.statusText}`;
+                    }
+                    
+                    // Try to parse as JSON, fall back to text
+                    return response.text().then(text => {
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            return text;
+                        }
+                    });
+                })
+                .then(data => {
+                    // Display the response
+                    if (typeof data === 'object') {
+                        responseDiv.textContent = JSON.stringify(data, null, 2);
+                    } else {
+                        responseDiv.textContent = data;
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `Error: ${error.message}`;
+                    responseDiv.textContent = `Failed to fetch: ${error.message}`;
+                });
+        }
+        
+        function testGetSuite() {
+            const suiteId = document.getElementById('suiteId').value.trim();
+            const statusDiv = document.getElementById('status');
+            const responseDiv = document.getElementById('response');
+            
+            if (!suiteId) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = 'Please enter a suite ID';
+                return;
+            }
+            
+            // Clear previous response
+            statusDiv.textContent = 'Testing...';
+            statusDiv.className = 'status info';
+            responseDiv.textContent = 'Fetching...';
+            
+            // Make the fetch request
+            fetch(`/get_test_suite/${suiteId}`)
+                .then(response => {
+                    // Display status info
+                    if (response.ok) {
+                        statusDiv.className = 'status success';
+                        statusDiv.textContent = `Success: ${response.status} ${response.statusText}`;
+                    } else {
+                        statusDiv.className = 'status error';
+                        statusDiv.textContent = `Error: ${response.status} ${response.statusText}`;
+                    }
+                    
+                    // Try to parse as JSON, fall back to text
+                    return response.text().then(text => {
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            return text;
+                        }
+                    });
+                })
+                .then(data => {
+                    // Display the response
+                    if (typeof data === 'object') {
+                        responseDiv.textContent = JSON.stringify(data, null, 2);
+                    } else {
+                        responseDiv.textContent = data;
+                    }
+                })
+                .catch(error => {
+                    // Handle errors
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = `Error: ${error.message}`;
+                    responseDiv.textContent = `Failed to fetch: ${error.message}`;
+                });
+        }
+    </script>
+</body>
+</html> 

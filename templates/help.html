@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}Ayuda - Inovabiz QA Pilot{% endblock %}
+
+{% block content %}
+<!-- Banner Principal -->
+<div class="tech-panel mb-4">
+    <div class="tech-panel-header bg-primary text-white">
+        <h5 class="tech-panel-title">
+            <i class="fas fa-question-circle me-2"></i> Centro de Ayuda
+        </h5>
+    </div>
+    <div class="tech-panel-body">
+        <p class="tech-text-accented">
+            Bienvenido al Centro de Ayuda de Inovabiz QA Pilot. Aquí encontrarás toda la información necesaria para sacar el máximo provecho a nuestra herramienta de pruebas automatizadas.
+        </p>
+        <div class="alert alert-info">
+            <i class="fas fa-lightbulb me-2"></i> ¿Necesitas ayuda inmediata? Contacta con nuestro equipo de soporte en <a href="mailto:soporte@inovabiz.com" class="alert-link">soporte@inovabiz.com</a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Guía Rápida -->
+    <div class="col-lg-6">
+        <div class="tech-panel h-100">
+            <div class="tech-panel-header bg-success text-white">
+                <h5 class="tech-panel-title">
+                    <i class="fas fa-bolt me-2"></i> Guía Rápida
+                </h5>
+            </div>
+            <div class="tech-panel-body">
+                <div class="tech-card p-3 mb-3 hover-effect">
+                    <h6 class="d-flex align-items-center">
+                        <span class="tech-step-badge me-2">1</span> Configurar APIs
+                    </h6>
+                    <p class="small mb-0">
+                        Dirígete a la sección de <a href="{{ url_for('config') }}" class="tech-link">Configuración</a> y añade al menos una clave API válida para los servicios de IA que desees utilizar.
+                    </p>
+                    <div class="mt-2">
+                        <span class="badge bg-info">Requerido</span>
+                        <span class="badge bg-secondary">Configuración Inicial</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card p-3 mb-3 hover-effect">
+                    <h6 class="d-flex align-items-center">
+                        <span class="tech-step-badge me-2">2</span> Crear un Vuelo de Prueba
+                    </h6>
+                    <p class="small mb-0">
+                        En la página principal, describe lo que deseas probar en lenguaje natural. Incluye:
+                    </p>
+                    <ul class="small mt-2 mb-0">
+                        <li>URL del sitio a probar</li>
+                        <li>Acciones específicas a realizar</li>
+                        <li>Resultados esperados</li>
+                    </ul>
+                    <div class="mt-2">
+                        <span class="badge bg-primary">Paso Principal</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card p-3 mb-3 hover-effect">
+                    <h6 class="d-flex align-items-center">
+                        <span class="tech-step-badge me-2">3</span> Ejecutar y Monitorizar
+                    </h6>
+                    <p class="small mb-0">
+                        Pulsa "Iniciar Vuelo" y observa la ejecución en tiempo real. Opciones disponibles:
+                    </p>
+                    <ul class="small mt-2 mb-0">
+                        <li>Grabar Vuelo (capturas de pantalla)</li>
+                        <li>Modo Sigiloso (ejecución headless)</li>
+                        <li>Monitoreo en tiempo real</li>
+                    </ul>
+                    <div class="mt-2">
+                        <span class="badge bg-warning text-dark">En Progreso</span>
+                    </div>
+                </div>
+                
+                <div class="tech-card p-3 hover-effect">
+                    <h6 class="d-flex align-items-center">
+                        <span class="tech-step-badge me-2">4</span> Revisar Resultados
+                    </h6>
+                    <p class="small mb-0">
+                        Analiza los resultados de la prueba:
+                    </p>
+                    <ul class="small mt-2 mb-0">
+                        <li>Reporte detallado de la ejecución</li>
+                        <li>Capturas de pantalla del proceso</li>
+                        <li>Logs y mensajes de error</li>
+                        <li>Código generado del test</li>
+                    </ul>
+                    <div class="mt-2">
+                        <span class="badge bg-success">Finalizado</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preguntas Frecuentes -->
+    <div class="col-lg-6">
+        <div class="tech-panel h-100">
+            <div class="tech-panel-header bg-info text-white">
+                <h5 class="tech-panel-title">
+                    <i class="fas fa-question me-2"></i> Preguntas Frecuentes
+                </h5>
+            </div>
+            <div class="tech-panel-body">
+                <div class="accordion" id="faqAccordion">
+                    <div class="tech-card mb-3">
+                        <div class="p-3">
+                            <h6 class="accordion-header">
+                                <button class="tech-accordion-btn d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    <span><i class="fas fa-plane-departure me-2"></i> ¿Qué es un "Vuelo de Prueba"?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                            <div id="faq1" class="collapse show" data-bs-parent="#faqAccordion">
+                                <div class="tech-accordion-body">
+                                    <p class="small mb-0">
+                                        Un "Vuelo de Prueba" es una sesión de prueba automatizada donde el sistema navega por un sitio web siguiendo las instrucciones proporcionadas, como un piloto automático. Incluye:
+                                    </p>
+                                    <ul class="small mt-2 mb-0">
+                                        <li>Navegación automática</li>
+                                        <li>Interacción con elementos</li>
+                                        <li>Validación de resultados</li>
+                                        <li>Generación de evidencias</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-card mb-3">
+                        <div class="p-3">
+                            <h6 class="accordion-header">
+                                <button class="tech-accordion-btn d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    <span><i class="fas fa-robot me-2"></i> ¿Qué APIs de IA son compatibles?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                            <div id="faq2" class="collapse" data-bs-parent="#faqAccordion">
+                                <div class="tech-accordion-body">
+                                    <p class="small mb-0">
+                                        Actualmente soportamos las siguientes APIs de IA:
+                                    </p>
+                                    <ul class="small mt-2 mb-0">
+                                        <li><strong>OpenAI (GPT-4):</strong> Recomendado para instrucciones detalladas</li>
+                                        <li><strong>Google Gemini:</strong> Excelente para análisis visual</li>
+                                        <li><strong>Anthropic Claude:</strong> Ideal para contextos complejos</li>
+                                        <li><strong>Azure OpenAI:</strong> Para entornos empresariales</li>
+                                        <li><strong>DeepSeek AI:</strong> Alternativa económica</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-card mb-3">
+                        <div class="p-3">
+                            <h6 class="accordion-header">
+                                <button class="tech-accordion-btn d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    <span><i class="fas fa-ghost me-2"></i> ¿Qué es el "Modo Sigiloso"?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                            <div id="faq3" class="collapse" data-bs-parent="#faqAccordion">
+                                <div class="tech-accordion-body">
+                                    <p class="small mb-0">
+                                        El Modo Sigiloso (headless) ofrece varias ventajas:
+                                    </p>
+                                    <ul class="small mt-2 mb-0">
+                                        <li>Mayor velocidad de ejecución</li>
+                                        <li>Menor consumo de recursos</li>
+                                        <li>Ideal para pruebas en segundo plano</li>
+                                        <li>Compatible con entornos sin interfaz gráfica</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tech-card mb-3">
+                        <div class="p-3">
+                            <h6 class="accordion-header">
+                                <button class="tech-accordion-btn d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    <span><i class="fas fa-code me-2"></i> ¿Cómo accedo al código generado?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                            <div id="faq4" class="collapse" data-bs-parent="#faqAccordion">
+                                <div class="tech-accordion-body">
+                                    <p class="small mb-0">
+                                        Hay varias formas de acceder al código:
+                                    </p>
+                                    <ul class="small mt-2 mb-0">
+                                        <li>Botón "Ver Código" en resultados</li>
+                                        <li>Carpeta de scripts: <code>/scripts/tests/</code></li>
+                                        <li>Historial de ejecuciones</li>
+                                        <li>Descarga directa en formato Python</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-card">
+                        <div class="p-3">
+                            <h6 class="accordion-header">
+                                <button class="tech-accordion-btn d-flex justify-content-between align-items-center w-100" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    <span><i class="fas fa-file-alt me-2"></i> ¿Cómo genero reportes de evidencia?</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                            <div id="faq5" class="collapse" data-bs-parent="#faqAccordion">
+                                <div class="tech-accordion-body">
+                                    <p class="small mb-0">
+                                        Los reportes de evidencia se pueden generar:
+                                    </p>
+                                    <ul class="small mt-2 mb-0">
+                                        <li>En formato PDF o Word (.docx)</li>
+                                        <li>Desde la vista de resultados</li>
+                                        <li>Incluyendo todas las capturas</li>
+                                        <li>Con logs detallados</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Estilos Adicionales -->
+<style>
+.hover-effect {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.tech-step-badge {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
+.tech-accordion-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    width: 100%;
+    color: inherit;
+}
+.tech-accordion-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+.tech-accordion-btn .fa-chevron-down {
+    transition: transform 0.2s;
+}
+.tech-accordion-btn.collapsed .fa-chevron-down {
+    transform: rotate(-90deg);
+}
+.badge {
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+}
+</style>
+
+{% endblock %} 

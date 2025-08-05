@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Inovabiz QA Pilot{% endblock %}</title>
+    
+    <!-- Script de limpieza de duplicados - DEBE IR PRIMERO -->
+    <script src="{{ url_for('static', filename='script_cleanup.js') }}"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins, Inter y JetBrains Mono para diseño Inovabiz -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- HTMX para actualizaciones dinámicas -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    
+    <!-- Estilos mejorados para Header Fijo -->
+    <style>
+        body {
+            padding-top: 75px; 
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        
+        .tech-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        
+        /* Mejoras tipográficas Inovabiz */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+        }
+        
+        .btn, .form-control, .form-select {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        
+        code, pre, .tech-terminal {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+        }
+        
+        /* Animaciones suaves para carga */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mejoras para scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+
+    {% block head_extra %}{% endblock %}
+</head>
+<body class="tech-dark-bg">
+    <!-- Overlay empresarial para fondo profesional -->
+    <div class="tech-corporate-overlay"></div>
+
+    <!-- Header empresarial mejorado -->
+    <header class="tech-header">
+        <div class="container-fluid py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('index') }}" class="text-decoration-none d-flex align-items-center">
+                    <div class="tech-logo me-3">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h1 class="tech-title mb-0">QA-PILOT</h1>
+                        <div class="tech-subtitle">Powered by Inovabiz</div>
+                    </div>
+                </a>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="tech-badge">v1.0</div>
+                    <div class="d-none d-md-flex align-items-center text-muted small">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        <span>Secure</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <div class="container-fluid">
+        <div class="row g-4 px-3 py-4">
+            
+            <!-- Sidebar con Menú de Navegación -->
+            <aside class="col-md-3 col-lg-2">
+                <div class="tech-card mb-4">
+                    <div class="tech-nav">
+                        <a href="{{ url_for('index') }}" class="tech-nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <span>Inicio</span>
+                        </a>
+                        <a href="{{ url_for('config') }}" class="tech-nav-item {% if request.endpoint == 'config' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <span>Configuración</span>
+                        </a>
+                        <a href="{{ url_for('history') }}" class="tech-nav-item {% if request.endpoint == 'history' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <span>Historial</span>
+                        </a>
+                        <a href="{{ url_for('suites') }}" class="tech-nav-item {% if request.endpoint == 'suites' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <span>Suites de Prueba</span>
+                        </a>
+                        
+                        {# <a href="{{ url_for('bulk_execution') }}" class="tech-nav-item {% if request.endpoint == 'bulk_execution' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <span>Ejecución Masiva</span>
+                        </a>
+                        <a href="{{ url_for('excel_bulk_execution') }}" class="tech-nav-item {% if request.endpoint == 'excel_bulk_execution' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-file-excel"></i>
+                            </div>
+                            <span>Excel a QA-Pilot</span>
+                        </a> #}
+                        <a href="{{ url_for('api_usage') }}" class="tech-nav-item {% if request.endpoint == 'api_usage' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>Monitor de Tokens IA</span>
+                        </a>
+                        <a href="{{ url_for('database_page') }}" class="tech-nav-item {% if request.endpoint == 'database_page' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <span>Base de Datos</span>
+                        </a>
+                        <a href="{{ url_for('help_page') }}" class="tech-nav-item {% if request.endpoint == 'help_page' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-question-circle"></i>
+                            </div>
+                            <span>Ayuda</span>
+                        </a>
+                        <a href="{{ url_for('playwright_suites') }}" class="tech-nav-item {% if request.endpoint == 'playwright_suites' %}active{% endif %}">
+                            <div class="tech-nav-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <span>Ejecución Playwright</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Contenido adicional del sidebar si es necesario -->
+                <div class="mt-4">
+                    {% block sidebar_extra %}{% endblock %}
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="col-md-9 col-lg-10 fade-in">
+                {% block content %}
+                <!-- Contenido principal -->
+                {% endblock %}
+            </main>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="tech-footer">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center py-3 px-4">
+                <div class="tech-footer-text">
+                    <i class="fas fa-robot me-1"></i> Transformando el Testing con IA
+                </div>
+                <div class="tech-footer-logo">
+                    <strong>INOVABIZ</strong> ® 2025
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery first, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery polyfill for fallback -->
+    <script src="{{ url_for('static', filename='jquery_polyfill.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Content enhancement script -->
+    <script src="{{ url_for('static', filename='content.js') }}"></script>
+    <!-- Efectos Premium -->
+    <script src="{{ url_for('static', filename='premium-effects.js') }}"></script>
+    
+    {% block scripts_extra %}{% endblock %}
+
+</body>
+</html> 

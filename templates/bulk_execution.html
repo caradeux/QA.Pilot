@@ -1,0 +1,1112 @@
+{% extends 'base.html' %}
+
+{% block title %}Ejecución Masiva - Inovabiz QA Pilot{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Estilos mejorados para ejecución masiva */
+    .execution-card {
+        background: var(--tech-dark-light);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius-lg);
+        margin-bottom: var(--tech-space-md);
+        transition: var(--tech-transition);
+        box-shadow: var(--tech-shadow-md);
+        overflow: hidden;
+    }
+    
+    .execution-card:hover {
+        border-color: var(--tech-primary);
+        box-shadow: var(--tech-shadow-lg);
+        transform: translateY(-2px);
+    }
+    
+    .execution-header {
+        background: var(--tech-gradient-primary);
+        color: var(--tech-light);
+        padding: var(--tech-space) var(--tech-space-md);
+        border-bottom: 1px solid var(--tech-border);
+        position: relative;
+    }
+    
+    .execution-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    
+    .execution-header h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-sm);
+    }
+    
+    .execution-body {
+        padding: var(--tech-space-md);
+    }
+    
+    .test-selector {
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+        margin-bottom: var(--tech-space);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .test-item {
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-sm);
+        padding: var(--tech-space-sm) var(--tech-space);
+        border: 1px solid transparent;
+        border-radius: var(--tech-radius);
+        margin-bottom: var(--tech-space-xs);
+        transition: var(--tech-transition);
+        cursor: pointer;
+        background: rgba(15, 23, 42, 0.5);
+    }
+    
+    .test-item:hover {
+        background: rgba(37, 99, 235, 0.1);
+        border-color: var(--tech-primary);
+        transform: translateX(4px);
+    }
+    
+    .test-item.selected {
+        background: rgba(37, 99, 235, 0.15);
+        border-color: var(--tech-primary);
+        box-shadow: var(--tech-shadow);
+    }
+    
+    .test-item-checkbox {
+        margin-right: var(--tech-space-sm);
+    }
+    
+    .test-item-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .test-item-title {
+        font-weight: 600;
+        color: var(--tech-light);
+        margin-bottom: 0.25rem;
+        font-size: 0.875rem;
+    }
+    
+    .test-item-meta {
+        font-size: 0.75rem;
+        color: var(--tech-secondary);
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-sm);
+    }
+    
+    .test-item-badge {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.375rem;
+        border-radius: var(--tech-radius-sm);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    
+    .execution-controls {
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space-md);
+        margin-top: var(--tech-space);
+    }
+    
+    .config-section {
+        margin-bottom: var(--tech-space-md);
+        padding-bottom: var(--tech-space);
+        border-bottom: 1px solid var(--tech-border);
+    }
+    
+    .config-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .config-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--tech-light);
+        margin-bottom: var(--tech-space-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-xs);
+    }
+    
+    .execution-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: var(--tech-space);
+        margin-bottom: var(--tech-space-md);
+    }
+    
+    .stat-card {
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+        text-align: center;
+        transition: var(--tech-transition);
+    }
+    
+    .stat-card:hover {
+        border-color: var(--tech-primary);
+        box-shadow: var(--tech-shadow);
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--tech-primary);
+        display: block;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+        color: var(--tech-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.25rem;
+    }
+    
+    .progress-container {
+        margin-top: var(--tech-space);
+    }
+    
+    .execution-status {
+        background: var(--tech-dark);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+        margin-top: var(--tech-space);
+        border: 1px solid var(--tech-border);
+    }
+    
+    .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--tech-space-sm) 0;
+        border-bottom: 1px solid var(--tech-border);
+        transition: var(--tech-transition);
+    }
+    
+    .status-item:last-child {
+        border-bottom: none;
+    }
+    
+    .status-item:hover {
+        background: rgba(37, 99, 235, 0.05);
+        border-radius: var(--tech-radius-sm);
+        margin: 0 calc(-1 * var(--tech-space-xs));
+        padding-left: var(--tech-space-xs);
+        padding-right: var(--tech-space-xs);
+    }
+    
+    .status-name {
+        font-weight: 500;
+        color: var(--tech-light);
+        font-size: 0.875rem;
+    }
+    
+    .badge-status {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--tech-radius);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    
+    .badge-pending {
+        background: var(--tech-secondary);
+        color: var(--tech-light);
+    }
+    
+    .badge-running {
+        background: var(--tech-warning);
+        color: var(--tech-dark);
+        animation: pulse 2s infinite;
+    }
+    
+    .badge-success {
+        background: var(--tech-success);
+        color: var(--tech-light);
+    }
+    
+    .badge-error {
+        background: var(--tech-danger);
+        color: var(--tech-light);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    /* Mejoras para filtros */
+    .filter-section {
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+        margin-bottom: var(--tech-space);
+    }
+    
+    .selection-summary {
+        background: rgba(37, 99, 235, 0.1);
+        border: 1px solid var(--tech-primary);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space-sm) var(--tech-space);
+        margin-bottom: var(--tech-space);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .selection-text {
+        font-weight: 600;
+        color: var(--tech-light);
+        font-size: 0.875rem;
+    }
+    
+    .selection-badge {
+        background: var(--tech-primary);
+        color: var(--tech-light);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--tech-radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .execution-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .test-item {
+            padding: var(--tech-space-sm);
+        }
+        
+        .test-item-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header mejorado -->
+    <div class="tech-panel mb-4">
+        <div class="tech-panel-header">
+            <h1 class="tech-panel-title mb-0">
+                <i class="fas fa-rocket"></i>
+                Ejecución Masiva
+            </h1>
+        </div>
+        <div class="tech-panel-body">
+            <p class="text-muted mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                Ejecuta múltiples pruebas de forma simultánea o secuencial con configuración avanzada
+            </p>
+        </div>
+    </div>
+    
+    <!-- Estadísticas rápidas -->
+    <div class="execution-stats mb-4">
+        <div class="stat-card">
+            <span class="stat-number" id="totalAvailable">0</span>
+            <div class="stat-label">Disponibles</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number" id="totalSelected">0</span>
+            <div class="stat-label">Seleccionadas</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number" id="totalRunning">0</span>
+            <div class="stat-label">Ejecutando</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-number" id="totalCompleted">0</span>
+            <div class="stat-label">Completadas</div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Panel de Selección -->
+        <div class="col-lg-6">
+            <div class="execution-card">
+                <div class="execution-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-list-check me-2"></i>
+                        Seleccionar Pruebas
+                    </h3>
+                </div>
+                <div class="execution-body">
+                    <!-- Filtros mejorados -->
+                    <div class="filter-section">
+                        <div class="config-title">
+                            <i class="fas fa-filter"></i>
+                            Filtros de Búsqueda
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Origen:</label>
+                                <select class="form-select" id="filterOrigin">
+                                    <option value="all">🔍 Todas las fuentes</option>
+                                    <option value="history">📋 Historial de pruebas</option>
+                                    <option value="suites">📦 Suites de prueba</option>
+                                    <option value="playwright">🎭 Casos Playwright</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Buscar:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="searchTests" placeholder="Nombre, URL, descripción...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Selección masiva mejorada -->
+                    <div class="selection-summary">
+                        <div class="selection-text">
+                            <i class="fas fa-check-square me-2"></i>
+                            Selección de Pruebas
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="selectAll">
+                                <label class="form-check-label" for="selectAll">
+                                    Todas (<span id="totalTests">0</span>)
+                                </label>
+                            </div>
+                            <span class="selection-badge" id="selectedCount">0 seleccionadas</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de pruebas mejorada -->
+                    <div class="test-selector">
+                        <div id="testsList">
+                            <div class="text-center text-muted py-5">
+                                <div class="mb-3">
+                                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                                </div>
+                                <h6 class="mb-2">Cargando Pruebas Disponibles</h6>
+                                <p class="small mb-0">Escaneando historial, suites y casos de prueba...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Configuración y Ejecución -->
+        <div class="col-lg-6">
+            <div class="execution-card">
+                <div class="execution-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>
+                        Configuración de Ejecución
+                    </h3>
+                </div>
+                <div class="execution-body">
+                    <form id="executionForm">
+                        <!-- Configuración de Ejecución -->
+                        <div class="config-section">
+                            <div class="config-title">
+                                <i class="fas fa-play-circle"></i>
+                                Modo de Ejecución
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Estrategia:</label>
+                                    <select class="form-select" id="executionMode">
+                                        <option value="parallel">⚡ Paralelo (Rápido)</option>
+                                        <option value="sequential">🔄 Secuencial (Estable)</option>
+                                    </select>
+                                    <small class="text-muted">Paralelo ejecuta múltiples pruebas simultáneamente</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Concurrencia:</label>
+                                    <input type="range" class="form-range" id="maxConcurrent" min="1" max="5" value="2">
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">1</small>
+                                        <small class="text-primary" id="concurrentValue">2 pruebas</small>
+                                        <small class="text-muted">5</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Configuración del Navegador -->
+                        <div class="config-section">
+                            <div class="config-title">
+                                <i class="fas fa-globe"></i>
+                                Configuración del Navegador
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Navegador:</label>
+                                    <select class="form-select" id="browser">
+                                        <option value="chrome">🌐 Chrome</option>
+                                        <option value="firefox">🦊 Firefox</option>
+                                        <option value="edge">🔷 Edge</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Timeout (segundos):</label>
+                                    <input type="number" class="form-control" id="timeout" value="60" min="30" max="600">
+                                    <small class="text-muted">Tiempo máximo por prueba</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="headlessMode" checked>
+                                        <label class="form-check-label" for="headlessMode">
+                                            <i class="fas fa-eye-slash me-1"></i>
+                                            Modo Sigiloso
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Ejecutar sin mostrar ventana del navegador</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="fullscreenMode">
+                                        <label class="form-check-label" for="fullscreenMode">
+                                            <i class="fas fa-expand me-1"></i>
+                                            Pantalla Completa
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Maximizar ventana del navegador</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Configuración Avanzada -->
+                        <div class="config-section">
+                            <div class="config-title">
+                                <i class="fas fa-cogs"></i>
+                                Opciones Avanzadas
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="stopOnError">
+                                        <label class="form-check-label" for="stopOnError">
+                                            <i class="fas fa-stop-circle me-1"></i>
+                                            Detener en Error
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Parar toda la ejecución si una prueba falla</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="generateReport" checked>
+                                        <label class="form-check-label" for="generateReport">
+                                            <i class="fas fa-file-alt me-1"></i>
+                                            Reporte Automático
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Generar reporte consolidado al finalizar</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="captureScreenshots" checked>
+                                        <label class="form-check-label" for="captureScreenshots">
+                                            <i class="fas fa-camera me-1"></i>
+                                            Capturar Pantallas
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Guardar capturas durante la ejecución</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="retryOnFailure">
+                                        <label class="form-check-label" for="retryOnFailure">
+                                            <i class="fas fa-redo me-1"></i>
+                                            Reintentar Fallos
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Reintentar pruebas fallidas automáticamente</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Controles de ejecución mejorados -->
+                        <div class="execution-controls">
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-primary btn-lg" id="startExecution" disabled>
+                                    <i class="fas fa-rocket me-2"></i>
+                                    Iniciar Ejecución Masiva
+                                </button>
+                                <div class="row g-2" id="executionButtons" style="display: none;">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-warning w-100" id="pauseExecution">
+                                            <i class="fas fa-pause me-2"></i>
+                                            Pausar
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-danger w-100" id="stopExecution">
+                                            <i class="fas fa-stop me-2"></i>
+                                            Detener
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Panel de Estado -->
+            <div class="execution-card" id="statusPanel" style="display: none;">
+                <div class="execution-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Estado de Ejecución
+                    </h3>
+                </div>
+                <div class="execution-body">
+                    <div class="progress-container">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-light">Progreso General</span>
+                            <span class="text-light" id="progressText">0/0</span>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 id="overallProgress" role="progressbar" style="width: 0%">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row text-center mb-3">
+                        <div class="col-3">
+                            <div class="text-primary">
+                                <i class="fas fa-clock fa-2x"></i>
+                                <div class="mt-1">
+                                    <small class="text-muted">Pendientes</small>
+                                    <div class="h5 text-light" id="pendingCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-warning">
+                                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                <div class="mt-1">
+                                    <small class="text-muted">Ejecutando</small>
+                                    <div class="h5 text-light" id="runningCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-success">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                                <div class="mt-1">
+                                    <small class="text-muted">Exitosas</small>
+                                    <div class="h5 text-light" id="successCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="text-danger">
+                                <i class="fas fa-times-circle fa-2x"></i>
+                                <div class="mt-1">
+                                    <small class="text-muted">Fallidas</small>
+                                    <div class="h5 text-light" id="errorCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de estados individuales -->
+                    <div class="execution-status">
+                        <h6 class="text-light mb-3">Detalle de ejecuciones:</h6>
+                        <div id="executionDetails" style="max-height: 200px; overflow-y: auto;">
+                            <!-- Se llenará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    // Variables globales
+    let availableTests = [];
+    let selectedTests = [];
+    let executionInProgress = false;
+    let executionId = null;
+    let executionInterval = null;
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAvailableTests();
+        setupEventListeners();
+    });
+
+    function setupEventListeners() {
+        // Filtros y búsqueda
+        document.getElementById('filterOrigin').addEventListener('change', filterTests);
+        document.getElementById('searchTests').addEventListener('input', filterTests);
+        
+        // Slider de concurrencia
+        document.getElementById('maxConcurrent').addEventListener('input', function() {
+            const value = this.value;
+            document.getElementById('concurrentValue').textContent = value + ' prueba' + (value > 1 ? 's' : '');
+        });
+        
+        // Selección masiva
+        document.getElementById('selectAll').addEventListener('change', toggleSelectAll);
+        
+        // Botones de ejecución
+        document.getElementById('startExecution').addEventListener('click', startBulkExecution);
+        document.getElementById('stopExecution').addEventListener('click', stopBulkExecution);
+    }
+
+    async function loadAvailableTests() {
+        try {
+            // Cargar tests del historial
+            const historyResponse = await fetch('/get_history');
+            const historyData = await historyResponse.json();
+            
+            // Cargar suites
+            const suitesResponse = await fetch('/list_test_suites');
+            const suitesData = await suitesResponse.json();
+            
+            // Cargar casos Playwright
+            const playwrightResponse = await fetch('/list_playwright_cases');
+            const playwrightData = await playwrightResponse.json();
+            
+            // Procesar y combinar datos
+            availableTests = [];
+            
+            // Agregar tests del historial
+            if (historyData.status === 'success') {
+                historyData.history.forEach(test => {
+                    availableTests.push({
+                        id: test.id,
+                        name: test.name || `Test ${test.id.substring(0, 8)}`,
+                        type: 'history',
+                        status: test.status,
+                        date: test.date,
+                        url: test.url,
+                        instructions: test.instructions
+                    });
+                });
+            }
+            
+            // Agregar suites
+            if (suitesData.status === 'success') {
+                suitesData.suites.forEach(suite => {
+                    availableTests.push({
+                        id: suite.id,
+                        name: suite.name,
+                        type: 'suite',
+                        description: suite.description,
+                        cases: suite.cases,
+                        caseCount: suite.cases.length
+                    });
+                });
+            }
+            
+            // Agregar casos Playwright
+            if (playwrightData.status === 'success') {
+                playwrightData.cases.forEach(caseInfo => {
+                    availableTests.push({
+                        id: caseInfo.filename,
+                        name: caseInfo.filename.replace('.py', ''),
+                        type: 'playwright',
+                        path: caseInfo.path,
+                        size: caseInfo.size
+                    });
+                });
+            }
+            
+            renderTestsList();
+            updateCounters();
+            
+        } catch (error) {
+            console.error('Error cargando tests:', error);
+            showToast('Error al cargar las pruebas disponibles', 'danger');
+        }
+    }
+
+    function renderTestsList() {
+        const container = document.getElementById('testsList');
+        
+        if (availableTests.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-inbox fa-2x mb-3"></i>
+                    <p>No se encontraron pruebas disponibles</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const filteredTests = getFilteredTests();
+        
+        container.innerHTML = filteredTests.map(test => `
+            <div class="test-item" data-test-id="${test.id}" onclick="toggleTestSelection('${test.id}')">
+                <div class="form-check me-3">
+                    <input class="form-check-input test-checkbox" type="checkbox" value="${test.id}" 
+                           ${selectedTests.includes(test.id) ? 'checked' : ''}>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="text-light mb-1">${test.name}</h6>
+                            <div class="d-flex align-items-center">
+                                <span class="badge ${getTypeBadgeClass(test.type)} me-2">${getTypeLabel(test.type)}</span>
+                                ${test.type === 'suite' ? `<small class="text-muted">${test.caseCount} casos</small>` : ''}
+                                ${test.type === 'history' ? `<small class="text-muted">${test.date}</small>` : ''}
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            ${test.status ? `<span class="badge ${test.status === 'success' ? 'bg-success' : 'bg-danger'}">${test.status}</span>` : ''}
+                        </div>
+                    </div>
+                    ${test.description ? `<p class="text-muted small mb-0 mt-1">${test.description}</p>` : ''}
+                </div>
+            </div>
+        `).join('');
+        
+        updateCounters();
+    }
+
+    function getFilteredTests() {
+        const origin = document.getElementById('filterOrigin').value;
+        const search = document.getElementById('searchTests').value.toLowerCase();
+        
+        return availableTests.filter(test => {
+            const matchesOrigin = origin === 'all' || test.type === origin;
+            const matchesSearch = search === '' || 
+                                test.name.toLowerCase().includes(search) ||
+                                (test.description && test.description.toLowerCase().includes(search));
+            
+            return matchesOrigin && matchesSearch;
+        });
+    }
+
+    function getTypeBadgeClass(type) {
+        switch (type) {
+            case 'history': return 'bg-primary';
+            case 'suite': return 'bg-success';
+            case 'playwright': return 'bg-info';
+            default: return 'bg-secondary';
+        }
+    }
+
+    function getTypeLabel(type) {
+        switch (type) {
+            case 'history': return 'Historial';
+            case 'suite': return 'Suite';
+            case 'playwright': return 'Playwright';
+            default: return 'Otro';
+        }
+    }
+
+    function toggleTestSelection(testId) {
+        const index = selectedTests.indexOf(testId);
+        if (index > -1) {
+            selectedTests.splice(index, 1);
+        } else {
+            selectedTests.push(testId);
+        }
+        
+        updateTestItemAppearance(testId);
+        updateCounters();
+        updateStartButton();
+    }
+
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll').checked;
+        const filteredTests = getFilteredTests();
+        
+        if (selectAll) {
+            filteredTests.forEach(test => {
+                if (!selectedTests.includes(test.id)) {
+                    selectedTests.push(test.id);
+                }
+            });
+        } else {
+            selectedTests = selectedTests.filter(id => 
+                !filteredTests.some(test => test.id === id)
+            );
+        }
+        
+        renderTestsList();
+    }
+
+    function updateTestItemAppearance(testId) {
+        const testItem = document.querySelector(`[data-test-id="${testId}"]`);
+        const checkbox = testItem.querySelector('.test-checkbox');
+        const isSelected = selectedTests.includes(testId);
+        
+        checkbox.checked = isSelected;
+        testItem.classList.toggle('selected', isSelected);
+    }
+
+    function updateCounters() {
+        const filteredTests = getFilteredTests();
+        document.getElementById('totalTests').textContent = filteredTests.length;
+        document.getElementById('selectedCount').textContent = `${selectedTests.length} seleccionadas`;
+        
+        // Actualizar estado del checkbox "Seleccionar todas"
+        const selectAllCheckbox = document.getElementById('selectAll');
+        const filteredIds = filteredTests.map(test => test.id);
+        const selectedFiltered = selectedTests.filter(id => filteredIds.includes(id));
+        
+        selectAllCheckbox.checked = filteredTests.length > 0 && selectedFiltered.length === filteredTests.length;
+        selectAllCheckbox.indeterminate = selectedFiltered.length > 0 && selectedFiltered.length < filteredTests.length;
+    }
+
+    function updateStartButton() {
+        const startButton = document.getElementById('startExecution');
+        startButton.disabled = selectedTests.length === 0 || executionInProgress;
+    }
+
+    function filterTests() {
+        renderTestsList();
+    }
+
+    async function startBulkExecution() {
+        if (selectedTests.length === 0) {
+            showToast('Selecciona al menos una prueba para ejecutar', 'warning');
+            return;
+        }
+        
+        executionInProgress = true;
+        updateStartButton();
+        
+        // Mostrar panel de estado
+        document.getElementById('statusPanel').style.display = 'block';
+        document.getElementById('startExecution').style.display = 'none';
+        document.getElementById('stopExecution').style.display = 'block';
+        
+        // Configuración de ejecución
+        const config = {
+            tests: selectedTests,
+            mode: document.getElementById('executionMode').value,
+            browser: document.getElementById('browser').value,
+            headless: document.getElementById('headlessMode').checked,
+            timeout: parseInt(document.getElementById('timeout').value),
+            stopOnError: document.getElementById('stopOnError').checked,
+            generateReport: document.getElementById('generateReport').checked
+        };
+        
+        try {
+            const response = await fetch('/start_bulk_execution', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'started') {
+                executionId = data.execution_id;
+                showToast('Ejecución masiva iniciada correctamente', 'success');
+                startStatusMonitoring();
+            } else {
+                throw new Error(data.message || 'Error al iniciar ejecución');
+            }
+            
+        } catch (error) {
+            console.error('Error iniciando ejecución:', error);
+            showToast(`Error al iniciar ejecución: ${error.message}`, 'danger');
+            resetExecutionState();
+        }
+    }
+
+    function startStatusMonitoring() {
+        executionInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`/bulk_execution_status/${executionId}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    updateExecutionStatus(data.execution);
+                    
+                    if (data.execution.status === 'completed' || data.execution.status === 'failed') {
+                        clearInterval(executionInterval);
+                        executionCompleted(data.execution);
+                    }
+                }
+            } catch (error) {
+                console.error('Error monitoreando estado:', error);
+            }
+        }, 2000);
+    }
+
+    function updateExecutionStatus(execution) {
+        // Actualizar progreso general
+        const progress = (execution.completed / execution.total) * 100;
+        document.getElementById('overallProgress').style.width = `${progress}%`;
+        document.getElementById('progressText').textContent = `${execution.completed}/${execution.total}`;
+        
+        // Actualizar contadores
+        document.getElementById('pendingCount').textContent = execution.pending || 0;
+        document.getElementById('runningCount').textContent = execution.running || 0;
+        document.getElementById('successCount').textContent = execution.success || 0;
+        document.getElementById('errorCount').textContent = execution.errors || 0;
+        
+        // Actualizar detalles
+        const detailsContainer = document.getElementById('executionDetails');
+        detailsContainer.innerHTML = execution.details.map(detail => `
+            <div class="status-item">
+                <div class="flex-grow-1">
+                    <span class="text-light">${detail.name}</span>
+                </div>
+                <span class="badge-status badge-${detail.status}">${detail.status}</span>
+            </div>
+        `).join('');
+    }
+
+    function executionCompleted(execution) {
+        executionInProgress = false;
+        
+        document.getElementById('startExecution').style.display = 'block';
+        document.getElementById('stopExecution').style.display = 'none';
+        updateStartButton();
+        
+        const success = execution.status === 'completed';
+        showToast(
+            success ? 'Ejecución masiva completada' : 'Ejecución masiva finalizada con errores',
+            success ? 'success' : 'warning'
+        );
+        
+        if (document.getElementById('generateReport').checked) {
+            generateBulkReport(execution);
+        }
+    }
+
+    async function stopBulkExecution() {
+        if (!executionId) return;
+        
+        try {
+            const response = await fetch(`/stop_bulk_execution/${executionId}`, {
+                method: 'POST'
+            });
+            
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                showToast('Ejecución detenida correctamente', 'info');
+                clearInterval(executionInterval);
+                resetExecutionState();
+            }
+            
+        } catch (error) {
+            console.error('Error deteniendo ejecución:', error);
+            showToast('Error al detener la ejecución', 'danger');
+        }
+    }
+
+    function resetExecutionState() {
+        executionInProgress = false;
+        executionId = null;
+        
+        document.getElementById('statusPanel').style.display = 'none';
+        document.getElementById('startExecution').style.display = 'block';
+        document.getElementById('stopExecution').style.display = 'none';
+        updateStartButton();
+        
+        if (executionInterval) {
+            clearInterval(executionInterval);
+            executionInterval = null;
+        }
+    }
+
+    async function generateBulkReport(execution) {
+        try {
+            const response = await fetch(`/generate_bulk_report/${execution.id}`, {
+                method: 'POST'
+            });
+            
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Reporte_Ejecucion_Masiva_${new Date().toISOString().split('T')[0]}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Reporte descargado correctamente', 'success');
+            }
+        } catch (error) {
+            console.error('Error generando reporte:', error);
+            showToast('Error al generar el reporte', 'danger');
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        // Crear contenedor si no existe
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'position-fixed top-0 end-0 p-3';
+            toastContainer.style.zIndex = '9999';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Crear toast
+        const toast = document.createElement('div');
+        toast.className = `toast show align-items-center text-white bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 5000);
+    }
+</script>
+{% endblock %} 

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block title %}Configuración - Inovabiz QA Pilot{% endblock %}
+
+{% block content %}
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="tech-alert tech-alert-{{ category if category != 'message' else 'info' }} mb-4">
+                <div class="tech-alert-icon">
+                    <i class="fas fa-{{ 'check' if category == 'success' else 'exclamation' if category == 'danger' else 'info-circle' }}"></i>
+                </div>
+                <div>{{ message }}</div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Claves API -->
+    <div class="tech-panel mb-4">
+        <div class="tech-panel-header">
+            <h5 class="tech-panel-title">
+                <i class="fas fa-key"></i> Claves API
+            </h5>
+        </div>
+        <div class="tech-panel-body">
+            <form method="post" action="{{ url_for('save_config') }}">
+                {% for key_name in API_KEYS_TO_MANAGE %}
+                <div class="tech-card p-3 mb-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label for="key_{{ key_name }}" class="tech-label d-flex align-items-center mb-2 mb-md-0">
+                                <i class="fas fa-key me-2 opacity-75"></i> {{ key_name }}
+                            </label>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="input-group tech-input-group">
+                                <input type="password" class="tech-input form-control" 
+                                       id="key_{{ key_name }}" name="{{ key_name }}" 
+                                       value="{{ api_keys.get(key_name, '') }}"
+                                       placeholder="Ingresa tu {{ key_name }}">
+                                <button class="btn tech-btn-outline tech-btn-sm" type="button" onclick="togglePasswordVisibility('key_{{ key_name }}', this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="tech-btn tech-btn-success w-100 py-2">
+                    <i class="fas fa-save me-2"></i> Guardar Cambios en .env
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Configuración Avanzada -->
+    <div class="tech-panel">
+        <div class="tech-panel-header">
+            <h5 class="tech-panel-title">
+                <i class="fas fa-sliders-h"></i> Configuración Avanzada
+            </h5>
+        </div>
+        <div class="tech-panel-body">
+            <form id="advanced-config-form">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="tech-card p-3 h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="tech-toggle-wrap me-3">
+                                    <input type="checkbox" id="default_screenshots" class="tech-toggle" checked>
+                                    <label for="default_screenshots" class="tech-toggle-label"></label>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Grabar Vuelo por Defecto</h6>
+                                    <small class="text-muted">Habilitar capturas automáticas</small>
+                                </div>
+                            </div>
+                            <p class="small text-muted">
+                                Cuando está activado, las capturas de pantalla se toman automáticamente durante el proceso de prueba.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-card p-3 h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="tech-toggle-wrap me-3">
+                                    <input type="checkbox" id="default_headless" class="tech-toggle">
+                                    <label for="default_headless" class="tech-toggle-label"></label>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Modo Sigiloso por Defecto</h6>
+                                    <small class="text-muted">Navegador invisible al ejecutar</small>
+                                </div>
+                            </div>
+                            <p class="small text-muted">
+                                Ejecuta los tests sin mostrar la ventana del navegador, mejorando rendimiento y velocidad.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-card p-3 h-100">
+                            <label for="default_timeout" class="tech-label d-flex justify-content-between">
+                                <span>Tiempo Máximo por Defecto</span>
+                                <span class="tech-badge"><span id="timeout-value">180</span> seg</span>
+                            </label>
+                            <input type="range" class="form-range" min="60" max="600" step="30" value="600" 
+                                id="default_max_time" name="default_max_time">
+                            <p class="small text-muted">
+                                Tiempo máximo (en segundos) que puede durar un vuelo antes de ser cancelado.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-card p-3 h-100">
+                            <h6 class="mb-3">Control de Navegador</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="tech-toggle-wrap tech-toggle-wrap-sm me-3">
+                                    <input type="checkbox" id="wait_for_animations" class="tech-toggle" checked>
+                                    <label for="wait_for_animations" class="tech-toggle-label"></label>
+                                </div>
+                                <div>
+                                    <span class="d-block small">Esperar Animaciones</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="tech-toggle-wrap tech-toggle-wrap-sm me-3">
+                                    <input type="checkbox" id="store_cookies" class="tech-toggle" checked>
+                                    <label for="store_cookies" class="tech-toggle-label"></label>
+                                </div>
+                                <div>
+                                    <span class="d-block small">Guardar Cookies</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button type="submit" class="tech-btn">
+                        <i class="fas fa-sync me-2"></i> ACTUALIZAR PREFERENCIAS
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    // Función para alternar la visibilidad de las contraseñas
+    function togglePasswordVisibility(inputId, button) {
+        const input = document.getElementById(inputId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+        } else {
+            input.type = 'password';
+            button.innerHTML = '<i class="fas fa-eye"></i>';
+        }
+    }
+    
+    // Actualizar el valor del slider de timeout
+    const timeoutSlider = document.getElementById('default_max_time');
+    const timeoutValue = document.getElementById('timeout-value');
+    
+    if (timeoutSlider && timeoutValue) {
+        timeoutValue.textContent = timeoutSlider.value;
+        timeoutSlider.oninput = function() {
+            timeoutValue.textContent = this.value;
+        }
+    }
+    
+    // Guardar configuración avanzada (vía AJAX)
+    document.getElementById('advanced-config-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Aquí se implementaría la lógica para guardar vía AJAX
+        // Por ahora solo mostramos una alerta de confirmación
+        
+        // Simulación de guardado exitoso
+        const alertHtml = `
+            <div class="tech-alert tech-alert-success mb-4">
+                <div class="tech-alert-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div>Preferencias actualizadas correctamente</div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+        
+        // Insertar alerta al principio del contenido
+        const contentSection = document.querySelector('.content');
+        if (contentSection) {
+            const firstChild = contentSection.firstChild;
+            const alertDiv = document.createElement('div');
+            alertDiv.innerHTML = alertHtml;
+            contentSection.insertBefore(alertDiv.firstChild, firstChild);
+        }
+    });
+</script>
+{% endblock %} 

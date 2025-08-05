@@ -1,0 +1,817 @@
+{% extends 'base.html' %}
+
+{% block title %}Monitor de Tokens IA | QA-Pilot{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Estilos para el monitor de tokens */
+    .token-card {
+        background: linear-gradient(135deg, rgba(29, 39, 49, 0.8), rgba(51, 65, 85, 0.6));
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+    
+    .token-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(59, 130, 246, 0.5);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    }
+    
+    .provider-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-right: 1rem;
+    }
+    
+    .provider-openai { background: linear-gradient(135deg, #00A67E, #00C29A); }
+    .provider-anthropic { background: linear-gradient(135deg, #D97706, #F59E0B); }
+    .provider-gemini { background: linear-gradient(135deg, #4285F4, #34A853); }
+    .provider-deepseek { background: linear-gradient(135deg, #8B5CF6, #A855F7); }
+    
+    .token-metric {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #60a5fa;
+        text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+    }
+    
+    .cost-metric {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #34d399;
+    }
+    
+    .usage-bar {
+        height: 8px;
+        background: rgba(59, 130, 246, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .usage-progress {
+        height: 100%;
+        background: linear-gradient(90deg, #34d399, #10b981);
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+    
+    .usage-progress.high {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+    
+    .usage-progress.critical {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+    
+    .chart-container {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 8px;
+        padding: 1rem;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .alert-token {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 8px;
+        color: #fca5a5;
+    }
+    
+    .stats-mini-token {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+    }
+    
+    .stats-mini-token:last-child {
+        border-bottom: none;
+    }
+    
+    .model-tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        background: rgba(59, 130, 246, 0.2);
+        color: #93c5fd;
+        margin-left: 0.5rem;
+    }
+    
+    .refresh-button {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="tech-section">
+    <!-- Header del Monitor -->
+    <div class="tech-section-header position-relative overflow-hidden mb-4">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.1)); z-index: -1;"></div>
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold mb-2">
+                    <span class="tech-icon-circle me-3">
+                        <i class="fas fa-chart-line"></i>
+                    </span>
+                    Monitor de Tokens IA
+                </h1>
+                <p class="text-tech-muted fs-5 mb-3">
+                    <i class="fas fa-brain me-2"></i>
+                    Rastrea en tiempo real el consumo y costos de tokens de inteligencia artificial
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="badge bg-info"><i class="fas fa-robot me-1"></i>IA Integrada</span>
+                    <span class="badge bg-success"><i class="fas fa-dollar-sign me-1"></i>Control de Costos</span>
+                    <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Tiempo Real</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-outline-info" id="refreshData" onclick="refreshTokenData()">
+                    <i class="fas fa-sync-alt me-2" id="refreshIcon"></i>Actualizar
+                </button>
+                <button class="btn btn-outline-warning ms-2" onclick="clearTokenHistory()">
+                    <i class="fas fa-trash me-2"></i>Limpiar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen General -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="token-card p-4 text-center h-100">
+                <div class="provider-icon mx-auto mb-3" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3 class="token-metric mb-1" id="totalTokensToday">0</h3>
+                <p class="text-muted mb-2">Tokens Hoy</p>
+                <div class="usage-bar">
+                    <div class="usage-progress" id="dailyTokenProgress" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">Límite diario: 100K</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="token-card p-4 text-center h-100">
+                <div class="provider-icon mx-auto mb-3" style="background: linear-gradient(135deg, #34d399, #10b981);">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <h3 class="cost-metric mb-1" id="totalCostToday">$0.00</h3>
+                <p class="text-muted mb-2">Costo Hoy</p>
+                <div class="usage-bar">
+                    <div class="usage-progress" id="dailyCostProgress" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">Presupuesto: $50.00</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="token-card p-4 text-center h-100">
+                <div class="provider-icon mx-auto mb-3" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="token-metric mb-1" id="executionsToday">0</h3>
+                <p class="text-muted mb-2">Ejecuciones Hoy</p>
+                <div class="usage-bar">
+                    <div class="usage-progress" id="execProgress" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">Promedio: <span id="avgTokensPerExec">0</span> tokens/exec</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="token-card p-4 text-center h-100">
+                <div class="provider-icon mx-auto mb-3" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 class="token-metric mb-1" id="avgResponseTime">0ms</h3>
+                <p class="text-muted mb-2">Tiempo Respuesta</p>
+                <div class="usage-bar">
+                    <div class="usage-progress" id="responseTimeProgress" style="width: 0%"></div>
+                </div>
+                <small class="text-muted">Eficiencia IA</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas y Notificaciones -->
+    <div id="tokenAlerts" class="mb-4"></div>
+
+    <!-- Dashboard Principal -->
+    <div class="row g-4">
+        <!-- Panel Izquierdo: Providers -->
+        <div class="col-md-4">
+            <div class="token-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-robot me-2 text-info"></i>
+                        Providers IA
+                    </h5>
+                    <span class="badge bg-info" id="activeProviders">0 activos</span>
+                </div>
+                
+                <div id="providersList">
+                    <!-- OpenAI -->
+                    <div class="provider-item mb-3 p-3" style="background: rgba(0, 166, 126, 0.1); border-radius: 8px;">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="provider-icon provider-openai me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">OpenAI</h6>
+                                <small class="text-muted">GPT-4, GPT-3.5</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="token-metric" style="font-size: 1.2rem;" id="openaiTokens">0</div>
+                                <small class="text-muted">tokens</small>
+                            </div>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Costo estimado:</span>
+                            <span class="cost-metric" style="font-size: 1rem;" id="openaiCost">$0.00</span>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Última ejecución:</span>
+                            <span class="text-info" id="openaiLastUsed">Nunca</span>
+                        </div>
+                    </div>
+
+                    <!-- Anthropic -->
+                    <div class="provider-item mb-3 p-3" style="background: rgba(217, 119, 6, 0.1); border-radius: 8px;">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="provider-icon provider-anthropic me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                <i class="fas fa-user-robot"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Anthropic</h6>
+                                <small class="text-muted">Claude 3.5 Sonnet</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="token-metric" style="font-size: 1.2rem;" id="anthropicTokens">0</div>
+                                <small class="text-muted">tokens</small>
+                            </div>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Costo estimado:</span>
+                            <span class="cost-metric" style="font-size: 1rem;" id="anthropicCost">$0.00</span>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Última ejecución:</span>
+                            <span class="text-info" id="anthropicLastUsed">Nunca</span>
+                        </div>
+                    </div>
+
+                    <!-- Google Gemini -->
+                    <div class="provider-item mb-3 p-3" style="background: rgba(66, 133, 244, 0.1); border-radius: 8px;">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="provider-icon provider-gemini me-3" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                <i class="fab fa-google"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Google Gemini</h6>
+                                <small class="text-muted">Gemini Pro</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="token-metric" style="font-size: 1.2rem;" id="geminiTokens">0</div>
+                                <small class="text-muted">tokens</small>
+                            </div>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Costo estimado:</span>
+                            <span class="cost-metric" style="font-size: 1rem;" id="geminiCost">$0.00</span>
+                        </div>
+                        <div class="stats-mini-token">
+                            <span>Última ejecución:</span>
+                            <span class="text-info" id="geminiLastUsed">Nunca</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Central: Gráfico de Consumo -->
+        <div class="col-md-8">
+            <div class="token-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-area me-2 text-success"></i>
+                        Consumo de Tokens
+                    </h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-info active" onclick="changeTimeframe('24h')">24h</button>
+                        <button type="button" class="btn btn-outline-info" onclick="changeTimeframe('7d')">7d</button>
+                        <button type="button" class="btn btn-outline-info" onclick="changeTimeframe('30d')">30d</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="tokenChart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6 class="text-info mb-2">
+                            <i class="fas fa-trophy me-2"></i>Top Modelos
+                        </h6>
+                        <div id="topModelsList">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Claude 3.5 Sonnet<span class="model-tag">Anthropic</span></span>
+                                <span class="text-success">45%</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>GPT-4<span class="model-tag">OpenAI</span></span>
+                                <span class="text-warning">30%</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Gemini Pro<span class="model-tag">Google</span></span>
+                                <span class="text-info">25%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info mb-2">
+                            <i class="fas fa-clock me-2"></i>Actividad Reciente
+                        </h6>
+                        <div id="recentActivity">
+                            <small class="text-muted d-block">Cargando actividad...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Ejecuciones Recientes -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="token-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2 text-warning"></i>
+                        Ejecuciones Recientes
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar..." id="searchExecutions" style="width: 200px;">
+                        <button class="btn btn-sm btn-outline-info" onclick="exportTokenData()">
+                            <i class="fas fa-download me-1"></i>Exportar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Tipo</th>
+                                <th>Provider</th>
+                                <th>Modelo</th>
+                                <th>Tokens Input</th>
+                                <th>Tokens Output</th>
+                                <th>Total</th>
+                                <th>Costo</th>
+                                <th>Tiempo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="executionsTable">
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>
+                                    Cargando datos de ejecuciones...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <nav class="mt-3">
+                    <ul class="pagination pagination-sm justify-content-center" id="executionsPagination">
+                        <!-- Paginación se genera dinámicamente -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+let tokenChart;
+let currentTimeframe = '24h';
+let executionsData = [];
+let currentPage = 1;
+const itemsPerPage = 10;
+
+// Inicializar cuando la página carga
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTokenMonitor();
+    loadTokenData();
+    
+    // Actualizar datos cada 30 segundos
+    setInterval(loadTokenData, 30000);
+});
+
+function initializeTokenMonitor() {
+    // Inicializar gráfico
+    const ctx = document.getElementById('tokenChart').getContext('2d');
+    tokenChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: 'OpenAI',
+                    data: [],
+                    borderColor: '#00C29A',
+                    backgroundColor: 'rgba(0, 194, 154, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Anthropic',
+                    data: [],
+                    borderColor: '#F59E0B',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Gemini',
+                    data: [],
+                    borderColor: '#4285F4',
+                    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#e2e8f0'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                },
+                y: {
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                }
+            }
+        }
+    });
+}
+
+function loadTokenData() {
+    // Cargar datos reales desde la API
+    fetch('/api/token_usage')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Datos recibidos de la API:', data);
+            updateDashboard(data);
+            updateChart(data.chart_data);
+            updateExecutionsTable(data.executions);
+            updateProviderStats(data.providers);
+            checkAlerts(data.alerts);
+        })
+        .catch(error => {
+            console.error('Error al cargar datos de la API:', error);
+            // Mostrar datos vacíos en lugar de datos simulados
+            const emptyData = {
+                total_tokens_today: 0,
+                total_cost_today: 0.00,
+                executions_today: 0,
+                avg_response_time: 0,
+                providers: {
+                    openai: { tokens: 0, cost: 0.00, last_used: 'Nunca' },
+                    anthropic: { tokens: 0, cost: 0.00, last_used: 'Nunca' },
+                    gemini: { tokens: 0, cost: 0.00, last_used: 'Nunca' }
+                },
+                chart_data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                    openai: [0, 0, 0, 0, 0, 0],
+                    anthropic: [0, 0, 0, 0, 0, 0],
+                    gemini: [0, 0, 0, 0, 0, 0]
+                },
+                executions: [],
+                alerts: [{
+                    title: '⚠️ Error de Conexión',
+                    message: 'No se pudo conectar con la API para obtener datos de tokens.'
+                }]
+            };
+            
+            updateDashboard(emptyData);
+            updateChart(emptyData.chart_data);
+            updateExecutionsTable(emptyData.executions);
+            updateProviderStats(emptyData.providers);
+            checkAlerts(emptyData.alerts);
+        });
+}
+
+function loadMockData() {
+    // Fallback para cuando no hay conexión a la API
+    const emptyData = {
+        total_tokens_today: 0,
+        total_cost_today: 0.00,
+        executions_today: 0,
+        avg_response_time: 0,
+        providers: {
+            openai: { tokens: 0, cost: 0.00, last_used: 'Nunca' },
+            anthropic: { tokens: 0, cost: 0.00, last_used: 'Nunca' },
+            gemini: { tokens: 0, cost: 0.00, last_used: 'Nunca' }
+        },
+        chart_data: {
+            labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+            openai: [0, 0, 0, 0, 0, 0],
+            anthropic: [0, 0, 0, 0, 0, 0],
+            gemini: [0, 0, 0, 0, 0, 0],
+            system_executions: [0, 0, 0, 0, 0, 0]
+        },
+        executions: [],
+        alerts: [{
+            title: '⚠️ Conexión API',
+            message: 'No se pudo conectar con la API para obtener datos en tiempo real.'
+        }]
+    };
+    
+    updateDashboard(emptyData);
+    updateChart(emptyData.chart_data);
+    updateExecutionsTable(emptyData.executions);
+    updateProviderStats(emptyData.providers);
+    checkAlerts(emptyData.alerts);
+}
+
+function updateDashboard(data) {
+    document.getElementById('totalTokensToday').textContent = formatNumber(data.total_tokens_today);
+    document.getElementById('totalCostToday').textContent = '$' + data.total_cost_today.toFixed(2);
+    document.getElementById('executionsToday').textContent = data.executions_today;
+    document.getElementById('avgResponseTime').textContent = data.avg_response_time + 'ms';
+    
+    // Actualizar barras de progreso
+    const tokenProgress = Math.min((data.total_tokens_today / 100000) * 100, 100);
+    document.getElementById('dailyTokenProgress').style.width = tokenProgress + '%';
+    
+    const costProgress = Math.min((data.total_cost_today / 50) * 100, 100);
+    document.getElementById('dailyCostProgress').style.width = costProgress + '%';
+    
+    const avgTokens = data.executions_today > 0 ? Math.round(data.total_tokens_today / data.executions_today) : 0;
+    document.getElementById('avgTokensPerExec').textContent = formatNumber(avgTokens);
+}
+
+function updateProviderStats(providers) {
+    // OpenAI
+    document.getElementById('openaiTokens').textContent = formatNumber(providers.openai.tokens);
+    document.getElementById('openaiCost').textContent = '$' + providers.openai.cost.toFixed(2);
+    document.getElementById('openaiLastUsed').textContent = providers.openai.last_used;
+    
+    // Anthropic
+    document.getElementById('anthropicTokens').textContent = formatNumber(providers.anthropic.tokens);
+    document.getElementById('anthropicCost').textContent = '$' + providers.anthropic.cost.toFixed(2);
+    document.getElementById('anthropicLastUsed').textContent = providers.anthropic.last_used;
+    
+    // Gemini
+    document.getElementById('geminiTokens').textContent = formatNumber(providers.gemini.tokens);
+    document.getElementById('geminiCost').textContent = '$' + providers.gemini.cost.toFixed(2);
+    document.getElementById('geminiLastUsed').textContent = providers.gemini.last_used;
+    
+    // Contar providers activos
+    let activeCount = 0;
+    if (providers.openai.tokens > 0) activeCount++;
+    if (providers.anthropic.tokens > 0) activeCount++;
+    if (providers.gemini.tokens > 0) activeCount++;
+    
+    document.getElementById('activeProviders').textContent = activeCount + ' activos';
+}
+
+function updateChart(chartData) {
+    tokenChart.data.labels = chartData.labels;
+    tokenChart.data.datasets[0].data = chartData.openai;
+    tokenChart.data.datasets[1].data = chartData.anthropic;
+    tokenChart.data.datasets[2].data = chartData.gemini;
+    
+    // Agregar datos de ejecuciones del sistema si están disponibles
+    if (chartData.system_executions && tokenChart.data.datasets.length < 4) {
+        tokenChart.data.datasets.push({
+            label: 'Ejecuciones Sistema',
+            data: chartData.system_executions,
+            borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4
+        });
+    } else if (chartData.system_executions && tokenChart.data.datasets.length >= 4) {
+        tokenChart.data.datasets[3].data = chartData.system_executions;
+    }
+    
+    tokenChart.update();
+}
+
+function updateExecutionsTable(executions) {
+    executionsData = executions;
+    renderExecutionsPage(1);
+}
+
+function renderExecutionsPage(page) {
+    const tbody = document.getElementById('executionsTable');
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageData = executionsData.slice(start, end);
+    
+    if (pageData.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="text-center text-muted py-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No hay ejecuciones registradas
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = pageData.map(exec => `
+        <tr>
+            <td>${formatTimestamp(exec.timestamp)}</td>
+            <td><span class="badge bg-info">${exec.type}</span></td>
+            <td>${exec.provider}</td>
+            <td>${exec.model}</td>
+            <td>${formatNumber(exec.input_tokens)}</td>
+            <td>${formatNumber(exec.output_tokens)}</td>
+            <td><strong>${formatNumber(exec.total_tokens)}</strong></td>
+            <td class="text-success">$${exec.cost.toFixed(3)}</td>
+            <td>${exec.duration}ms</td>
+        </tr>
+    `).join('');
+    
+    // Actualizar paginación
+    updatePagination();
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(executionsData.length / itemsPerPage);
+    const pagination = document.getElementById('executionsPagination');
+    
+    if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    for (let i = 1; i <= totalPages; i++) {
+        html += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+            </li>
+        `;
+    }
+    
+    pagination.innerHTML = html;
+}
+
+function changePage(page) {
+    currentPage = page;
+    renderExecutionsPage(page);
+}
+
+function checkAlerts(alerts) {
+    const alertsContainer = document.getElementById('tokenAlerts');
+    
+    if (!alerts || alerts.length === 0) {
+        alertsContainer.innerHTML = '';
+        return;
+    }
+    
+    alertsContainer.innerHTML = alerts.map(alert => `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>${alert.title}</strong> ${alert.message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `).join('');
+}
+
+function refreshTokenData() {
+    const icon = document.getElementById('refreshIcon');
+    icon.classList.add('refresh-button');
+    
+    setTimeout(() => {
+        icon.classList.remove('refresh-button');
+        loadTokenData();
+        showToast('Datos actualizados', 'success');
+    }, 1000);
+}
+
+function clearTokenHistory() {
+    if (confirm('¿Estás seguro de que deseas limpiar el historial de tokens? Esta acción no se puede deshacer.')) {
+        fetch('/api/token_usage/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showToast('Historial limpiado correctamente', 'success');
+                loadTokenData(); // Recargar datos
+            } else {
+                showToast('Error al limpiar historial: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error de conexión al limpiar historial', 'error');
+        });
+    }
+}
+
+function changeTimeframe(timeframe) {
+    currentTimeframe = timeframe;
+    
+    // Actualizar botones activos
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Recargar datos con nuevo timeframe
+    loadTokenData();
+}
+
+function exportTokenData() {
+    const data = {
+        summary: {
+            date: new Date().toISOString().split('T')[0],
+            total_tokens: document.getElementById('totalTokensToday').textContent,
+            total_cost: document.getElementById('totalCostToday').textContent,
+            executions: document.getElementById('executionsToday').textContent
+        },
+        executions: executionsData
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `token-usage-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
+function showToast(message, type = 'info') {
+    // Crear toast notification
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type} position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check' : 'info'}-circle me-2"></i>
+            ${message}
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}

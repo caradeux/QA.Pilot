@@ -1,0 +1,32 @@
+# Base de datos PostgreSQL
+# Versiones específicas para garantizar compatibilidad
+
+# SQLAlchemy - ORM y conexiones a DB
+sqlalchemy>=2.0.0
+
+# Driver PostgreSQL
+psycopg2-binary>=2.9.0
+
+# Migraciones de DB
+alembic>=1.12.0
+
+# Variables de entorno
+python-dotenv>=1.0.0
+
+# UUID support (generalmente incluido en Python 3.7+)
+# uuid
+
+# Manejo de fechas
+python-dateutil>=2.8.0
+
+# Validación de datos
+pydantic>=2.0.0
+
+# Logging estructurado
+structlog>=23.0.0
+
+# Connection pooling
+psycopg2-pool>=1.1
+
+# JSON handling
+orjson>=3.9.0 

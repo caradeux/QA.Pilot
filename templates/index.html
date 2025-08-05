@@ -1,0 +1,1186 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Inovabiz QA Pilot{% endblock %}
+
+{% block sidebar_extra %}
+    <!-- Instrucciones de Uso -->
+    <div class="tech-panel mb-4">
+        <div class="tech-panel-header">
+            <h6 class="tech-panel-title">
+                <i class="fas fa-info-circle"></i> Instrucciones
+            </h6>
+        </div>
+        <div class="tech-panel-body">
+            <ol class="small ps-3 mb-0">
+                <li class="mb-2"><strong class="tech-glow">Ingresa la URL</strong> del sitio a probar.</li>
+                <li class="mb-2"><strong class="tech-glow">Describe las acciones</strong> a realizar.</li>
+                <li class="mb-2"><strong class="tech-glow">Configura</strong> claves API si es necesario.</li>
+                <li class="mb-2"><strong class="tech-glow">Ajusta opciones</strong> de vuelo.</li>
+                <li class="mb-2">Pulsa <strong class="tech-glow">'Iniciar Vuelo'</strong>.</li>
+                <li class="mb-2"><strong class="tech-glow">Observa</strong> al piloto trabajar.</li>
+                <li><strong class="tech-glow">Revisa</strong> resultados y grabaciones.</li>
+            </ol>
+        </div>
+    </div>
+    
+    <!-- Panel de Recomendación Clave en Sidebar (Versión Completa) -->
+    <div class="tech-panel">
+        <div class="tech-panel-header">
+            <h6 class="tech-panel-title">
+                <i class="fas fa-lightbulb me-2 text-info"></i> Recomendación: Instrucciones Eficientes
+            </h6>
+        </div>
+        <div class="tech-panel-body p-3">
+            <p class="small tech-text-muted mb-2">
+                Para acelerar la ejecución, especialmente al seleccionar elementos, proporciona instrucciones más específicas.
+            </p>
+        
+            <div class="mb-3">
+                <p class="small mb-1"><strong>Más Específico (Recomendado):</strong></p>
+                <pre class="tech-code-block small">1. Escribe 'smartphone' en la barra de búsqueda y presiona Enter
+2. Haz clic en el **título** del **primer producto**
+3. Espera a que cargue</pre>
+            </div>
+             <div class="mb-2">
+                <p class="small mb-1"><strong>Muy Específico (Si Conoces HTML):</strong></p>
+                <pre class="tech-code-block small">1. Escribe 'smartphone' en el input con id 'search-input'...
+2. Haz clic en el enlace dentro del primer div con clase 'ui-search-result__wrapper'
+3. Espera 3 segundos</pre>
+            </div>
+            <p class="small tech-text-muted mt-2 mb-0">
+                <i class="fas fa-info-circle me-1"></i> Cuanto más guíes al agente, más rápida y fiable será la ejecución.
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <!-- Mensajes Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="tech-alert tech-alert-{{ category if category != 'message' else 'info' }} mb-4">
+                <div class="tech-alert-icon">
+                    <i class="fas fa-{{ 'check' if category == 'success' else 'exclamation' if category == 'danger' else 'info-circle' }}"></i>
+                </div>
+                <div>{{ message }}</div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Nuevo Vuelo (Test) -->
+    <div class="tech-panel mb-4">
+        <div class="tech-panel-header">
+            <h5 class="tech-panel-title">
+                <i class="fas fa-rocket"></i> Nuevo Vuelo (Test)
+            </h5>
+        </div>
+        <div class="tech-panel-body">
+            <form id="test-form" method="post">
+                <div class="tech-form-group mb-4">
+                    <label for="url" class="tech-label">
+                        <i class="fas fa-globe me-1 tech-glow"></i> Destino
+                    </label>
+                    <input type="url" class="tech-input form-control mb-3" id="url" name="url" 
+                           placeholder="URL del Sitio Web (https://...)" required>
+                    
+                    <label for="instructions" class="tech-label">
+                        <i class="fas fa-tasks me-1 tech-glow"></i> Misión
+                    </label>
+                    <textarea class="form-control tech-textarea" id="instructions" name="instructions" rows="5" required placeholder="Ej: 
+1. Ir a google.com
+2. Buscar 'noticias'
+3. Hacer clic en el primer resultado"></textarea>
+                </div>
+
+                <div class="tech-form-group mb-4">
+                    <label class="tech-label">
+                        <i class="fas fa-sliders-h me-1 tech-glow"></i> Configuración del Vuelo
+                    </label>
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-6">
+                            <div class="tech-card p-3 h-100">
+                                <label for="max_time" class="form-label small d-flex justify-content-between">
+                                    <span class="config-label"><i class="fas fa-hourglass-half me-1"></i> Tiempo Máximo</span>
+                                    <span class="badge" style="background: var(--tech-primary);"><span id="tiempo-value" class="config-value">600</span> seg</span>
+                                </label>
+                                <input type="range" class="form-range" min="60" max="3600" step="60" value="600" 
+                                    id="max_time" name="max_time" oninput="document.getElementById('tiempo-value').textContent = this.value">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="tech-card p-3 h-100">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="fullscreen" name="fullscreen" checked>
+                                    <label class="form-check-label config-label" for="fullscreen">
+                                        <i class="fas fa-expand me-1"></i> Pantalla Completa
+                                    </label>
+                                </div>
+                                <small class="tech-highlight-text d-block mt-2">Ejecutar navegador maximizado</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Nuevo selector de navegador -->
+                    <div class="row g-3 mb-2">
+                        <div class="col-md-12">
+                            <div class="tech-card p-3">
+                                <label class="form-label small config-label">
+                                    <i class="fas fa-globe-americas me-1"></i> Navegador
+                                </label>
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="browser" id="browser-chrome" value="chrome" checked>
+                                        <label class="form-check-label" for="browser-chrome">
+                                            <i class="fab fa-chrome me-1"></i> Chrome
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="browser" id="browser-firefox" value="firefox">
+                                        <label class="form-check-label" for="browser-firefox">
+                                            <i class="fab fa-firefox me-1"></i> Firefox
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="browser" id="browser-edge" value="edge">
+                                        <label class="form-check-label" for="browser-edge">
+                                            <i class="fab fa-edge me-1"></i> Edge
+                                        </label>
+                                    </div>
+                                </div>
+                                <small class="tech-highlight-text d-block mt-2">Selecciona el navegador para la prueba</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="tech-card p-3 h-100">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="headless" name="headless">
+                                    <label class="form-check-label config-label" for="headless">
+                                        <i class="fas fa-eye-slash me-1"></i> Modo Sigiloso (Recomendado)
+                                    </label>
+                                </div>
+                                <small class="tech-highlight-text d-block mt-2">Ejecutar sin mostrar el navegador - MÁS RÁPIDO</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="tech-card p-3 h-100">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="screenshots" name="screenshots" checked>
+                                    <label class="form-check-label config-label" for="screenshots">
+                                        <i class="fas fa-camera me-1"></i> Capturar Vuelo
+                                    </label>
+                                </div>
+                                <small class="tech-highlight-text d-block mt-2">Guardar capturas del proceso</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" id="start-test-btn" class="tech-btn tech-btn-success w-100 py-3">
+                    <i class="fas fa-rocket me-2"></i> INICIAR VUELO
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Telemetría -->
+    <div class="tech-panel mt-4" id="telemetrySection">
+        <div class="tech-panel-header">
+            <h5 class="tech-panel-title">
+                <i class="fas fa-satellite-dish me-2 text-info"></i> Telemetría en Tiempo Real
+            </h5>
+        </div>
+        <div class="tech-panel-body" id="telemetry-container">
+            <div id="terminal" class="tech-terminal p-3">
+                <div id="status-messages" class="tech-status-line">
+                     <span class="text-muted">Esperando inicio del vuelo...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reporte de Vuelo (Contenedor para las tarjetas de estado) -->
+    <div class="tech-panel mt-4">
+         <div class="tech-panel-header">
+            <h5 class="tech-panel-title">
+                <i class="fas fa-clipboard-list me-2"></i> Reporte de Vuelos
+            </h5>
+        </div>
+        <div class="tech-panel-body" id="test-status-container" style="min-height: 100px;">
+             <div class="text-center py-4 initial-placeholder">
+                <div class="mb-3 d-inline-block p-3 rounded-circle" style="border: 2px dashed rgba(15, 224, 255, 0.3);">
+                    <i class="fas fa-paper-plane fa-3x" style="color: var(--tech-primary);"></i>
+                </div>
+                <h5 class="tech-glow mb-2">Sistema Listo</h5>
+                <p class="text-muted">Inicia un nuevo vuelo para ver su estado aquí.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Código Playwright Generado -->
+    <div class="modal fade" id="playwrightCodeModal" tabindex="-1" aria-labelledby="playwrightCodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content tech-card bg-dark">
+                <div class="modal-header tech-panel-header">
+                    <h5 class="modal-title tech-panel-title" id="playwrightCodeModalLabel">
+                        <i class="fab fa-playwright me-2"></i> Código Playwright Generado (<span id="generatedLanguage"></span>)
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>A continuación se muestra el código Playwright generado basado en las instrucciones y el log de ejecución. Puede copiarlo y adaptarlo según sea necesario.</p>
+                    <div class="position-relative">
+                        <pre class="bg-black text-light p-3 rounded" style="max-height: 60vh; overflow-y: auto;"><code id="playwrightCodeContent" class="language-python"># Código se cargará aquí...</code></pre>
+                        <div class="position-absolute top-0 end-0 mt-2 me-2">
+                             <button class="btn btn-sm btn-outline-secondary me-2" onclick="downloadPlaywrightCode()">
+                                <i class="fas fa-download me-1"></i> Descargar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                       <button type="button" class="btn tech-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Logs -->
+    <div class="modal fade" id="logModal" tabindex="-1" aria-labelledby="logModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content tech-card bg-dark">
+                <div class="modal-header tech-panel-header">
+                    <h5 class="modal-title tech-panel-title" id="logModalLabel">
+                        <i class="fas fa-file-alt me-2"></i> Logs del Test
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="position-relative">
+                        <pre class="bg-black text-light p-3 rounded" style="max-height: 60vh; overflow-y: auto;"><code id="logContent" class="language-plaintext"># Logs se mostrarán aquí...</code></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn tech-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nuevo Modal para Capturas -->
+    <div class="modal fade" id="screenshotModal" tabindex="-1" aria-labelledby="screenshotModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content tech-card bg-dark">
+                <div class="modal-header tech-panel-header">
+                    <h5 class="modal-title tech-panel-title" id="screenshotModalLabel">
+                        <i class="fas fa-images me-2"></i> Capturas del Test
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="position-relative">
+                        <div id="screenshotCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner" id="screenshotCarouselInner">
+                                <!-- Contenido del carrusel -->
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#screenshotCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#screenshotCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn tech-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de progreso de test -->
+    <div class="card shadow-sm mb-4" id="test-progress-panel">
+        <div class="card-header bg-primary bg-gradient text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-tasks me-2"></i> Progreso del Test
+                <small id="test-id-display" class="ms-2 opacity-75">{{ task_id }}</small>
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="progress" style="height: 20px;">
+                        <div id="main-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="stats-icon bg-primary me-2">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Estado</h6>
+                            <p id="test-status" class="mb-0">Consultando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="stats-icon bg-info me-2">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Acción Actual</h6>
+                            <p id="current-action" class="mb-0">Preparando test...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pasos numerados del test -->
+            <div id="test-steps-container" class="mb-3 d-none">
+                <h6 class="border-bottom pb-2">Pasos Detectados</h6>
+                <div id="test-steps" class="list-group">
+                    <!-- Los pasos se añadirán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Capturas de pantalla -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h6 class="border-bottom pb-2">Capturas de Pantalla (<span id="screenshot-count">0</span>)</h6>
+                    <div id="screenshots-container" class="row g-2">
+                        <!-- Las capturas se añadirán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-secondary" id="copy-status-btn">
+                    <i class="fas fa-copy me-1"></i> Copiar registro
+                </button>
+                <a href="{{ url_for('history') }}" class="btn btn-primary">
+                    <i class="fas fa-history me-1"></i> Ver historial
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para registro completo -->
+    <div class="modal fade" id="logModalDetailed" tabindex="-1" aria-labelledby="logModalDetailedLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logModalDetailedLabel">Registro de Ejecución Detallado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <select class="form-select" id="log-type-selector">
+                            <option value="stdout">Salida Estándar</option>
+                            <option value="stderr">Errores</option>
+                        </select>
+                    </div>
+                    <pre id="log-content" class="p-3 bg-dark text-light rounded" style="max-height: 400px; overflow-y: auto;"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="copy-log-btn">
+                        <i class="fas fa-copy me-1"></i> Copiar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 
+
+{% endblock %}
+
+{% block scripts_extra %}
+<!-- Incluir Prism.js para resaltado de sintaxis -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<style>
+/* Estilo simple para la línea de estado en la terminal */
+.tech-status-line {
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--tech-primary-light); /* Un color claro para el texto */
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro semi-transparente */
+    display: inline-block; /* Para que el fondo se ajuste al texto */
+    min-width: 200px; /* Ancho mínimo */
+    white-space: nowrap; /* Evitar que el texto se divida en líneas */
+    overflow: hidden; /* Ocultar texto que desborde */
+    text-overflow: ellipsis; /* Añadir '...' si el texto es muy largo */
+}
+.tech-status-line .spinner-border-sm {
+    margin-right: 8px;
+    vertical-align: -0.125em;
+}
+</style>
+
+<script>
+    const testStatus = {}; // Almacena el estado actual de cada test
+    let pollingInterval = null; // ID del intervalo de polling
+    const statusMessagesDiv = document.getElementById('status-messages'); // Referencia al div de telemetría
+
+    // Función para iniciar la ejecución del test
+    document.getElementById('test-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log("Formulario enviado. Recopilando datos...");
+        
+        const formData = new FormData(this);
+        const startButton = document.getElementById('start-test-btn');
+        const placeholder = document.querySelector('#test-status-container .initial-placeholder');
+
+        startButton.disabled = true;
+        startButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Iniciando...';
+        
+        if(placeholder) {
+            placeholder.remove();
+        }
+        if (statusMessagesDiv) {
+            statusMessagesDiv.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Iniciando...`;
+        }
+        
+        console.log("Enviando solicitud a {{ url_for('run_test') }}...");
+        fetch("{{ url_for('run_test') }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log("Respuesta recibida:", response);
+            if (!response.ok) {
+                throw new Error("Error " + response.status + ": " + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Datos recibidos:", data);
+            
+            if (data.status === 'started' && data.task_id) {
+                console.log("Test iniciado con ID:", data.task_id);
+                addTestStatusCard(data.task_id, {
+                    status: 'queued',
+                    message: 'Vuelo en cola...',
+                    icon: 'fa-hourglass-start',
+                    current_action: 'Esperando para despegar...'
+                });
+                if (statusMessagesDiv) {
+                    statusMessagesDiv.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Esperando para despegar...`;
+                }
+                if (!pollingInterval) {
+                    console.log("Iniciando polling para actualizaciones...");
+                    startPolling();
+                }
+            } else {
+                console.error("Error al iniciar test:", data);
+                if (statusMessagesDiv) {
+                    statusMessagesDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-danger me-2"></i> ${data.message || 'Error al iniciar'}`;
+                }
+                const container = document.getElementById('test-status-container');
+                const existingPlaceholder = container.querySelector('.initial-placeholder');
+                if(existingPlaceholder) { existingPlaceholder.remove(); }
+                addTestStatusCard('error-start', {
+                    status: 'error',
+                    message: data.message || 'Error desconocido al iniciar el test.',
+                    icon: 'fa-exclamation-triangle'
+                });
+                startButton.disabled = false;
+                startButton.innerHTML = '<i class="fas fa-rocket me-2"></i> INICIAR VUELO';
+            }
+        })
+        .catch(error => {
+            console.error('Error al iniciar el test:', error);
+            if (statusMessagesDiv) {
+                statusMessagesDiv.innerHTML = `<i class="fas fa-exclamation-triangle text-danger me-2"></i> Error de red al iniciar.`;
+            }
+            const container = document.getElementById('test-status-container');
+            const existingPlaceholder = container.querySelector('.initial-placeholder');
+            if(existingPlaceholder) { existingPlaceholder.remove(); }
+            addTestStatusCard('error-fetch', {
+                status: 'error',
+                message: 'Error de red al intentar iniciar el test.',
+                icon: 'fa-exclamation-triangle'
+            });
+            startButton.disabled = false;
+            startButton.innerHTML = '<i class="fas fa-rocket me-2"></i> INICIAR VUELO';
+        });
+    });
+
+    // Función para añadir o actualizar una tarjeta de estado
+    function addTestStatusCard(taskId, data) {
+        const container = document.getElementById('test-status-container');
+        // Limpiar placeholder inicial si aún existe al añadir la primera tarjeta real
+         const placeholder = container.querySelector('.initial-placeholder');
+         if(placeholder && !document.getElementById(`test-card-${taskId}`)) { // Solo quitar si la tarjeta no existe aún
+             placeholder.remove();
+         }
+        
+        let card = document.getElementById(`test-card-${taskId}`);
+
+        if (!card) {
+            card = document.createElement('div');
+            card.className = 'tech-card p-3 mb-3';
+            card.id = `test-card-${taskId}`;
+            // Insertar nueva tarjeta al principio del contenedor
+            container.insertBefore(card, container.firstChild); 
+        }
+
+        let statusClass = 'text-info';
+        let progressBarClass = 'bg-info';
+        let progressWidth = '25%';
+        let statusIcon = data.icon || 'fa-question-circle'; // Icono por defecto
+
+        switch (data.status) {
+            case 'queued': 
+                statusClass = 'text-secondary'; 
+                progressBarClass = 'bg-secondary';
+                progressWidth = '10%'; 
+                statusIcon = 'fa-hourglass-start';
+                break;
+            case 'generating': 
+                statusClass = 'text-primary'; 
+                progressBarClass = 'bg-primary'; 
+                progressWidth = '25%';
+                statusIcon = 'fa-cogs'; // Engranajes para generando
+                break;
+            case 'running': 
+                statusClass = 'text-info'; 
+                progressBarClass = 'bg-info progress-bar-striped progress-bar-animated'; 
+                progressWidth = '50%';
+                statusIcon = 'fa-plane-departure'; // Avión despegando
+                break;
+            case 'success': 
+                statusClass = 'text-success'; 
+                progressBarClass = 'bg-success';
+                progressWidth = '100%';
+                 statusIcon = 'fa-check-circle';
+                break;
+            case 'error': 
+                statusClass = 'text-danger'; 
+                progressBarClass = 'bg-danger';
+                progressWidth = '100%'; // Marcar como completo pero en error
+                statusIcon = 'fa-times-circle';
+                break;
+            // Añadir default por si acaso
+             default:
+                 statusClass = 'text-muted';
+                 progressBarClass = 'bg-secondary';
+                 progressWidth = '0%';
+                 statusIcon = 'fa-question-circle';
+        }
+
+        // Usar el icono determinado por el switch
+        const finalIcon = data.icon || statusIcon; 
+        // Asegurar que current_action tenga un valor por defecto visible y coherente
+        const currentActionText = data.current_action || (data.status === 'queued' ? 'En cola...' : (data.status === 'success' ? 'Completado' : (data.status === 'error' ? 'Fallo' : 'Procesando...')));
+        // Mensaje principal más consistente
+        const mainMessageText = data.message || (data.status === 'queued' ? 'Vuelo en cola' : (data.status === 'success' ? 'Vuelo exitoso' : (data.status === 'error' ? 'Vuelo fallido' : 'Estado desconocido')));
+
+        card.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0 tech-glow">
+                    <i class="fas ${finalIcon} me-2 ${statusClass}"></i>
+                    <span class="test-message">${mainMessageText}</span> <!-- Usar mensaje consistente -->
+                </h6>
+                <span class="badge bg-secondary">${taskId.substring(0, 8)}</span> 
+            </div>
+            <div class="progress mb-1" style="height: 5px;"> <!-- Reducir margen inferior -->
+                <div class="progress-bar ${progressBarClass}" role="progressbar" style="width: ${progressWidth};" aria-valuenow="${progressWidth.replace('%','')}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <!-- Mostrar current_action debajo de la barra de progreso -->
+            <p class="text-muted small mb-2 current-action-display">
+                 ${(data.status === 'running' || data.status === 'generating') ? '<span class="spinner-border spinner-border-sm text-info me-1" role="status" aria-hidden="true"></span>' : ''}
+                 ${currentActionText} 
+             </p>
+            ${data.details ? `<p class="text-warning small mb-2"><i class="fas fa-exclamation-circle me-1"></i> ${data.details}</p>` : ''}
+            
+            <!-- Botones y Acciones -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                 <div>
+                    <!-- Modificación: Usar raw_stdout y raw_stderr para los logs -->
+                    ${(data.status === 'success' || data.status === 'error') && (data.raw_stdout || data.raw_stderr) ? 
+                        `<button class="btn btn-sm tech-btn-outline me-2" onclick="showLogs('${taskId}')">
+                            <i class="fas fa-file-alt me-1"></i> Ver Logs Completos
+                         </button>` : ''}
+                    ${(data.status === 'success' || data.status === 'error') && data.screenshots && data.screenshots.length > 0 ? 
+                        `<button class="btn btn-sm tech-btn-outline" onclick="showScreenshots('${taskId}')">
+                            <i class="fas fa-images me-1"></i> Ver Capturas (${data.screenshots.length})
+                         </button>` : ''}
+                </div>
+                <!-- Sección para Generar Código Playwright -->
+                ${(data.status === 'success' || data.status === 'error') ? `
+                <div class="d-flex align-items-center">
+                    <select class="form-select form-select-sm tech-input me-2" id="language-select-${taskId}" style="width: auto;" title="Seleccionar lenguaje para Playwright">
+                        <option value="python" selected>Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="java">Java</option>
+                        <option value="csharp">C#</option>
+                    </select>
+                    <button class="btn btn-sm tech-btn-primary" onclick="generatePlaywrightCode('${taskId}')" title="Generar script Playwright basado en este test">
+                        <i class="fab fa-playwright me-1"></i> Generar Playwright
+                    </button>
+                 </div>
+                ` : ''}
+            </div>
+        `;
+
+        // Almacenar datos completos para modales
+        testStatus[taskId] = data;
+    }
+
+    // Función para iniciar el polling
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(pollAllTests, 5000); // Consulta cada 5 segundos (reducido frecuencia)
+        console.log("Polling iniciado...");
+    }
+
+    // Función para detener el polling
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+            console.log("Polling detenido.");
+             const startButton = document.getElementById('start-test-btn');
+             if (startButton) {
+                 startButton.disabled = false;
+                 startButton.innerHTML = '<i class="fas fa-rocket me-2"></i> INICIAR VUELO';
+             }
+        }
+    }
+
+    // --- Heavily Modify pollAllTests ---
+    function pollAllTests() {
+        const activeTestIds = Object.keys(testStatus).filter(id =>
+            testStatus[id] &&
+            testStatus[id].status !== 'success' && testStatus[id].status !== 'error'
+        );
+
+        // --- Step 1: Check if all tests are finished ---        
+        if (activeTestIds.length === 0) {
+            if (pollingInterval) { // Only act if polling was previously active
+                 console.log("No active tests remaining. Stopping polling and setting final status.");
+                 stopPolling(); // Stop the interval
+
+                 // Update telemetry with the status of the most recently finished test
+                 if (statusMessagesDiv) {
+                     // Find the last task ID added to testStatus (usually the most recent)
+                     const taskIds = Object.keys(testStatus);
+                     const lastStatusKey = taskIds[taskIds.length - 1]; 
+                     const lastStatusData = lastStatusKey ? testStatus[lastStatusKey] : null;
+
+                     if (lastStatusData && (lastStatusData.status === 'success' || lastStatusData.status === 'error')) {
+                         const finalIconClass = lastStatusData.status === 'success' ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+                         const finalMessage = lastStatusData.message || `Vuelo finalizado (${lastStatusData.status})`;
+                         statusMessagesDiv.innerHTML = `<i class="fas ${finalIconClass} me-2"></i> ${finalMessage}`; // No spinner
+                     } else if (!Object.keys(testStatus).length) {
+                          statusMessagesDiv.innerHTML = `<span class="text-muted">Esperando inicio del vuelo...</span>`;
+                     } else { // Fallback if last status wasn't success/error
+                         statusMessagesDiv.innerHTML = `<span class="text-muted">Todos los vuelos han finalizado.</span>`;
+                     }
+                 }
+            }
+            return; // Exit polling cycle
+        }
+
+        // --- Step 2: If tests are active, poll them ---        
+        console.log("Polling active tests:", activeTestIds);
+        let lastActiveAction = null; // Reset for this cycle
+        let promises = []; // Collect all fetch promises
+
+        activeTestIds.forEach(taskId => {
+            promises.push( // Add the fetch promise to the array
+                fetch(`/test_status/${taskId}`)
+                    .then(response => {
+                        // ... (error handling for fetch/JSON parsing) ...
+                         if (!response.ok) {
+                            return response.json().then(errData => {
+                                 throw new Error(errData.message || `Error ${response.status}`);
+                            }).catch(() => {
+                                throw new Error(`Error ${response.status}: ${response.statusText}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log(`Estado recibido para ${taskId}:`, data);
+                        if (data && data.status) {
+                            // Update the specific test card
+                            addTestStatusCard(taskId, data);
+
+                            // Capture the latest action message from any active test
+                            if (data.current_action && (data.status === 'running' || data.status === 'generating' || data.status === 'queued')) {
+                                // Capture the message intended for the user during execution
+                                lastActiveAction = data.current_action;
+                            }
+                            // **Removed:** Logic to check if this specific test was the "last one" and stop polling here
+                        } else if (data && data.error && data.message) {
+                             addTestStatusCard(taskId, data);                             
+                             // Potentially mark this task as finished in testStatus locally if needed
+                        } else {
+                             console.warn("Respuesta inesperada o inválida para", taskId, data);
+                        }
+                    })
+                    .catch(error => {
+                        // ... (error handling for catch) ...
+                         console.error(`Error al obtener estado para ${taskId}:`, error);
+                         addTestStatusCard(taskId, { 
+                             status: 'error', 
+                             message: `Error al obtener estado: ${error.message}`,
+                             icon: 'fa-exclamation-circle',
+                             raw_stdout: '', raw_stderr: '' 
+                         });
+                          // Indicate communication error in the main telemetry
+                          lastActiveAction = "Error de comunicación..."; 
+                    })
+            ); // End of promises.push()
+        }); // End of forEach loop
+
+        // --- Step 3: After all fetch promises settle, update the main telemetry ---        
+        Promise.allSettled(promises).then(() => {
+            // Check if polling should STILL be active AFTER fetches completed.
+            // We re-calculate active tests based on the potentially updated testStatus object.
+            const stillActiveIdsNow = Object.keys(testStatus).filter(id =>
+                testStatus[id] &&
+                testStatus[id].status !== 'success' && testStatus[id].status !== 'error'
+            );
+
+            if (statusMessagesDiv && stillActiveIdsNow.length > 0) { // Update only if tests are genuinely still active
+                if (lastActiveAction) {
+                    statusMessagesDiv.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${lastActiveAction}`;
+                } else {
+                    // Fallback if no specific action was captured but tests are active
+                    statusMessagesDiv.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando ${stillActiveIdsNow.length} vuelo(s)...`;
+                }
+            } else if (statusMessagesDiv && stillActiveIdsNow.length === 0) {
+                // If all tests finished *during* this polling cycle's fetches, 
+                // ensure the final message is set (redundant if start check works, but safe). 
+                // This might occur if stopPolling wasn't called due to timing.
+                 if (pollingInterval) stopPolling(); // Ensure polling stops
+                 const taskIds = Object.keys(testStatus);
+                 const lastStatusKey = taskIds[taskIds.length - 1];
+                 const lastStatusData = lastStatusKey ? testStatus[lastStatusKey] : null;
+                 if (lastStatusData && (lastStatusData.status === 'success' || lastStatusData.status === 'error')){
+                     const finalIconClass = lastStatusData.status === 'success' ? 'fa-check-circle text-success' : 'fa-times-circle text-danger';
+                     const finalMessage = lastStatusData.message || `Vuelo finalizado (${lastStatusData.status})`;
+                     statusMessagesDiv.innerHTML = `<i class="fas ${finalIconClass} me-2"></i> ${finalMessage}`; 
+                 } else {
+                      statusMessagesDiv.innerHTML = `<span class="text-muted">Todos los vuelos han finalizado.</span>`;
+                 }
+            }
+             // The final message setting is primarily handled by the check at the beginning of the *next* poll cycle.
+        });
+
+    } // End of pollAllTests
+
+    // Funciones para mostrar modales
+    function showLogs(taskId) {
+        const data = testStatus[taskId];
+        const logContent = document.getElementById('logContent');
+        if (data) {
+             // Usar raw_stdout y raw_stderr
+            logContent.textContent = `--- STDOUT ---
+${data.raw_stdout || '(Vacío)'}
+
+--- STDERR ---
+${data.raw_stderr || '(Vacío)'}`;
+            // Resaltar si Prism está cargado
+             if (window.Prism) {
+                 logContent.className = 'language-plaintext'; // Asegurar clase para Prism
+                 Prism.highlightElement(logContent);
+             }
+            const logModal = new bootstrap.Modal(document.getElementById('logModal'));
+            logModal.show();
+        } else {
+             alert('No se encontraron datos de log para este test.');
+        }
+    }
+
+    function showScreenshots(taskId) {
+        const data = testStatus[taskId];
+        const carouselInner = document.getElementById('screenshotCarouselInner');
+        const carouselIndicators = document.getElementById('screenshotCarouselIndicators');
+        
+        if (data && data.screenshots && data.screenshots.length > 0) {
+            carouselInner.innerHTML = ''; // Limpiar anteriores
+            carouselIndicators.innerHTML = ''; // Limpiar indicadores
+
+            data.screenshots.forEach((ss, index) => {
+                const activeClass = index === 0 ? 'active' : '';
+                // Crear item del carrusel
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `carousel-item ${activeClass}`;
+                itemDiv.innerHTML = `
+                    <img src="${ss.url}" class="d-block w-100" alt="${ss.name}" style="max-height: 70vh; object-fit: contain;">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded px-2">
+                        <h5>${ss.name}</h5>
+                    </div>
+                `;
+                carouselInner.appendChild(itemDiv);
+                
+                // Crear indicador
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.dataset.bsTarget = '#screenshotCarousel';
+                button.dataset.bsSlideTo = index;
+                button.className = activeClass;
+                button.setAttribute('aria-current', activeClass ? 'true' : 'false');
+                button.setAttribute('aria-label', `Slide ${index + 1}`);
+                carouselIndicators.appendChild(button);
+            });
+            
+            const screenshotModal = new bootstrap.Modal(document.getElementById('screenshotModal'));
+            screenshotModal.show();
+        } else {
+            alert('No hay capturas de pantalla disponibles para este test.');
+        }
+    }
+    
+    // *** NUEVA FUNCIÓN para Generar Código Playwright ***
+    function generatePlaywrightCode(taskId) {
+        const languageSelect = document.getElementById(`language-select-${taskId}`);
+        const selectedLanguage = languageSelect ? languageSelect.value : 'python';
+        const generateButton = languageSelect ? languageSelect.nextElementSibling : null;
+
+        if (generateButton) {
+            generateButton.disabled = true;
+            generateButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generando...';
+        }
+        
+        console.log(`Solicitando código Playwright para ${taskId} en ${selectedLanguage}...`);
+        
+        fetch(`/generate_playwright/${taskId}?language=${selectedLanguage}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Respuesta de /generate_playwright:", data);
+                 if (generateButton) {
+                    generateButton.disabled = false;
+                    generateButton.innerHTML = '<i class="fab fa-playwright me-1"></i> Generar Playwright';
+                }
+                
+                // Verificar si hay un error específico
+                if (data.error) {
+                    // Mostrar mensaje de error amigable al usuario
+                    alert(data.message || "Error al generar el código Playwright");
+                    return;
+                }
+                
+                if (data.generated_code) {
+                    const codeContent = document.getElementById('playwrightCodeContent');
+                    const languageSpan = document.getElementById('generatedLanguage');
+                    
+                    codeContent.textContent = data.generated_code;
+                    // Actualizar clase para resaltado de sintaxis
+                    codeContent.className = `language-${data.language}`;
+                    languageSpan.textContent = data.language.charAt(0).toUpperCase() + data.language.slice(1);
+                    
+                    // Re-resaltar con Prism.js
+                    Prism.highlightElement(codeContent);
+                    
+                    // Mostrar el modal
+                    const codeModal = new bootstrap.Modal(document.getElementById('playwrightCodeModal'));
+                    codeModal.show();
+                } else {
+                    alert("Error al generar el código Playwright: Respuesta inesperada del servidor.");
+                }
+            })
+            .catch(error => {
+                console.error('Error al generar código Playwright:', error);
+                if (generateButton) {
+                    generateButton.disabled = false;
+                    generateButton.innerHTML = '<i class="fab fa-playwright me-1"></i> Generar Playwright';
+                }
+                alert("Error de red al intentar generar el código Playwright.");
+            });
+    }
+
+
+    // NUEVA FUNCIÓN para descargar el código Playwright
+    function downloadPlaywrightCode() {
+        const codeContent = document.getElementById('playwrightCodeContent').innerText;
+        const languageSpan = document.getElementById('generatedLanguage');
+        const language = languageSpan ? languageSpan.innerText.toLowerCase() : 'python'; // Default a python si no se encuentra
+        const fileExtension = language === 'javascript' ? 'js' : 'py';
+        const filename = `playwright_script.${fileExtension}`;
+
+        const blob = new Blob([codeContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link); // Necesario para Firefox
+        link.click();
+        
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url); // Liberar memoria
+    }
+
+    // Función para mostrar la modal con el código generado
+    function showPlaywrightCode(code, language) {
+        const codeElement = document.getElementById('playwrightCodeContent');
+        const langSpan = document.getElementById('generatedLanguage');
+        const modal = new bootstrap.Modal(document.getElementById('playwrightCodeModal'));
+
+        if (codeElement && langSpan) {
+            codeElement.textContent = code;
+            codeElement.className = `language-${language}` // Actualizar clase para resaltado
+            langSpan.textContent = language.charAt(0).toUpperCase() + language.slice(1); // Poner primera letra en mayúscula
+            // Re-inicializar resaltado si se usa Prism.js o similar
+            if (window.Prism) {
+                Prism.highlightElement(codeElement);
+            }
+        } else {
+            console.error('Elementos de la modal no encontrados');
+            // Manejar error, quizás mostrar código en alerta
+            alert("Error al mostrar el código. Elementos de la modal no encontrados.");
+            return; 
+        }
+        
+        modal.show();
+    }
+
+    // Iniciar polling si hay tests que cargar inicialmente (ej. si la página se recarga)
+    // Podríamos añadir lógica aquí para cargar tests previos si fuera necesario
+
+    // Función para actualizar el progreso del test
+    function updateTestProgress() {
+        const taskId = "{{ task_id }}";
+        
+        if (!taskId) {
+            console.error("No hay ID de tarea disponible");
+            return;
+        }
+        
+        // Verificar el estado cada 3 segundos
+        const progressInterval = setInterval(() => {
+            fetch(`/test_status/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Actualizar barra de progreso
+                const progressBar = document.getElementById('main-progress-bar');
+                let progressPercent = 0;
+                
+                // Calcular progreso basado en pasos
+                if (data.current_step && data.total_steps) {
+                    progressPercent = Math.min(100, Math.round((data.current_step / data.total_steps) * 100));
+                    progressBar.textContent = `${progressPercent}%`;
+                } else if (data.status === 'running') {
+                    // Si no tenemos información de pasos, incrementar progresivamente
+                    const currentProgress = parseInt(progressBar.getAttribute('aria-valuenow') || '0');
+                    progressPercent = Math.min(90, currentProgress + 2);
+                } else if (data.status === 'success' || data.status === 'error') {
+                    progressPercent = 100;
+                }
+                
+                progressBar.style.width = `${progressPercent}%`;
+                progressBar.setAttribute('aria-valuenow', progressPercent);
+                
+                // Actualizar color según estado
+                if (data.status === 'success') {
+                    progressBar.classList.remove('bg-danger', 'bg-warning', 'bg-primary');
+                    progressBar.classList.add('bg-success');
+                } else if (data.status === 'error') {
+                    progressBar.classList.remove('bg-success', 'bg-warning', 'bg-primary');
+                    progressBar.classList.add('bg-danger');
+                } else if (data.status === 'running' && progressPercent > 80) {
+                    progressBar.classList.remove('bg-danger', 'bg-primary');
+                    progressBar.classList.add('bg-warning');
+                }
+                
+                // Actualizar estado
+                document.getElementById('test-status').textContent = 
+                    data.status === 'running' ? 'En ejecución' :
+                    data.status === 'success' ? 'Completado exitosamente' :
+                    data.status === 'error' ? 'Error' :
+                    data.status === 'queued' ? 'En cola' :
+                    data.status === 'generating' ? 'Generando script' : data.status;
+                
+                // Actualizar acción actual
+                if (data.current_action) {
+                    document.getElementById('current-action').textContent = data.current_action;
+                }
+                
+                // Mostrar pasos detectados si están disponibles
+                if (data.pasos_instrucciones && data.pasos_instrucciones.length > 0) {
+                    const stepsContainer = document.getElementById('test-steps-container');
+                    const stepsList = document.getElementById('test-steps');
+                    stepsContainer.classList.remove('d-none');
+                    
+                    // Limpiar contenido previo
+                    stepsList.innerHTML = '';
+                    
+                    // Agregar cada paso
+                    data.pasos_instrucciones.forEach(paso => {
+                        const stepNumber = paso[0];
+                        const stepDesc = paso[1];
+                        const currentStep = data.current_step || 0;
+                        
+                        // Determinar estado del paso
+                        let stepStatus = 'pending';
+                        if (currentStep >= stepNumber + 3) { // +3 por el offset en la detección
+                            stepStatus = 'completed';
+                        } else if (currentStep === stepNumber + 2 || currentStep === stepNumber + 3) {
+                            stepStatus = 'in-progress';
+                        }
+                        
+                        const stepItem = document.createElement('div');
+                        stepItem.className = `list-group-item d-flex justify-content-between align-items-center
+                            ${stepStatus === 'completed' ? 'list-group-item-success' : 
+                              stepStatus === 'in-progress' ? 'list-group-item-primary' : ''}`;
+                        
+                        stepItem.innerHTML = `
+                            <span>${stepNumber}. ${stepDesc}</span>
+                            <span class="badge ${
+                                stepStatus === 'completed' ? 'bg-success' : 
+                                stepStatus === 'in-progress' ? 'bg-primary' : 'bg-secondary'
+                            } rounded-pill">
+                                <i class="fas ${
+                                    stepStatus === 'completed' ? 'fa-check' : 
+                                    stepStatus === 'in-progress' ? 'fa-spinner fa-spin' : 'fa-clock'
+                                }"></i>
+                            </span>
+                        `;
+                        
+                        stepsList.appendChild(stepItem);
+                    });
+                }
+                
+                // Actualizar capturas de pantalla
+                if (data.screenshots && data.screenshots.length > 0) {
+                    const screenshotsContainer = document.getElementById('screenshots-container');
+                    document.getElementById('screenshot-count').textContent = data.screenshots.length;
+                    
+                    // Verificar si hay nuevas capturas para no volver a crearlas todas
+                    const existingScreenshots = screenshotsContainer.querySelectorAll('.screenshot-item');
+                    
+                    if (existingScreenshots.length < data.screenshots.length) {
+                        // Limpiar y recrear todas
+                        screenshotsContainer.innerHTML = '';
+                        
+                        data.screenshots.forEach((screenshot, index) => {
+                            const screenshotItem = document.createElement('div');
+                            screenshotItem.className = 'col-md-4 col-sm-6 screenshot-item';
+                            screenshotItem.innerHTML = `
+                                <div class="card h-100">
+                                    <a href="${screenshot.url}" target="_blank" class="screenshot-link">
+                                        <img src="${screenshot.url}" class="card-img-top img-fluid" alt="Captura ${index + 1}">
+                                    </a>
+                                    <div class="card-footer">
+                                        <small class="text-muted">${screenshot.name}</small>
+                                    </div>
+                                </div>
+                            `;
+                            screenshotsContainer.appendChild(screenshotItem);
+                        });
+                    }
+                }
+                
+                // Si el test ha terminado, detener la actualización
+                if (data.status === 'success' || data.status === 'error') {
+                    clearInterval(progressInterval);
+                    
+                    // Mostrar mensaje de resultado si está disponible
+                    if (data.message) {
+                        document.getElementById('current-action').innerHTML = `<strong>${data.message}</strong>`;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error al verificar estado del test:', error);
+            });
+        }, 3000);
+        
+        // Configurar evento del botón para mostrar modal con log
+        document.getElementById('copy-status-btn').addEventListener('click', () => {
+            showLogModal();
+        });
+    }
+    
+    // Función para mostrar modal con log completo
+    function showLogModal() {
+        const taskId = "{{ task_id }}";
+        const modal = new bootstrap.Modal(document.getElementById('logModal'));
+        const logContent = document.getElementById('log-content');
+        const logTypeSelector = document.getElementById('log-type-selector');
+        
+        // Función para cargar el log seleccionado
+        function loadSelectedLog() {
+            fetch(`/test_status/${taskId}`)
+            .then(response => response.json())
+            .then(data => {
+                const logType = logTypeSelector.value;
+                logContent.textContent = data[logType] || 'Sin información disponible';
+            })
+            .catch(error => {
+                console.error('Error al obtener logs:', error);
+                logContent.textContent = 'Error al cargar el registro';
+            });
+        }
+        
+        // Cargar log inicial
+        loadSelectedLog();
+        
+        // Configurar eventos
+        logTypeSelector.addEventListener('change', loadSelectedLog);
+        
+        // Configurar botón de copia
+        document.getElementById('copy-log-btn').addEventListener('click', () => {
+            navigator.clipboard.writeText(logContent.textContent)
+            .then(() => {
+                alert('Registro copiado al portapapeles');
+            })
+            .catch(err => {
+                console.error('Error al copiar:', err);
+                alert('No se pudo copiar el registro. Intente seleccionar y copiar manualmente.');
+            });
+        });
+        
+        modal.show();
+    }
+    
+    // Iniciar monitoreo si hay un task_id
+    document.addEventListener('DOMContentLoaded', function() {
+        const taskId = "{{ task_id }}";
+        if (taskId) {
+            updateTestProgress();
+            
+            // Activar tooltips para capturas de pantalla
+            const screenshotLinks = document.querySelectorAll('.screenshot-link');
+            screenshotLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.open(link.getAttribute('href'), '_blank', 'width=1200,height=800');
+                });
+            });
+        } else {
+            document.getElementById('test-progress-panel').classList.add('d-none');
+        }
+    });
+
+    // Función para actualizar el estado del test
+    function updateTestStatus() {
+        // ... (código existente)
+    }
+</script>
+{% endblock %} 

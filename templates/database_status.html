@@ -1,0 +1,813 @@
+{% extends 'base.html' %}
+
+{% block title %}Estado de Base de Datos - Inovabiz QA Pilot{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="tech-panel mb-4">
+            <div class="tech-panel-header">
+                <h4 class="tech-panel-title">
+                    <i class="fas fa-database me-2"></i> Estado de Base de Datos PostgreSQL
+                </h4>
+            </div>
+            <div class="tech-panel-body">
+                <div id="db-status-container">
+                    <div class="text-center py-3">
+                        <div class="spinner-border tech-spinner" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Verificando conexión a base de datos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Casos de Prueba -->
+<div class="row">
+    <div class="col-12">
+        <div class="tech-panel mb-4">
+            <div class="tech-panel-header d-flex justify-content-between align-items-center">
+                <h5 class="tech-panel-title mb-0">
+                    <i class="fas fa-list-check me-2"></i> Casos de Prueba en Base de Datos
+                </h5>
+                <button class="tech-btn tech-btn-outline-info btn-sm" onclick="loadTestCases()">
+                    <i class="fas fa-sync-alt me-1"></i> Actualizar
+                </button>
+            </div>
+            <div class="tech-panel-body">
+                <div id="test-cases-container">
+                    <div class="text-center py-3">
+                        <p class="text-muted">Haz clic en "Actualizar" para cargar casos de prueba</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Casos Huérfanos -->
+<div class="row">
+    <div class="col-12">
+        <div class="tech-panel mb-4">
+            <div class="tech-panel-header d-flex justify-content-between align-items-center">
+                <h5 class="tech-panel-title mb-0">
+                    <i class="fas fa-unlink me-2 text-warning"></i> Casos sin Suite Asociada
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="tech-btn tech-btn-outline-warning btn-sm" onclick="loadOrphanedCases()">
+                        <i class="fas fa-search me-1"></i> Buscar Huérfanos
+                    </button>
+                    <button class="tech-btn tech-btn-outline-danger btn-sm" onclick="bulkDeleteOrphaned()" id="bulk-delete-btn" style="display: none;">
+                        <i class="fas fa-trash me-1"></i> Eliminar Seleccionados
+                    </button>
+                </div>
+            </div>
+            <div class="tech-panel-body">
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>¿Qué son los casos huérfanos?</strong><br>
+                    Son casos de prueba que no están asignados a ninguna suite de testing. Puedes eliminarlos para mantener la base de datos organizada.
+                </div>
+                <div id="orphaned-cases-container">
+                    <div class="text-center py-3">
+                        <p class="text-muted">Haz clic en "Buscar Huérfanos" para identificar casos sin suite</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Mantenimiento -->
+<div class="row">
+    <div class="col-12">
+        <div class="tech-panel mb-4">
+            <div class="tech-panel-header">
+                <h5 class="tech-panel-title">
+                    <i class="fas fa-tools me-2"></i> Mantenimiento de Base de Datos
+                </h5>
+            </div>
+            <div class="tech-panel-body">
+                <div class="alert alert-warning mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Herramientas de Mantenimiento</strong><br>
+                    Funciones avanzadas para mantener la integridad de la base de datos. Usar con precaución.
+                </div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="tech-card p-3">
+                            <h6 class="tech-highlight mb-2">
+                                <i class="fas fa-duplicate me-2"></i> Limpiar Duplicados de Suite
+                            </h6>
+                            <p class="text-muted mb-3">
+                                Elimina ejecuciones duplicadas que pueden haberse creado durante ejecuciones de suite.
+                            </p>
+                            <button class="tech-btn tech-btn-outline-warning btn-sm" onclick="cleanDuplicateSuiteExecutions()">
+                                <i class="fas fa-broom me-1"></i> Ejecutar Limpieza
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="tech-card p-3">
+                            <h6 class="tech-highlight mb-2">
+                                <i class="fas fa-chart-bar me-2"></i> Estadísticas Detalladas
+                            </h6>
+                            <p class="text-muted mb-3">
+                                Ver estadísticas detalladas de la base de datos y uso del sistema.
+                            </p>
+                            <button class="tech-btn tech-btn-outline-info btn-sm" onclick="loadDetailedStats()">
+                                <i class="fas fa-chart-line me-1"></i> Ver Estadísticas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="maintenance-results" class="mt-3" style="display: none;">
+                    <!-- Resultados de operaciones de mantenimiento -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Panel de Migración desde Historial -->
+<div class="row">
+    <div class="col-12">
+        <div class="tech-panel mb-4">
+            <div class="tech-panel-header">
+                <h5 class="tech-panel-title">
+                    <i class="fas fa-database me-2"></i> Migrar Tests desde Historial
+                </h5>
+            </div>
+            <div class="tech-panel-body">
+                <p class="tech-text-muted mb-3">
+                    Migra tests exitosos desde el historial hacia la base de datos para una mejor organización y seguimiento.
+                </p>
+                <div id="history-migration-container">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let dbStatusInterval;
+
+// Cargar estado inicial
+document.addEventListener('DOMContentLoaded', function() {
+    checkDatabaseStatus();
+    loadHistoryForMigration();
+    
+    // Verificar estado cada 30 segundos
+    dbStatusInterval = setInterval(checkDatabaseStatus, 30000);
+});
+
+// Limpiar intervalos al salir de la página
+window.addEventListener('beforeunload', function() {
+    if (dbStatusInterval) {
+        clearInterval(dbStatusInterval);
+    }
+});
+
+async function checkDatabaseStatus() {
+    try {
+        const response = await fetch('/database_status');
+        const data = await response.json();
+        
+        const container = document.getElementById('db-status-container');
+        
+        if (data.success && data.database_status.connection) {
+            const stats = data.database_status;
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                            <h6 class="text-success mb-0">Conectado</h6>
+                            <small class="text-muted">PostgreSQL Activo</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="tech-highlight mb-2">
+                                <i class="fas fa-project-diagram fa-2x"></i>
+                            </div>
+                            <h6 class="tech-highlight mb-0">${stats.projects || 0}</h6>
+                            <small class="text-muted">Proyectos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="tech-highlight mb-2">
+                                <i class="fas fa-tasks fa-2x"></i>
+                            </div>
+                            <h6 class="tech-highlight mb-0">${stats.test_cases || 0}</h6>
+                            <small class="text-muted">Casos de Prueba</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="tech-highlight mb-2">
+                                <i class="fas fa-play-circle fa-2x"></i>
+                            </div>
+                            <h6 class="tech-highlight mb-0">${stats.executions || 0}</h6>
+                            <small class="text-muted">Ejecuciones</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 p-3 bg-success bg-opacity-10 border border-success border-opacity-25 rounded">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle text-success me-2"></i>
+                        <span class="text-success">Base de datos conectada y funcionando correctamente</span>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="tech-card text-center p-4">
+                            <div class="text-danger mb-3">
+                                <i class="fas fa-exclamation-triangle fa-3x"></i>
+                            </div>
+                            <h5 class="text-danger mb-2">Sin Conexión a Base de Datos</h5>
+                            <p class="text-muted mb-3">No se pudo establecer conexión con PostgreSQL</p>
+                            <button class="tech-btn tech-btn-outline-danger" onclick="checkDatabaseStatus()">
+                                <i class="fas fa-sync-alt me-1"></i> Reintentar Conexión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                        <span class="text-danger">Error: ${data.error || 'Conexión fallida'}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Error checking database status:', error);
+        document.getElementById('db-status-container').innerHTML = `
+            <div class="tech-card text-center p-4">
+                <div class="text-warning mb-3">
+                    <i class="fas fa-exclamation-circle fa-3x"></i>
+                </div>
+                <h5 class="text-warning mb-2">Error de Comunicación</h5>
+                <p class="text-muted">No se pudo verificar el estado de la base de datos</p>
+            </div>
+        `;
+    }
+}
+
+async function loadTestCases() {
+    const container = document.getElementById('test-cases-container');
+    
+    // Mostrar spinner de carga
+    container.innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border tech-spinner" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2 text-muted">Cargando casos de prueba...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch('/api/test_cases?limit=20');
+        const data = await response.json();
+        
+        if (data.success && data.test_cases.length > 0) {
+            let tableHTML = `
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>Prioridad</th>
+                                <th>Estado</th>
+                                <th>Válido</th>
+                                <th>Creado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            data.test_cases.forEach(testCase => {
+                const validBadge = testCase.es_valido ? 
+                    '<span class="badge bg-success">Sí</span>' : 
+                    '<span class="badge bg-danger">No</span>';
+                
+                const statusBadge = getStatusBadge(testCase.status);
+                const priorityBadge = getPriorityBadge(testCase.prioridad);
+                
+                tableHTML += `
+                    <tr>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong>${testCase.nombre || 'Sin nombre'}</strong>
+                                ${testCase.objetivo ? `<small class="text-muted">${testCase.objetivo.substring(0, 60)}...</small>` : ''}
+                            </div>
+                        </td>
+                        <td><code class="tech-code">${testCase.codigo || 'N/A'}</code></td>
+                        <td><span class="badge bg-info">${testCase.tipo || 'N/A'}</span></td>
+                        <td>${priorityBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${validBadge}</td>
+                        <td>
+                            ${testCase.created_at ? 
+                                new Date(testCase.created_at).toLocaleDateString('es-ES') : 
+                                'N/A'
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 text-center">
+                    <p class="text-muted">Mostrando ${data.test_cases.length} casos de prueba</p>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+            
+        } else if (data.success && data.test_cases.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="text-muted mb-3">
+                        <i class="fas fa-database fa-3x"></i>
+                    </div>
+                    <h6 class="text-muted">No hay casos de prueba en la base de datos</h6>
+                    <p class="text-muted">Comienza importando desde Excel o migrando desde el historial</p>
+                </div>
+            `;
+        } else {
+            throw new Error(data.error || 'Error desconocido');
+        }
+        
+    } catch (error) {
+        console.error('Error loading test cases:', error);
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <div class="text-danger mb-3">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                </div>
+                <h6 class="text-danger">Error al cargar casos de prueba</h6>
+                <p class="text-muted">${error.message}</p>
+                <button class="tech-btn tech-btn-outline-danger btn-sm" onclick="loadTestCases()">
+                    <i class="fas fa-sync-alt me-1"></i> Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'draft': '<span class="badge bg-secondary">Borrador</span>',
+        'active': '<span class="badge bg-success">Activo</span>',
+        'inactive': '<span class="badge bg-warning">Inactivo</span>',
+        'archived': '<span class="badge bg-dark">Archivado</span>'
+    };
+    return badges[status] || `<span class="badge bg-secondary">${status || 'N/A'}</span>`;
+}
+
+function getPriorityBadge(priority) {
+    const badges = {
+        'alta': '<span class="badge bg-danger">Alta</span>',
+        'media': '<span class="badge bg-warning">Media</span>',
+        'baja': '<span class="badge bg-info">Baja</span>',
+        'critica': '<span class="badge bg-dark">Crítica</span>'
+    };
+    return badges[priority] || `<span class="badge bg-secondary">${priority || 'N/A'}</span>`;
+}
+
+async function loadHistoryForMigration() {
+    // Esta función cargará tests del historial que pueden ser migrados
+    // Se implementará cuando el historial esté disponible
+    const container = document.getElementById('history-migration-container');
+    container.innerHTML = `
+        <div class="text-center py-3">
+            <p class="text-muted">
+                <i class="fas fa-info-circle me-1"></i>
+                La migración desde historial estará disponible cuando haya tests en el historial
+            </p>
+        </div>
+    `;
+}
+
+async function migrateTestToDatabase(taskId) {
+    try {
+        const response = await fetch('/api/save_test_to_db', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                task_id: taskId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Mostrar mensaje de éxito
+            showNotification('Caso de prueba migrado exitosamente', 'success');
+            // Recargar casos de prueba
+            loadTestCases();
+        } else {
+            throw new Error(data.error);
+        }
+        
+    } catch (error) {
+        console.error('Error migrating test:', error);
+        showNotification('Error al migrar el caso de prueba: ' + error.message, 'error');
+    }
+}
+
+async function loadOrphanedCases() {
+    const container = document.getElementById('orphaned-cases-container');
+    
+    // Mostrar spinner de carga
+    container.innerHTML = `
+        <div class="text-center py-3">
+            <div class="spinner-border tech-spinner" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-2 text-muted">Buscando casos huérfanos...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch('/api/test_cases/orphaned');
+        const data = await response.json();
+        
+        if (data.success && data.orphaned_cases.length > 0) {
+            let tableHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="select-all-orphaned" onchange="toggleAllOrphaned()">
+                        <label class="form-check-label text-warning fw-bold" for="select-all-orphaned">
+                            Seleccionar todos (${data.orphaned_cases.length} casos)
+                        </label>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                        Estos casos no pertenecen a ninguna suite
+                    </small>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th width="5%">
+                                    <i class="fas fa-check-square"></i>
+                                </th>
+                                <th>Nombre</th>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                                <th>Creado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            data.orphaned_cases.forEach(testCase => {
+                const statusBadge = getStatusBadge(testCase.status);
+                
+                tableHTML += `
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input orphaned-checkbox" type="checkbox" 
+                                       value="${testCase.id}" onchange="updateBulkDeleteButton()">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <strong class="text-warning">${testCase.nombre || 'Sin nombre'}</strong>
+                                ${testCase.objetivo ? `<small class="text-muted">${testCase.objetivo.substring(0, 80)}...</small>` : ''}
+                            </div>
+                        </td>
+                        <td><code class="tech-code">${testCase.codigo || 'N/A'}</code></td>
+                        <td><span class="badge bg-info">${testCase.tipo || 'N/A'}</span></td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            ${testCase.created_at ? 
+                                new Date(testCase.created_at).toLocaleDateString('es-ES') : 
+                                'N/A'
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger btn-sm" 
+                                    onclick="deleteSingleOrphanedCase('${testCase.id}')"
+                                    title="Eliminar este caso">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3 p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        <span class="text-warning">
+                            <strong>¡Atención!</strong> Se encontraron ${data.orphaned_cases.length} casos sin suite asociada.
+                            Considera asignarlos a una suite o eliminarlos si no son necesarios.
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+            updateBulkDeleteButton();
+            
+        } else if (data.success && data.orphaned_cases.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-check-circle fa-3x"></i>
+                    </div>
+                    <h6 class="text-success">¡Excelente! No hay casos huérfanos</h6>
+                    <p class="text-muted">Todos los casos de prueba están organizados en suites</p>
+                </div>
+            `;
+            document.getElementById('bulk-delete-btn').style.display = 'none';
+        } else {
+            throw new Error(data.error || 'Error desconocido');
+        }
+        
+    } catch (error) {
+        console.error('Error loading orphaned cases:', error);
+        container.innerHTML = `
+            <div class="text-center py-4">
+                <div class="text-danger mb-3">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                </div>
+                <h6 class="text-danger">Error al buscar casos huérfanos</h6>
+                <p class="text-muted">${error.message}</p>
+                <button class="tech-btn tech-btn-outline-danger btn-sm" onclick="loadOrphanedCases()">
+                    <i class="fas fa-sync-alt me-1"></i> Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+function toggleAllOrphaned() {
+    const selectAll = document.getElementById('select-all-orphaned');
+    const checkboxes = document.querySelectorAll('.orphaned-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateBulkDeleteButton();
+}
+
+function updateBulkDeleteButton() {
+    const checkboxes = document.querySelectorAll('.orphaned-checkbox:checked');
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    
+    if (checkboxes.length > 0) {
+        bulkDeleteBtn.style.display = 'inline-block';
+        bulkDeleteBtn.innerHTML = `<i class="fas fa-trash me-1"></i> Eliminar Seleccionados (${checkboxes.length})`;
+    } else {
+        bulkDeleteBtn.style.display = 'none';
+    }
+}
+
+async function deleteSingleOrphanedCase(caseId) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este caso de prueba? Esta acción no se puede deshacer.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/test_cases/${caseId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('Caso eliminado exitosamente', 'success');
+            loadOrphanedCases(); // Recargar lista
+        } else {
+            throw new Error(data.error);
+        }
+        
+    } catch (error) {
+        console.error('Error deleting case:', error);
+        showNotification('Error al eliminar el caso: ' + error.message, 'error');
+    }
+}
+
+async function bulkDeleteOrphaned() {
+    const checkboxes = document.querySelectorAll('.orphaned-checkbox:checked');
+    const caseIds = Array.from(checkboxes).map(cb => cb.value);
+    
+    if (caseIds.length === 0) {
+        showNotification('No hay casos seleccionados', 'warning');
+        return;
+    }
+    
+    if (!confirm(`¿Estás seguro de que quieres eliminar ${caseIds.length} casos de prueba? Esta acción no se puede deshacer.`)) {
+        return;
+    }
+    
+    // Mostrar spinner en el botón
+    const bulkDeleteBtn = document.getElementById('bulk-delete-btn');
+    const originalText = bulkDeleteBtn.innerHTML;
+    bulkDeleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Eliminando...';
+    bulkDeleteBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/test_cases/orphaned/bulk_delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                case_ids: caseIds
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(`${data.deleted_count} casos eliminados exitosamente`, 'success');
+            loadOrphanedCases(); // Recargar lista
+        } else {
+            throw new Error(data.error);
+        }
+        
+    } catch (error) {
+        console.error('Error bulk deleting cases:', error);
+        showNotification('Error al eliminar casos: ' + error.message, 'error');
+    } finally {
+        bulkDeleteBtn.innerHTML = originalText;
+        bulkDeleteBtn.disabled = false;
+    }
+}
+
+async function cleanDuplicateSuiteExecutions() {
+    if (!confirm('¿Estás seguro de que quieres ejecutar la limpieza de duplicados? Esta operación eliminará ejecuciones duplicadas de suite.')) {
+        return;
+    }
+    
+    const resultsContainer = document.getElementById('maintenance-results');
+    resultsContainer.style.display = 'block';
+    resultsContainer.innerHTML = `
+        <div class="alert alert-info">
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <span>Ejecutando limpieza de duplicados...</span>
+            </div>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch('/api/maintenance/clean_duplicate_suite_executions', {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            resultsContainer.innerHTML = `
+                <div class="alert alert-success">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>
+                            <strong>Limpieza completada exitosamente</strong><br>
+                            <small>${data.message}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showNotification(`Limpieza completada: ${data.deleted_count} duplicados eliminados`, 'success');
+            
+            // Recargar estadísticas después de 2 segundos
+            setTimeout(() => {
+                checkDatabaseStatus();
+            }, 2000);
+            
+        } else {
+            throw new Error(data.error);
+        }
+        
+    } catch (error) {
+        console.error('Error cleaning duplicates:', error);
+        resultsContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <div>
+                        <strong>Error en la limpieza</strong><br>
+                        <small>${error.message}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        showNotification('Error en la limpieza: ' + error.message, 'error');
+    }
+}
+
+async function loadDetailedStats() {
+    const resultsContainer = document.getElementById('maintenance-results');
+    resultsContainer.style.display = 'block';
+    resultsContainer.innerHTML = `
+        <div class="alert alert-info">
+            <div class="d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <span>Cargando estadísticas detalladas...</span>
+            </div>
+        </div>
+    `;
+    
+    try {
+        // Simular carga de estadísticas detalladas
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        resultsContainer.innerHTML = `
+            <div class="alert alert-info">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>
+                        <strong>Estadísticas Detalladas</strong><br>
+                        <small>Esta funcionalidad estará disponible en próximas versiones</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error loading detailed stats:', error);
+        resultsContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <div>
+                        <strong>Error cargando estadísticas</strong><br>
+                        <small>${error.message}</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Crear notificación temporal
+    const alertClass = type === 'success' ? 'alert-success' : 
+                      type === 'error' ? 'alert-danger' : 
+                      type === 'warning' ? 'alert-warning' : 'alert-info';
+    
+    const notification = document.createElement('div');
+    notification.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 90px; right: 20px; z-index: 1050; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+</script>
+
+{% endblock %} 

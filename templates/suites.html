@@ -1,0 +1,4143 @@
+{% extends "base.html" %}
+
+{% block title %}Suites de Prueba | QA-Pilot{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Estilos actualizados para la pantalla de suites */
+    .test-case-list {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid rgba(50, 140, 193, 0.4);
+        border-radius: 12px;
+        padding: 15px;
+        background-color: rgba(11, 60, 93, 0.2);
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .suites-dashboard {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    @media (min-width: 992px) {
+        .suites-dashboard {
+            grid-template-columns: 350px 1fr;
+        }
+    }
+    
+    /* Estilos mejorados para el modal de crear suite */
+    #createSuiteModal .modal-content {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        border: 2px solid rgba(59, 130, 246, 0.5);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+        color: #e2e8f0;
+    }
+    
+    #createSuiteModal .modal-header {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        color: #e2e8f0;
+    }
+    
+    #createSuiteModal .modal-body {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        color: #e2e8f0;
+    }
+    
+    #createSuiteModal .modal-footer {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-top: 2px solid rgba(59, 130, 246, 0.3);
+        color: #e2e8f0;
+    }
+    
+    .tech-icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 1.1rem;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulse-glow {
+        0% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        100% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.6); }
+    }
+    
+    #createSuiteModal .tech-highlight {
+        color: #60a5fa;
+        font-weight: 600;
+    }
+    
+    #createSuiteModal .tech-label {
+        color: #e2e8f0;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    #createSuiteModal .tech-input {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #e2e8f0;
+        border-radius: 8px;
+    }
+    
+    #createSuiteModal .tech-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        background-color: rgba(15, 23, 42, 0.9);
+        color: #ffffff;
+    }
+    
+    #createSuiteModal .tech-input::placeholder {
+        color: rgba(148, 163, 184, 0.7);
+        font-style: italic;
+    }
+    
+    #createSuiteModal .form-text {
+        color: #94a3b8;
+    }
+    
+    #createSuiteModal .text-muted {
+        color: #94a3b8 !important;
+    }
+    
+    #createSuiteModal .text-tech-accent {
+        color: #60a5fa !important;
+    }
+    
+    #createSuiteModal .form-check-input {
+        background-color: rgba(15, 23, 42, 0.8);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    #createSuiteModal .form-check-input:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+    }
+    
+    #createSuiteModal .form-check-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
+    }
+    
+    #createSuiteModal .form-check-label {
+        color: #e2e8f0;
+    }
+    
+    #createSuiteModal .tech-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        border-radius: 8px;
+    }
+    
+         #createSuiteModal .modal-lg .modal-body {
+         max-height: 80vh;
+         overflow-y: auto;
+     }
+     
+     #createSuiteModal .btn-outline-secondary {
+         background: transparent;
+         border-color: rgba(148, 163, 184, 0.3);
+         color: #94a3b8;
+     }
+     
+     #createSuiteModal .btn-outline-secondary:hover {
+         background-color: rgba(148, 163, 184, 0.1);
+         border-color: #94a3b8;
+         color: #e2e8f0;
+     }
+     
+     #createSuiteModal .tech-btn-accent {
+         background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+         border: none;
+         color: #ffffff;
+         font-weight: 600;
+         padding: 0.5rem 1.5rem;
+         border-radius: 8px;
+         box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+         transition: all 0.3s ease;
+     }
+     
+     #createSuiteModal .tech-btn-accent:hover {
+         background: linear-gradient(135deg, #2563eb, #1e40af);
+         box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+         transform: translateY(-1px);
+         color: #ffffff;
+     }
+     
+     #createSuiteModal .form-select {
+         background: rgba(15, 23, 42, 0.8);
+         border: 1px solid rgba(59, 130, 246, 0.3);
+         color: #e2e8f0;
+     }
+     
+     #createSuiteModal .form-select:focus {
+         background: rgba(15, 23, 42, 0.9);
+         border-color: #3b82f6;
+         box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+         color: #ffffff;
+     }
+     
+     #createSuiteModal .form-select option {
+         background: #1e293b;
+         color: #e2e8f0;
+     }
+     
+     /* Scrollbar personalizada para el modal */
+     #createSuiteModal .modal-body::-webkit-scrollbar {
+         width: 8px;
+     }
+     
+     #createSuiteModal .modal-body::-webkit-scrollbar-track {
+         background: rgba(15, 23, 42, 0.5);
+         border-radius: 4px;
+     }
+     
+     #createSuiteModal .modal-body::-webkit-scrollbar-thumb {
+         background: rgba(59, 130, 246, 0.5);
+         border-radius: 4px;
+     }
+     
+     #createSuiteModal .modal-body::-webkit-scrollbar-thumb:hover {
+         background: rgba(59, 130, 246, 0.7);
+     }
+     
+     /* Estilos para el botón de crear proyecto integrado */
+     #createSuiteModal .input-group .btn-outline-primary {
+         background: transparent;
+         border-color: rgba(59, 130, 246, 0.3);
+         color: #3b82f6;
+         border-left: none;
+     }
+     
+     #createSuiteModal .input-group .btn-outline-primary:hover {
+         background-color: rgba(59, 130, 246, 0.1);
+         border-color: #3b82f6;
+         color: #60a5fa;
+     }
+     
+     #createSuiteModal .input-group .form-select {
+         border-right: none;
+     }
+     
+     /* Estilos para el modal de crear proyecto */
+     #createProjectModal .modal-content {
+         background: linear-gradient(135deg, #1e293b, #334155);
+         border: 2px solid rgba(59, 130, 246, 0.5);
+         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+         color: #e2e8f0;
+     }
+     
+     #createProjectModal .modal-header {
+         background: linear-gradient(135deg, #0f172a, #1e293b);
+         border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+         color: #e2e8f0;
+     }
+     
+     #createProjectModal .modal-body {
+         background: linear-gradient(135deg, #1e293b, #334155);
+         color: #e2e8f0;
+     }
+     
+     #createProjectModal .modal-footer {
+         background: linear-gradient(135deg, #0f172a, #1e293b);
+         border-top: 2px solid rgba(59, 130, 246, 0.3);
+         color: #e2e8f0;
+     }
+     
+     #createProjectModal .tech-label {
+         color: #e2e8f0;
+         font-weight: 500;
+         margin-bottom: 0.5rem;
+     }
+     
+     #createProjectModal .tech-input {
+         background: rgba(15, 23, 42, 0.8);
+         border: 1px solid rgba(59, 130, 246, 0.3);
+         color: #e2e8f0;
+         border-radius: 8px;
+     }
+     
+     #createProjectModal .tech-input:focus {
+         border-color: #3b82f6;
+         box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+         background-color: rgba(15, 23, 42, 0.9);
+         color: #ffffff;
+     }
+     
+     #createProjectModal .tech-input::placeholder {
+         color: rgba(148, 163, 184, 0.7);
+         font-style: italic;
+     }
+     
+     #createProjectModal .form-text {
+         color: #94a3b8;
+     }
+     
+     #createProjectModal .text-muted {
+         color: #94a3b8 !important;
+     }
+     
+     #createProjectModal .text-tech-accent {
+         color: #60a5fa !important;
+     }
+     
+     #createProjectModal .btn-outline-secondary {
+         background: transparent;
+         border-color: rgba(148, 163, 184, 0.3);
+         color: #94a3b8;
+     }
+     
+     #createProjectModal .btn-outline-secondary:hover {
+         background-color: rgba(148, 163, 184, 0.1);
+         border-color: #94a3b8;
+         color: #e2e8f0;
+     }
+     
+     #createProjectModal .tech-btn-accent {
+         background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+         border: none;
+         color: #ffffff;
+         font-weight: 600;
+         padding: 0.5rem 1.5rem;
+         border-radius: 8px;
+         box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+         transition: all 0.3s ease;
+     }
+     
+           #createProjectModal .tech-btn-accent:hover {
+          background: linear-gradient(135deg, #2563eb, #1e40af);
+          box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+          transform: translateY(-1px);
+          color: #ffffff;
+      }
+      
+      /* Animación para resaltar proyecto seleccionado */
+      @keyframes pulse-success {
+          0% { 
+              box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+              border-color: #10b981;
+          }
+          50% { 
+              box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+              border-color: #34d399;
+          }
+          100% { 
+              box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+              border-color: rgba(59, 130, 246, 0.3);
+          }
+      }
+     
+     /* Estilos para los toast notifications */
+     .toast {
+         background: linear-gradient(135deg, #1e293b, #334155);
+         border: 1px solid rgba(59, 130, 246, 0.3);
+         color: #e2e8f0;
+         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+     }
+     
+     .toast-success {
+         border-left: 4px solid #10b981;
+     }
+     
+     .toast-error {
+         border-left: 4px solid #ef4444;
+     }
+     
+     .toast-warning {
+         border-left: 4px solid #f59e0b;
+     }
+     
+     .toast-info {
+         border-left: 4px solid #3b82f6;
+     }
+     
+     .toast .toast-header {
+         background: transparent;
+         border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+         color: #e2e8f0;
+     }
+     
+     .toast .toast-body {
+         color: #e2e8f0;
+     }
+     
+     .toast .btn-close {
+         filter: invert(1);
+         opacity: 0.7;
+     }
+     
+     .toast .btn-close:hover {
+         opacity: 1;
+     }
+    
+    .tech-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(217, 179, 16, 0.4);
+    }
+    
+    /* Mejoras específicas para el modal de crear suite */
+    #createSuiteModal .form-text small {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+    
+    #createSuiteModal .form-control:focus + .form-text small,
+    #createSuiteModal .form-select:focus + .form-text small {
+        opacity: 1;
+    }
+    
+    #createSuiteModal .form-check-label {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    #createSuiteModal .form-check-label:hover {
+        color: var(--tech-accent);
+    }
+    
+    #createSuiteModal .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    #createSuiteModal .modal-body::-webkit-scrollbar-track {
+        background: rgba(29, 39, 49, 0.5);
+        border-radius: 3px;
+    }
+    
+    #createSuiteModal .modal-body::-webkit-scrollbar-thumb {
+        background: var(--tech-accent);
+        border-radius: 3px;
+    }
+    
+    #createSuiteModal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: #fbbf24;
+    }
+    
+    /* Toast notifications mejoradas */
+    .toast-container .toast {
+        border: 1px solid rgba(50, 140, 193, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+    }
+    
+    .toast .tech-card {
+        background: rgba(11, 60, 93, 0.9);
+        border: none;
+        color: var(--tech-light);
+    }
+    
+    /* Estilos para validaciones en tiempo real */
+    .form-control.is-valid {
+        border-color: #28a745;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+    }
+    
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+    }
+    
+    .validation-feedback {
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .validation-feedback.text-success {
+        color: #28a745 !important;
+    }
+    
+    .validation-feedback.text-danger {
+        color: #dc3545 !important;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .case-item {
+        margin-bottom: 10px;
+        border-radius: 8px;
+        padding: 12px;
+        background-color: rgba(29, 39, 49, 0.6);
+        border: 1px solid rgba(50, 140, 193, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .case-item:hover {
+        background-color: rgba(50, 140, 193, 0.3);
+        transform: translateX(5px);
+        box-shadow: 0 0 12px rgba(15, 224, 255, 0.2);
+    }
+    
+    .case-selected {
+        background-color: var(--tech-accent);
+        color: #000;
+        box-shadow: 0 0 15px rgba(217, 179, 16, 0.5);
+        border-color: var(--tech-accent);
+    }
+    
+    .case-selected:hover {
+        background-color: var(--tech-accent);
+        transform: translateX(5px);
+        box-shadow: 0 0 20px rgba(217, 179, 16, 0.6);
+    }
+    
+    .suite-list-item {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(50, 140, 193, 0.3);
+        background-color: rgba(11, 60, 93, 0.2);
+        margin-bottom: 10px;
+        border-radius: 8px;
+        padding: 12px 15px;
+    }
+    
+    .suite-list-item:hover {
+        transform: translateX(5px);
+        border-color: var(--tech-accent);
+        background-color: rgba(50, 140, 193, 0.3);
+        box-shadow: 0 0 15px rgba(50, 140, 193, 0.4);
+    }
+    
+    .suite-list-item.active {
+        border-color: var(--tech-accent);
+        background-color: rgba(50, 140, 193, 0.4);
+        box-shadow: 0 0 15px rgba(217, 179, 16, 0.4);
+    }
+    
+    .tab-container {
+        display: flex;
+        border-bottom: 1px solid rgba(50, 140, 193, 0.4);
+        margin-bottom: 20px;
+    }
+    
+    .tab-item {
+        padding: 10px 20px;
+        cursor: pointer;
+        position: relative;
+        color: var(--tech-light);
+        transition: all 0.3s ease;
+    }
+    
+    .tab-item:hover {
+        color: var(--tech-accent);
+    }
+    
+    .tab-item.active {
+        color: var(--tech-accent);
+    }
+    
+    .tab-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background-color: var(--tech-accent);
+        box-shadow: 0 0 10px rgba(217, 179, 16, 0.6);
+    }
+    
+    .tab-content {
+        display: none;
+    }
+    
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .tech-card-content {
+        padding: 20px;
+    }
+    
+    .tech-card-header {
+        background: linear-gradient(135deg, rgba(11, 60, 93, 0.95), rgba(29, 39, 49, 0.95));
+        padding: 18px 20px;
+        border-bottom: 2px solid rgba(50, 140, 193, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .tech-card-title {
+        margin: 0;
+        font-size: 1.3rem;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(50, 140, 193, 0.5);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+    
+    .tech-card-title i {
+        margin-right: 10px;
+        color: var(--tech-accent);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: var(--tech-accent);
+        text-shadow: 0 0 15px rgba(217, 179, 16, 0.4);
+    }
+    
+    .empty-state p {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: var(--tech-light);
+    }
+    
+    /* Resto de los estilos existentes... */
+    .run-status {
+        font-size: 0.9rem;
+    }
+    
+    .execution-log {
+        max-height: 200px;
+        overflow-y: auto;
+        font-family: 'Consolas', monospace;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        word-break: break-all;
+        border: 1px solid rgba(50, 140, 193, 0.3);
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .progress-wrapper {
+        height: 25px;
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(50, 140, 193, 0.2);
+    }
+    
+    .progress-bar {
+        border-radius: 30px;
+        background-image: linear-gradient(45deg, 
+            rgba(255, 255, 255, 0.15) 25%, 
+            transparent 25%, 
+            transparent 50%, 
+            rgba(255, 255, 255, 0.15) 50%, 
+            rgba(255, 255, 255, 0.15) 75%, 
+            transparent 75%, 
+            transparent);
+        background-size: 1rem 1rem;
+    }
+    
+    .screenshot-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 15px;
+        padding: 15px;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        border: 1px solid rgba(50, 140, 193, 0.2);
+    }
+    
+    .screenshot-item {
+        border: 1px solid rgba(50, 140, 193, 0.5);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        width: 150px;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .screenshot-item:hover {
+        transform: scale(1.05);
+        border-color: var(--tech-accent);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3),
+                    0 0 10px rgba(217, 179, 16, 0.4);
+    }
+    
+    .screenshot-item img {
+        width: 100%;
+        height: auto;
+    }
+    
+    .screenshot-item .caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 5px;
+        font-size: 0.8rem;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-top: 1px solid rgba(50, 140, 193, 0.4);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .badge {
+        padding: 6px 10px;
+        border-radius: 30px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Estilos nuevos para la sección de acciones */
+    .suite-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .action-group {
+        display: flex;
+        gap: 10px;
+    }
+    
+    /* Animaciones */
+    .pulse-animation {
+        animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(0.95); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(0.95); opacity: 0.7; }
+    }
+    
+    /* Modo oscuro con neomorfismo */
+    .tech-card {
+        border-radius: 12px;
+        background-color: rgba(29, 39, 49, 0.5);
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3),
+                   -5px -5px 15px rgba(255, 255, 255, 0.02);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(50, 140, 193, 0.3);
+    }
+    
+    /* Nuevos estilos para importación de historial */
+    .history-import-modal .modal-dialog {
+        max-width: 800px;
+    }
+    
+    .history-item {
+        padding: 12px;
+        border-radius: 8px;
+        background-color: rgba(29, 39, 49, 0.6);
+        border: 1px solid rgba(50, 140, 193, 0.3);
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .history-item:hover {
+        background-color: rgba(50, 140, 193, 0.2);
+        transform: translateX(5px);
+    }
+    
+    .history-item.selected {
+        background-color: rgba(50, 140, 193, 0.4);
+        border-color: var(--tech-accent);
+        box-shadow: 0 0 12px rgba(217, 179, 16, 0.4);
+    }
+    
+    .script-item {
+        display: flex;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 6px;
+        border: 1px solid rgba(50, 140, 193, 0.2);
+    }
+    
+    .script-item i {
+        color: var(--tech-accent);
+        margin-right: 10px;
+    }
+    
+    .import-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
+    
+    .badge-playwright {
+        background-color: #2f81f7;
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+        border-radius: 30px;
+    }
+
+     /* Estilos para las cards estadísticas */
+     .stats-card {
+         background: linear-gradient(135deg, rgba(29, 39, 49, 0.8), rgba(51, 65, 85, 0.6));
+         border: 1px solid rgba(59, 130, 246, 0.2);
+         border-radius: 12px;
+         padding: 1.5rem;
+         transition: all 0.3s ease;
+         position: relative;
+         overflow: hidden;
+     }
+
+     .stats-card::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         height: 3px;
+         background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+         opacity: 0;
+         transition: opacity 0.3s ease;
+     }
+
+     .stats-card:hover {
+         transform: translateY(-5px);
+         border-color: rgba(59, 130, 246, 0.4);
+         box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
+     }
+
+     .stats-card:hover::before {
+         opacity: 1;
+     }
+
+     .stats-icon {
+         width: 50px;
+         height: 50px;
+         border-radius: 12px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 1.5rem;
+         color: white;
+         flex-shrink: 0;
+     }
+
+     .stats-card h3 {
+         color: #e2e8f0;
+         font-weight: 700;
+         font-size: 2rem;
+     }
+
+     .stats-card p {
+         color: #94a3b8;
+         font-size: 0.875rem;
+         font-weight: 500;
+     }
+
+     /* Barra de búsqueda mejorada */
+     .search-box .input-group {
+         background: rgba(15, 23, 42, 0.5);
+         border: 1px solid rgba(59, 130, 246, 0.2);
+         border-radius: 25px;
+         overflow: hidden;
+         transition: all 0.3s ease;
+     }
+
+     .search-box .input-group:focus-within {
+         border-color: #3b82f6;
+         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+     }
+
+     .search-box .form-control {
+         color: #e2e8f0;
+         font-size: 0.9rem;
+     }
+
+     .search-box .form-control::placeholder {
+         color: #64748b;
+     }
+
+     .search-box .form-control:focus {
+         color: #e2e8f0;
+         box-shadow: none;
+     }
+
+     /* Dropdown mejorado */
+     .dropdown-menu-dark {
+         background: linear-gradient(135deg, #1e293b, #334155);
+         border: 1px solid rgba(59, 130, 246, 0.3);
+         border-radius: 8px;
+         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+     }
+
+     .dropdown-menu-dark .dropdown-item {
+         color: #e2e8f0;
+         transition: all 0.2s ease;
+     }
+
+     .dropdown-menu-dark .dropdown-item:hover {
+         background: rgba(59, 130, 246, 0.2);
+         color: #ffffff;
+     }
+
+     /* Header con gradiente mejorado */
+     .tech-section-header {
+         background: linear-gradient(135deg, 
+             rgba(15, 23, 42, 0.95), 
+             rgba(30, 41, 59, 0.9), 
+             rgba(51, 65, 85, 0.85));
+         border-radius: 16px;
+         padding: 2rem;
+         margin-bottom: 2rem;
+         position: relative;
+         backdrop-filter: blur(10px);
+     }
+
+     .tech-section-header::after {
+         content: '';
+         position: absolute;
+         bottom: 0;
+         left: 0;
+         right: 0;
+         height: 1px;
+         background: linear-gradient(90deg, 
+             transparent, 
+             rgba(59, 130, 246, 0.6), 
+             transparent);
+     }
+
+     /* Spinner personalizado */
+     .spinner-border {
+         border-width: 3px;
+     }
+
+     /* Mejoras en las suite cards */
+     .suite-list-item {
+         background: linear-gradient(135deg, 
+             rgba(29, 39, 49, 0.6), 
+             rgba(51, 65, 85, 0.4));
+         border: 1px solid rgba(59, 130, 246, 0.2);
+         border-radius: 10px;
+         padding: 1rem;
+         margin-bottom: 0.75rem;
+         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+         cursor: pointer;
+         position: relative;
+         overflow: hidden;
+     }
+
+     .suite-list-item::before {
+         content: '';
+         position: absolute;
+         top: 0;
+         left: -100%;
+         width: 100%;
+         height: 100%;
+         background: linear-gradient(90deg, 
+             transparent, 
+             rgba(59, 130, 246, 0.1), 
+             transparent);
+         transition: left 0.5s ease;
+     }
+
+     .suite-list-item:hover::before {
+         left: 100%;
+     }
+
+     .suite-list-item:hover {
+         transform: translateX(8px) scale(1.02);
+         border-color: rgba(59, 130, 246, 0.5);
+         box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+     }
+
+     .suite-list-item.active {
+         background: linear-gradient(135deg, 
+             rgba(59, 130, 246, 0.2), 
+             rgba(29, 78, 216, 0.15));
+         border-color: #3b82f6;
+         box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+     }
+
+     /* Badges mejorados */
+     .badge {
+         font-weight: 600;
+         padding: 0.5rem 0.75rem;
+         border-radius: 20px;
+         font-size: 0.75rem;
+         backdrop-filter: blur(10px);
+     }
+
+     /* Animación de carga mejorada */
+     @keyframes fadeInUp {
+         from {
+             opacity: 0;
+             transform: translateY(30px);
+         }
+         to {
+             opacity: 1;
+             transform: translateY(0);
+         }
+     }
+
+     .tech-card {
+         animation: fadeInUp 0.6s ease-out;
+     }
+
+     .stats-card:nth-child(1) { animation-delay: 0.1s; }
+     .stats-card:nth-child(2) { animation-delay: 0.2s; }
+     .stats-card:nth-child(3) { animation-delay: 0.3s; }
+     .stats-card:nth-child(4) { animation-delay: 0.4s; }
+
+
+
+     /* Estadísticas mini */
+     .stats-mini {
+         space-y: 0.5rem;
+     }
+
+     .stat-row {
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         padding: 0.5rem 0;
+         border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+     }
+
+     .stat-row:last-child {
+         border-bottom: none;
+     }
+
+     .stat-label {
+         font-size: 0.85rem;
+         color: #94a3b8;
+     }
+
+     .stat-value {
+         font-weight: 600;
+         font-size: 0.9rem;
+     }
+
+     /* Panel de detalles mejorado */
+     .main-panel {
+         flex: 1;
+         min-height: 600px;
+     }
+
+     .empty-state {
+         text-align: center;
+         padding: 3rem 2rem;
+         color: #94a3b8;
+         background: linear-gradient(135deg, rgba(29, 39, 49, 0.3), rgba(51, 65, 85, 0.2));
+         border-radius: 12px;
+         border: 2px dashed rgba(59, 130, 246, 0.3);
+     }
+
+     .empty-state i {
+         font-size: 3rem;
+         color: #3b82f6;
+         margin-bottom: 1rem;
+         opacity: 0.7;
+     }
+
+     .empty-state p {
+         font-size: 1.1rem;
+         margin-bottom: 1.5rem;
+         color: #cbd5e1;
+     }
+
+     /* Tabs mejorados */
+     .tab-container {
+         display: flex;
+         border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+         margin-bottom: 1.5rem;
+         background: rgba(15, 23, 42, 0.5);
+         border-radius: 8px 8px 0 0;
+         overflow: hidden;
+     }
+
+     .tab-item {
+         flex: 1;
+         padding: 1rem;
+         text-align: center;
+         cursor: pointer;
+         transition: all 0.3s ease;
+         color: #94a3b8;
+         font-weight: 500;
+         position: relative;
+         background: transparent;
+         border: none;
+     }
+
+     .tab-item:hover {
+         background: rgba(59, 130, 246, 0.1);
+         color: #e2e8f0;
+     }
+
+     .tab-item.active {
+         background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(29, 78, 216, 0.15));
+         color: #60a5fa;
+         font-weight: 600;
+     }
+
+     .tab-item.active::after {
+         content: '';
+         position: absolute;
+         bottom: 0;
+         left: 0;
+         right: 0;
+         height: 3px;
+         background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+     }
+
+     .tab-content {
+         display: none;
+         animation: fadeInUp 0.5s ease-out;
+     }
+
+     .tab-content.active {
+         display: block;
+     }
+
+     /* Suites dashboard responsive */
+     .suites-dashboard {
+         display: grid;
+         grid-template-columns: 350px 1fr;
+         gap: 1.5rem;
+         min-height: 600px;
+     }
+
+     @media (max-width: 1200px) {
+         .suites-dashboard {
+             grid-template-columns: 300px 1fr;
+         }
+     }
+
+     @media (max-width: 768px) {
+         .suites-dashboard {
+             grid-template-columns: 1fr;
+         }
+     }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tech-section">
+    <!-- Header mejorado con gradiente y animaciones -->
+    <div class="tech-section-header position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1)); z-index: -1;"></div>
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold mb-2">
+                    <span class="tech-icon-circle me-3">
+                        <i class="fas fa-layer-group"></i>
+                    </span>
+                    Suites de Prueba
+                </h1>
+                <p class="text-tech-muted fs-5 mb-3">
+                    <i class="fas fa-rocket me-2"></i>
+                    Gestiona y ejecuta conjuntos de casos de prueba de manera eficiente
+                </p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <span class="badge bg-info"><i class="fas fa-code me-1"></i>Automatización</span>
+                    <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>QA Testing</span>
+                    <span class="badge bg-warning"><i class="fas fa-chart-line me-1"></i>Reportes</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+        <div class="tech-header-actions">
+                    <button type="button" class="tech-btn tech-btn-accent btn-lg" id="btnCreateSuite">
+                        <i class="fas fa-plus me-2"></i>Nueva Suite
+                    </button>
+                    <button type="button" class="btn btn-outline-info ms-2" onclick="loadSuitesList()" title="Actualizar">
+                        <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+        </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard mejorado con cards estadísticas -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="tech-card stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-primary">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0" id="totalSuiteCount">0</h3>
+                        <p class="text-muted mb-0">Suites Totales</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="tech-card stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-success">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0" id="totalCaseCount">0</h3>
+                        <p class="text-muted mb-0">Casos de Prueba</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="tech-card stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-info">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0">0</h3>
+                        <p class="text-muted mb-0">Ejecuciones Hoy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="tech-card stats-card">
+                <div class="d-flex align-items-center">
+                    <div class="stats-icon bg-warning">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="ms-3">
+                        <h3 class="mb-0" id="activeSuitesCount">0</h3>
+                        <p class="text-muted mb-0">Suites Activas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="suites-dashboard">
+        <!-- Panel izquierdo: Lista de Suites -->
+        <div class="side-panel">
+            <div class="tech-card">
+                <div class="tech-card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-list me-2 text-tech-accent"></i>
+                        <span class="fw-bold">Suites Disponibles</span>
+                </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-info" onclick="loadSuitesList()" title="Actualizar lista">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-check-circle me-2"></i>Activas</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-pause-circle me-2"></i>Pausadas</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-list me-2"></i>Todas</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-card-content">
+                    <div class="search-box mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-0 bg-transparent" 
+                                   placeholder="Buscar suites..." id="suitesSearchInput">
+                        </div>
+                    </div>
+                    <div id="suitesList" class="suites-list">
+                        <!-- Las suites se cargarán aquí dinámicamente -->
+                        <div class="text-center p-4 text-tech-muted empty-state">
+                            <div class="spinner-border text-info mb-3" role="status"></div>
+                            <p class="fw-bold">Cargando suites...</p>
+                            <small>Por favor espera mientras obtenemos la información</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Panel de resumen estadístico -->
+            <div class="tech-card mt-3">
+                <div class="tech-card-header">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-chart-pie me-2 text-info"></i>
+                        <span class="fw-bold">Resumen</span>
+                    </div>
+                </div>
+                <div class="tech-card-content">
+                    <div class="stats-mini">
+                        <div class="stat-row">
+                            <span class="stat-label">Última Actividad:</span>
+                            <span class="stat-value text-info" id="lastActivityTime">Nunca</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Casos:</span>
+                            <span class="stat-value text-warning" id="miniTotalCases">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Suites Disponibles:</span>
+                            <span class="stat-value text-success" id="miniActiveSuites">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel derecho: Detalle de Suite y Ejecución -->
+        <div class="main-panel">
+            <div class="tech-card" id="suiteDetailCard">
+                <div class="tech-card-header">
+                    <div class="tech-card-title">
+                        <i class="fas fa-info-circle"></i> <span id="suiteDetailTitle">Detalle de Suite</span>
+                </div>
+                    <div class="header-tabs">
+                        <div class="tab-container">
+                            <div class="tab-item active" data-tab="edit-tab">Edición</div>
+                            <div class="tab-item" data-tab="run-tab">Ejecución</div>
+                            <div class="tab-item" data-tab="history-tab">Historial</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-card-content">
+                    <!-- Mensaje cuando no hay suite seleccionada -->
+                    <div id="suiteDetailEmpty" class="empty-state">
+                        <i class="fas fa-layer-group"></i>
+                        <p>Selecciona una suite para ver sus detalles o crea una nueva</p>
+                        <button class="tech-btn tech-btn-primary" id="btnCreateSuiteEmpty">
+                            <i class="fas fa-plus me-1"></i> Crear Suite
+                        </button>
+                    </div>
+                    
+                    <!-- Tab de Edición -->
+                    <div id="edit-tab" class="tab-content active">
+                    <div id="suiteDetailContent" style="display: none;">
+                        <form id="suiteForm">
+                            <input type="hidden" id="suiteId">
+                            
+                            <div class="mb-3">
+                                    <label for="suiteName" class="form-label tech-label">Nombre de la Suite</label>
+                                    <input type="text" class="form-control tech-input" id="suiteName" required placeholder="Ingresa un nombre descriptivo para la suite">
+                            </div>
+                            
+                            <div class="mb-3">
+                                    <label for="suiteDescription" class="form-label tech-label">Descripción</label>
+                                    <textarea class="form-control tech-input" id="suiteDescription" rows="2" placeholder="Describe brevemente el propósito de esta suite"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                    <label class="form-label tech-label d-flex justify-content-between align-items-center">
+                                        <span>Casos de Prueba</span>
+                                        <span class="badge bg-info" id="selectedCasesCount">0 seleccionados</span>
+                                    </label>
+                                <div class="test-case-list" id="caseSelectionList">
+                                    <!-- Los casos se cargarán aquí dinámicamente -->
+                                        <div class="text-center p-4 text-tech-muted empty-state">
+                                            <i class="fas fa-spinner fa-spin pulse-animation"></i>
+                                            <p>Cargando casos...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                                <div class="suite-actions">
+                                    <div class="action-group">
+                                        <button type="submit" class="tech-btn tech-btn-primary" id="btnSaveSuite">
+                                            <i class="fas fa-save me-1"></i> Guardar
+                                    </button>
+                                    <button type="button" class="tech-btn tech-btn-secondary" id="btnCancelEdit">
+                                            <i class="fas fa-times me-1"></i> Cancelar
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button" class="tech-btn tech-btn-danger" id="btnDeleteSuite" style="display: none;">
+                                            <i class="fas fa-trash me-1"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                    </div>
+                        
+                    <!-- Tab de Ejecución -->
+                    <div id="run-tab" class="tab-content">
+                        <div id="runContent">
+                        <!-- Controles de ejecución -->
+                            <div class="run-controls mb-4">
+                                <h4 class="tech-glow mb-3"><i class="fas fa-play-circle me-2 text-tech-accent"></i>Ejecutar Suite</h4>
+                            
+                                <div class="d-flex flex-wrap align-items-center justify-content-between">
+                                    <div class="form-check form-switch mb-2 mb-md-0">
+                                    <input class="form-check-input" type="checkbox" id="headlessMode" checked>
+                                        <label class="form-check-label tech-highlight-text" for="headlessMode">
+                                            <i class="fas fa-eye-slash me-1"></i> Modo Invisible
+                                        </label>
+                                </div>
+                                
+                                    <div>
+                                        <button type="button" class="tech-btn tech-btn-outline-primary" id="btnDryRun">
+                                            <i class="fas fa-vial me-1"></i> Verificar Suite
+                                        </button>
+                                        <button type="button" class="tech-btn tech-btn-success" id="btnRunSuite">
+                                            <i class="fas fa-play me-1"></i> Ejecutar Pruebas
+                                </button>
+                                        <button type="button" class="tech-btn tech-btn-danger" id="btnStopSuite" style="display: none;">
+                                            <i class="fas fa-stop me-1"></i> Detener Ejecución
+                                        </button>
+                    </div>
+                </div>
+            </div>
+            
+                            <!-- Panel de resultados de ejecución -->
+                            <div id="executionPanel" style="display: none;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 id="executionSuiteName" class="tech-glow">Suite: Nombre de la Suite</h4>
+                                    <span class="badge bg-secondary" id="executionStatus">En espera</span>
+                    </div>
+                    
+                    <div class="progress progress-wrapper mb-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             id="executionProgress" role="progressbar" 
+                             style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    
+                                <div class="d-flex justify-content-between mb-4">
+                        <div>
+                                        <span class="me-4 tech-highlight-text"><i class="fas fa-check-circle text-success me-2"></i> <span id="successCount">0</span> éxitos</span>
+                                        <span class="tech-highlight-text"><i class="fas fa-times-circle text-danger me-2"></i> <span id="failCount">0</span> fallos</span>
+                        </div>
+                        <div>
+                                        <span class="tech-highlight-text">Caso actual: <span id="currentCase" class="badge bg-primary">-</span></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de casos con estado -->
+                                <div class="mb-4">
+                                    <h5 class="tech-glow mb-3"><i class="fas fa-clipboard-list me-2 text-tech-accent"></i> Casos de Prueba</h5>
+                        <div id="executionCasesList" class="list-group">
+                            <!-- Los casos con estado se cargarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <!-- Capturas de pantalla -->
+                                <div class="mb-4">
+                                    <h5 class="tech-glow mb-3"><i class="fas fa-camera me-2 text-tech-accent"></i> Capturas de Pantalla</h5>
+                        <div id="screenshotGallery" class="screenshot-gallery">
+                            <!-- Las capturas se cargarán aquí -->
+                                        <div class="text-tech-muted">No hay capturas disponibles</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Log de ejecución -->
+                    <div>
+                                    <h5 class="tech-glow mb-3"><i class="fas fa-terminal me-2 text-tech-accent"></i> Log de Ejecución</h5>
+                        <div id="executionLog" class="execution-log">
+                            Esperando inicio de ejecución...
+                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab de Historial -->
+                    <div id="history-tab" class="tab-content">
+                        <div class="empty-state">
+                            <i class="fas fa-history"></i>
+                            <p>Historial de ejecuciones para esta suite</p>
+                            <p class="text-tech-muted">No hay ejecuciones registradas para esta suite</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Nueva Suite de Prueba -->
+<div class="modal fade" id="createSuiteModal" tabindex="-1" aria-labelledby="createSuiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-panel-header border-0">
+                <h5 class="modal-title tech-panel-title" id="createSuiteModalLabel">
+                    <i class="fas fa-plus-circle me-2 text-tech-accent"></i>
+                    Nueva Suite de Prueba
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="createSuiteForm">
+                    <!-- Información básica -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="tech-icon-circle me-3">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <h6 class="tech-highlight mb-0">Información Básica</h6>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="newSuiteName" class="form-label tech-label">
+                                <i class="fas fa-tag me-1 text-tech-accent"></i>Nombre de la Suite *
+                            </label>
+                            <input type="text" 
+                                   class="form-control tech-input" 
+                                   id="newSuiteName" 
+                                   required 
+                                   placeholder="Ej: Suite de Login y Autenticación"
+                                   maxlength="100"
+                                   onkeyup="validateSuiteName(this)">
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-lightbulb me-1"></i>Un nombre descriptivo y único para identificar fácilmente tu suite</small>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="newSuiteDescription" class="form-label tech-label">
+                                <i class="fas fa-align-left me-1 text-tech-accent"></i>Descripción
+                            </label>
+                            <textarea class="form-control tech-input" 
+                                      id="newSuiteDescription" 
+                                      rows="3" 
+                                      placeholder="Describe el propósito y alcance de esta suite de pruebas..."
+                                      maxlength="500"></textarea>
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-info-circle me-1"></i>Opcional: Información adicional sobre qué funcionalidades cubre esta suite</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="tech-icon-circle me-3">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <h6 class="tech-highlight mb-0">Configuración</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="newSuiteProject" class="form-label tech-label">
+                                <i class="fas fa-folder me-1 text-tech-accent"></i>Proyecto
+                            </label>
+                            <div class="input-group">
+                                <select class="form-select tech-input" id="newSuiteProject">
+                                    <option value="">Seleccionar proyecto...</option>
+                                    <!-- Los proyectos se cargarán dinámicamente -->
+                                </select>
+                                <button class="btn btn-outline-primary" type="button" id="btnCreateProject" title="Crear nuevo proyecto">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-layer-group me-1"></i>Categoriza tu suite por tipo de proyecto</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="newSuiteStatus" class="form-label tech-label">
+                                <i class="fas fa-toggle-on me-1 text-tech-accent"></i>Estado
+                            </label>
+                            <select class="form-select tech-input" id="newSuiteStatus">
+                                <option value="active" selected>✅ Activo</option>
+                                <option value="draft">📝 Borrador</option>
+                                <option value="inactive">⏸️ Inactivo</option>
+                            </select>
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-power-off me-1"></i>Estado inicial de la suite</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opciones avanzadas -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="tech-icon-circle me-3">
+                                    <i class="fas fa-sliders-h"></i>
+                                </div>
+                                <h6 class="tech-highlight mb-0">Opciones Avanzadas</h6>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="tech-card p-3">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="autoAddCases" checked>
+                                    <label class="form-check-label tech-label" for="autoAddCases">
+                                        <i class="fas fa-magic me-2 text-tech-accent"></i>
+                                        <strong>Agregar casos automáticamente</strong>
+                                        <div class="form-text text-muted mt-1">
+                                            <small>Incluir automáticamente casos disponibles en el sistema</small>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="enableNotifications">
+                                    <label class="form-check-label tech-label" for="enableNotifications">
+                                        <i class="fas fa-bell me-2 text-tech-accent"></i>
+                                        <strong>Habilitar notificaciones</strong>
+                                        <div class="form-text text-muted mt-1">
+                                            <small>Recibir notificaciones sobre el estado de las ejecuciones</small>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-between align-items-center">
+                <div class="text-muted small d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2 text-tech-accent"></i>
+                    Podrás agregar casos específicos después de crear la suite
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="tech-btn tech-btn-accent" onclick="createSuiteFromModal()">
+                        <i class="fas fa-rocket me-1"></i>Crear Suite
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Crear Nuevo Proyecto -->
+<div class="modal fade" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-panel-header border-0">
+                <h5 class="modal-title tech-panel-title" id="createProjectModalLabel">
+                    <i class="fas fa-folder-plus me-2 text-tech-accent"></i>
+                    Crear Nuevo Proyecto
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="createProjectForm">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="newProjectName" class="form-label tech-label">
+                                <i class="fas fa-tag me-1 text-tech-accent"></i>Nombre del Proyecto *
+                            </label>
+                            <input type="text" 
+                                   class="form-control tech-input" 
+                                   id="newProjectName" 
+                                   required 
+                                   placeholder="Ej: Mi Aplicación Web"
+                                   maxlength="255"
+                                   onkeyup="validateProjectName(this)">
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-lightbulb me-1"></i>Nombre descriptivo del proyecto o aplicación</small>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="newProjectDescription" class="form-label tech-label">
+                                <i class="fas fa-align-left me-1 text-tech-accent"></i>Descripción
+                            </label>
+                            <textarea class="form-control tech-input" 
+                                      id="newProjectDescription" 
+                                      rows="3" 
+                                      placeholder="Describe el proyecto y su propósito..."
+                                      maxlength="500"></textarea>
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-info-circle me-1"></i>Opcional: Información sobre el proyecto</small>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="newProjectBaseUrl" class="form-label tech-label">
+                                <i class="fas fa-link me-1 text-tech-accent"></i>URL Base
+                            </label>
+                            <input type="url" 
+                                   class="form-control tech-input" 
+                                   id="newProjectBaseUrl" 
+                                   placeholder="https://mi-aplicacion.com"
+                                   maxlength="500">
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-globe me-1"></i>Opcional: URL principal de la aplicación</small>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="newProjectStatus" class="form-label tech-label">
+                                <i class="fas fa-toggle-on me-1 text-tech-accent"></i>Estado
+                            </label>
+                            <select class="form-select tech-input" id="newProjectStatus">
+                                <option value="active" selected>✅ Activo</option>
+                                <option value="inactive">⏸️ Inactivo</option>
+                                <option value="archived">📦 Archivado</option>
+                            </select>
+                            <div class="form-text text-muted mt-1">
+                                <small><i class="fas fa-power-off me-1"></i>Estado inicial del proyecto</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-between align-items-center">
+                <div class="text-muted small d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2 text-tech-accent"></i>
+                    El proyecto se asociará automáticamente a la suite
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="button" class="tech-btn tech-btn-accent" onclick="createProjectFromModal()">
+                        <i class="fas fa-folder-plus me-1"></i>Crear Proyecto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para importar scripts desde historial -->
+<div class="modal fade history-import-modal" id="importHistoryModal" tabindex="-1" aria-labelledby="importHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-card-header">
+                <h5 class="modal-title tech-card-title" id="importHistoryModalLabel">
+                    <i class="fas fa-history me-2"></i> Importar desde Historial
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3">
+                    <p class="text-tech-muted mb-3">Selecciona scripts guardados en tu historial para añadirlos a esta suite.</p>
+                    
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-transparent border-end-0">
+                            <i class="fas fa-search text-tech-muted"></i>
+                        </span>
+                        <input type="text" class="form-control tech-input" id="searchHistoryInput" placeholder="Buscar por nombre o fecha...">
+                    </div>
+                </div>
+                
+                <div class="history-tabs">
+                    <ul class="nav nav-tabs" id="historyTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-scripts-tab" data-bs-toggle="tab" data-bs-target="#all-scripts" type="button" role="tab">
+                                Todos los scripts
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="playwright-tab" data-bs-toggle="tab" data-bs-target="#playwright-scripts" type="button" role="tab">
+                                Casos Playwright
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="tab-content p-3" id="historyTabContent">
+                    <div class="tab-pane fade show active" id="all-scripts" role="tabpanel">
+                        <div id="allScriptsList" class="history-list">
+                            <!-- Lista de todos los scripts - se cargará dinámicamente -->
+                            <div class="text-center p-4">
+                                <i class="fas fa-spinner fa-spin text-tech-muted"></i>
+                                <p class="text-tech-muted mt-2">Cargando scripts...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="playwright-scripts" role="tabpanel">
+                        <div id="playwrightScriptsList" class="history-list">
+                            <!-- Lista de scripts Playwright - se cargará dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <span class="text-tech-muted me-2">Seleccionados:</span>
+                        <span id="selectedScriptsCount" class="badge bg-info">0</span>
+                    </div>
+                    <div>
+                        <button type="button" class="tech-btn tech-btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="tech-btn tech-btn-primary" id="importSelectedBtn" onclick="importSelectedScripts()">
+                            <i class="fas fa-file-import me-1"></i> Importar seleccionados
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    // Variables globales
+    let availableCases = [];
+    let currentSuiteId = null;
+    let executionId = null;
+    let executionInterval = null;
+    
+
+
+    // Cargar lista de suites al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializamos los contadores de estadísticas
+        updateStatistics();
+        
+        // Cargamos suites
+        loadSuitesList();
+        
+        // Event listeners principales
+        document.getElementById('btnCreateSuite').addEventListener('click', createNewSuite);
+        if (document.getElementById('btnCreateSuiteEmpty')) {
+            document.getElementById('btnCreateSuiteEmpty').addEventListener('click', createNewSuite);
+        }
+        document.getElementById('suiteForm').addEventListener('submit', saveSuite);
+        document.getElementById('btnCancelEdit').addEventListener('click', cancelEdit);
+        document.getElementById('btnDeleteSuite').addEventListener('click', deleteSuite);
+        document.getElementById('btnRunSuite').addEventListener('click', () => runSuite(false));
+        document.getElementById('btnStopSuite').addEventListener('click', stopSuiteExecution);
+        
+        // Configuración de tabs
+        const tabItems = document.querySelectorAll('.tab-item');
+        tabItems.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                // Actualizar clases activas en los tabs
+                tabItems.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Mostrar el contenido del tab seleccionado
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === targetTab) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+
+        
+        // Si existe el botón de dry run
+        if (document.getElementById('btnDryRun')) {
+            document.getElementById('btnDryRun').addEventListener('click', function() {
+                runSuite(true); // Ejecutar en modo "dry run"
+            });
+        }
+        
+        // Asegurar que los botones tengan el texto correcto
+        function ensureButtonTexts() {
+            const btnDryRun = document.getElementById('btnDryRun');
+            const btnRunSuite = document.getElementById('btnRunSuite');
+            
+            if (btnDryRun) {
+                btnDryRun.innerHTML = '<i class="fas fa-vial me-1"></i> Verificar Suite';
+            }
+            
+            if (btnRunSuite) {
+                btnRunSuite.innerHTML = '<i class="fas fa-play me-1"></i> Ejecutar Pruebas';
+            }
+        }
+        
+        // Llamar la función para asegurar textos correctos
+        ensureButtonTexts();
+        
+
+        
+
+        
+        // Event listener para el botón de crear proyecto
+        document.getElementById('btnCreateProject')?.addEventListener('click', openCreateProjectModal);
+        
+        // Event listener para búsqueda de suites
+        document.getElementById('suitesSearchInput')?.addEventListener('input', function(e) {
+            filterSuites(e.target.value);
+        });
+        
+        // Event listeners para tabs
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                switchTab(this.dataset.tab);
+            });
+        });
+        
+        // Event listeners para botones de crear suite adicionales
+        document.getElementById('btnCreateSuiteEmpty')?.addEventListener('click', createNewSuite);
+    });
+    
+    // Actualizar contadores de estadísticas
+    function updateStatistics(suites = []) {
+        // Si no existen los elementos, salimos
+        if (!document.getElementById('totalSuiteCount')) return;
+        
+        // Si tenemos datos, actualizamos los contadores
+        if (suites.length > 0) {
+            const totalCases = suites.reduce((total, suite) => total + (suite.cases ? suite.cases.length : 0), 0);
+            const activeSuites = suites.filter(suite => suite.status === 'active' || !suite.status).length;
+            
+            document.getElementById('totalSuiteCount').textContent = suites.length;
+            document.getElementById('totalCaseCount').textContent = totalCases;
+            document.getElementById('activeSuitesCount').textContent = activeSuites;
+            
+            // Actualizar estadísticas mini del panel lateral
+            document.getElementById('miniTotalCases').textContent = totalCases;
+            document.getElementById('miniActiveSuites').textContent = suites.length;
+            document.getElementById('lastActivityTime').textContent = 'Hace pocos minutos';
+        } else {
+            // Valores por defecto
+            document.getElementById('totalSuiteCount').textContent = '0';
+            document.getElementById('totalCaseCount').textContent = '0';
+            document.getElementById('activeSuitesCount').textContent = '0';
+            
+            // Actualizar estadísticas mini por defecto
+            document.getElementById('miniTotalCases').textContent = '0';
+            document.getElementById('miniActiveSuites').textContent = '0';
+            document.getElementById('lastActivityTime').textContent = 'Nunca';
+        }
+    }
+    
+    // Función para filtrar suites
+    function filterSuites(searchTerm) {
+        const suiteItems = document.querySelectorAll('.suite-list-item');
+        const normalizedSearch = searchTerm.toLowerCase().trim();
+        
+        suiteItems.forEach(item => {
+            const suiteName = item.querySelector('h5')?.textContent.toLowerCase() || '';
+            const suiteDescription = item.querySelector('.text-light')?.textContent.toLowerCase() || '';
+            
+            if (suiteName.includes(normalizedSearch) || suiteDescription.includes(normalizedSearch)) {
+                item.style.display = 'block';
+                item.style.animation = 'fadeInUp 0.3s ease-out';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        
+        // Mostrar mensaje si no hay resultados
+        const visibleItems = Array.from(suiteItems).filter(item => item.style.display !== 'none');
+        const suitesList = document.getElementById('suitesList');
+        
+        // Remover mensaje anterior de "sin resultados"
+        const noResultsMsg = suitesList.querySelector('.no-results-message');
+        if (noResultsMsg) noResultsMsg.remove();
+        
+        if (visibleItems.length === 0 && searchTerm.trim() !== '') {
+            const noResultsDiv = document.createElement('div');
+            noResultsDiv.className = 'text-center p-4 text-muted no-results-message';
+            noResultsDiv.innerHTML = `
+                <i class="fas fa-search-minus fa-2x mb-2"></i>
+                <p>No se encontraron suites que coincidan con "<strong>${searchTerm}</strong>"</p>
+                <small>Intenta con términos diferentes o crea una nueva suite</small>
+            `;
+            suitesList.appendChild(noResultsDiv);
+        }
+    }
+    
+    // Función para cambiar tabs
+    function switchTab(tabName) {
+        // Actualizar tabs activos
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        
+        // Mostrar contenido correspondiente
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+    }
+    
+
+    
+    // Función para cargar lista de suites
+    function loadSuitesList() {
+        // Log attempt for debugging
+        console.log("Intentando fetch a lista de suites - Timestamp: " + new Date().toISOString());
+        
+        // Intentar cargar desde el API local
+        console.log("INFO: Intentando cargar suites desde el API local");
+        
+        // Usar el API local para obtener suites
+        const apiUrl = '/api/test_suites';
+        
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        })
+            .then(response => {
+            console.log("Respuesta recibida del servidor dedicado:", response);
+            console.log("Status:", response.status);
+            
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+        .then(data => {
+            console.log("Datos recibidos del API:", data);
+            
+            if (data.success && data.suites) {
+                renderSuitesList({ status: 'success', suites: data.suites });
+                updateStatistics(data.suites);
+            } else {
+                throw new Error(data.error || 'Formato de respuesta inválido');
+            }
+        })
+            .catch(error => {
+            console.error('Error al cargar suites:', error);
+            renderEmptyState('Error al cargar suites: ' + error.message);
+        });
+    }
+    
+    // Función para mostrar estado vacío
+    function renderEmptyState(message = null) {
+        const suitesListElement = document.getElementById('suitesList');
+        const statsElement = document.getElementById('stats-overview');
+        
+        suitesListElement.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <p>${message || 'No hay suites de prueba disponibles'}</p>
+                <p class="small text-muted">Crea tu primera suite para comenzar a organizar tus tests</p>
+                <button class="tech-btn tech-btn-accent" onclick="createNewSuite()">
+                    <i class="fas fa-plus me-2"></i>Crear Nueva Suite
+                </button>
+            </div>
+        `;
+        
+        // Actualizar estadísticas a cero
+        if (statsElement) {
+            statsElement.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="tech-highlight mb-2">
+                                <i class="fas fa-folder fa-2x"></i>
+                            </div>
+                            <h6 class="tech-highlight mb-0">0</h6>
+                            <small class="text-muted">Suites Totales</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-check-circle fa-2x"></i>
+                            </div>
+                            <h6 class="text-success mb-0">0</h6>
+                            <small class="text-muted">Suites Activas</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="text-info mb-2">
+                                <i class="fas fa-file-code fa-2x"></i>
+                            </div>
+                            <h6 class="text-info mb-0">0</h6>
+                            <small class="text-muted">Casos Totales</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="tech-card text-center p-3">
+                            <div class="tech-highlight mb-2">
+                                <i class="fas fa-percentage fa-2x"></i>
+                            </div>
+                            <h6 class="tech-highlight mb-0">0%</h6>
+                            <small class="text-muted">Tasa de Éxito</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+
+    
+    // Función para renderizar lista de suites
+    function renderSuitesList(data) {
+                const suitesListElement = document.getElementById('suitesList');
+                
+                if (data.status === 'success' && data.suites && data.suites.length > 0) {
+                    suitesListElement.innerHTML = '';
+                    
+                    data.suites.forEach(suite => {
+                const suiteItem = document.createElement('div');
+                suiteItem.className = 'suite-list-item';
+                        suiteItem.dataset.suiteId = suite.id;
+                        
+                // Renderizar cada suite con más detalles
+                        suiteItem.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                            <h5 class="mb-1">${suite.name}</h5>
+                            <div class="small text-tech-muted">${suite.test_cases_count || 0} casos</div>
+                            ${suite.description ? `<div class="small text-light mt-1">${suite.description.substring(0, 60)}${suite.description.length > 60 ? '...' : ''}</div>` : ''}
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                    </div>
+                        `;
+                        
+                        suiteItem.addEventListener('click', function(e) {
+                            e.preventDefault();
+                    
+                    // Remover clase active de todos los items
+                    document.querySelectorAll('.suite-list-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Añadir clase active al item seleccionado
+                    this.classList.add('active');
+                    
+                            loadSuiteDetails(suite.id);
+                        });
+                        
+                        suitesListElement.appendChild(suiteItem);
+                    });
+            
+            // Añadir botón para crear nueva suite si no existe
+            if (!document.querySelector('.btn-create-suite')) {
+                const createNewBtn = document.createElement('button');
+                createNewBtn.className = 'tech-btn tech-btn-primary mt-3 w-100 btn-create-suite';
+                createNewBtn.innerHTML = '<i class="fas fa-plus me-1"></i> Crear nueva suite';
+                createNewBtn.addEventListener('click', createNewSuite);
+                suitesListElement.parentNode.appendChild(createNewBtn);
+            }
+            
+                } else {
+                    suitesListElement.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                            <p>No hay suites disponibles</p>
+                    <button class="tech-btn tech-btn-primary mt-3" id="createFirstSuiteBtn">
+                        <i class="fas fa-plus me-1"></i> Crear primera suite
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Agregar evento al botón
+                    document.getElementById('createFirstSuiteBtn')?.addEventListener('click', function() {
+                        createNewSuite();
+                    });
+                }
+    }
+    
+    // Función para cargar detalles de una suite
+    function loadSuiteDetails(suiteId) {
+        currentSuiteId = suiteId;
+        
+        // Activar el tab de edición
+        const tabItems = document.querySelectorAll('.tab-item');
+        tabItems.forEach(tab => {
+            if (tab.dataset.tab === 'edit-tab') {
+                tab.click();
+            }
+        });
+        
+        // Resetear el panel de ejecución
+        document.getElementById('executionPanel').style.display = 'none';
+        
+        // Usar el servidor dedicado de suites para obtener los detalles
+        console.log("INFO: Cargando detalles de suite desde API local");
+        
+        fetch(`/api/test_suites/${suiteId}`)
+            .then(response => {
+                console.log("DEBUG: Respuesta del servidor dedicado:", response);
+                
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("DEBUG: Datos de suite recibidos:", data);
+                
+                if (data.status === 'success') {
+                    const suite = data.suite;
+                    
+                    // Convertir available_cases del formato de BD al formato esperado
+                    availableCases = (data.available_cases || []).map(testCase => ({
+                        filename: testCase.codigo || `test_${testCase.id}.py`, // Usar 'codigo' como filename
+                        name: testCase.nombre || testCase.codigo,              // Usar 'nombre' como name
+                        id: testCase.id,
+                        created_at: testCase.created_at,
+                        // Campos adicionales de la BD
+                        objetivo: testCase.objetivo,
+                        pasos: testCase.pasos,
+                        url_objetivo: testCase.url_objetivo,
+                        status: testCase.status
+                    }));
+                    
+                    console.log(`Available cases cargados desde BD: ${availableCases.length}`);
+                    
+                    // Llenar el formulario
+                    document.getElementById('suiteId').value = suite.id;
+                    document.getElementById('suiteName').value = suite.name;
+                    document.getElementById('suiteDescription').value = suite.description;
+                    
+                    // Mostrar botón de eliminar
+                    document.getElementById('btnDeleteSuite').style.display = 'block';
+                    
+                    // Convertir casos de la suite al formato esperado (filename)
+                    const selectedCaseFilenames = (suite.test_cases || []).map(testCase => 
+                        testCase.codigo || `test_${testCase.id}.py`
+                    );
+                    
+                    console.log(`Casos seleccionados en la suite: ${selectedCaseFilenames.length}`, selectedCaseFilenames);
+                    
+                    // Llenar lista de casos
+                    loadCasesList(selectedCaseFilenames);
+                    
+                    // Mostrar panel de detalle
+                    document.getElementById('suiteDetailEmpty').style.display = 'none';
+                    document.getElementById('suiteDetailContent').style.display = 'block';
+                    document.getElementById('suiteDetailTitle').textContent = 'Editar Suite';
+                    
+                    // Actualizar conteo de casos seleccionados
+                    updateSelectedCasesCount(selectedCaseFilenames.length);
+                    
+                    // Simular datos del historial si estamos en esa pestaña
+                    if (document.querySelector('.tab-item[data-tab="history-tab"]').classList.contains('active')) {
+                        renderSuiteHistory(suite);
+                    }
+                    
+
+                } else {
+                    alert('Error al cargar detalles de la suite: ' + (data.message || 'Error desconocido'));
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar detalles de suite:', error);
+                alert('Error al cargar detalles de la suite: ' + error.message);
+                
+                // Mostrar mensaje de error
+                console.error("Error al cargar suite:", error.message);
+            });
+    }
+    
+    // Función para actualizar el contador de casos seleccionados
+    function updateSelectedCasesCount(count) {
+        const countElement = document.getElementById('selectedCasesCount');
+        if (countElement) {
+            countElement.textContent = `${count} seleccionados`;
+        }
+    }
+    
+    // Función para renderizar historial de ejecuciones de una suite
+    function renderSuiteHistory(suite) {
+        const historyTab = document.getElementById('history-tab');
+        if (!historyTab) return;
+        
+        // Cargar historial real de ejecuciones (por implementar)
+        const historySummary = [];
+        
+        let historyHTML = `
+            <h4 class="tech-glow mb-3"><i class="fas fa-history me-2 text-tech-accent"></i>Historial de Ejecuciones</h4>
+            <p class="text-tech-muted mb-3">Últimas ejecuciones de la suite "${suite.name}"</p>
+            <div class="history-list">
+        `;
+        
+        if (historySummary.length > 0) {
+            historyHTML += `<div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Éxitos</th>
+                            <th>Fallos</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            
+            historySummary.forEach(item => {
+                historyHTML += `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td><span class="badge ${item.status === 'Completado' ? 'bg-success' : 'bg-danger'}">${item.status}</span></td>
+                        <td><span class="text-success">${item.success}</span>/${item.total}</td>
+                        <td><span class="text-danger">${item.failed}</span>/${item.total}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" 
+                                    onclick="alert('Funcionalidad de ver detalles en desarrollo')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary ms-1" 
+                                    onclick="alert('Funcionalidad de descargar reporte en desarrollo')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            historyHTML += `</tbody></table></div>`;
+        } else {
+            historyHTML += `
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <p>No hay ejecuciones registradas para esta suite</p>
+                </div>
+            `;
+        }
+        
+        historyHTML += `</div>`;
+        
+        historyTab.innerHTML = historyHTML;
+    }
+    
+    // Función para cargar lista de casos
+    function loadCasesList(selectedCases = []) {
+        const caseListElement = document.getElementById('caseSelectionList');
+        caseListElement.innerHTML = `
+            <div class="text-center p-4 text-tech-muted empty-state">
+                <i class="fas fa-spinner fa-spin pulse-animation"></i>
+                <p>Cargando casos...</p>
+            </div>
+        `;
+        
+        console.log("Intentando cargar casos...");
+        
+                // Si ya tenemos casos disponibles (cargados desde la suite details)
+        if (availableCases && availableCases.length > 0) {
+            console.log("✅ Usando casos cargados desde BD:", availableCases.length);
+            console.log("📋 Casos seleccionados:", selectedCases);
+            renderCasesList(availableCases, selectedCases);
+            updateSelectedCasesCount(Array.isArray(selectedCases) ? selectedCases.length : 0);
+            return;
+        } else {
+            console.warn("⚠️ No hay casos disponibles en memoria, intentando cargar desde API...");
+        }
+        
+        // Cargar SOLO casos disponibles (sin suite asignada)
+        fetch('/api/test_cases/orphaned')
+            .then(response => {
+                console.log("Respuesta recibida:", response);
+                
+                // Verificar si la respuesta es correcta
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                }
+                
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos recibidos:", data);
+                
+                // Adaptar la respuesta del API de casos huérfanos
+                if (data.success) {
+                    // Convertir los casos a formato esperado - USANDO CAMPOS DE BD
+                    availableCases = (data.orphaned_cases || []).map(testCase => ({
+                        filename: testCase.codigo || `test_${testCase.id}.py`, // Usar 'codigo' como filename
+                        name: testCase.nombre || testCase.codigo,              // Usar 'nombre' como name
+                        id: testCase.id,
+                        created_at: testCase.created_at,
+                        // Campos adicionales de la BD
+                        objetivo: testCase.objetivo,
+                        pasos: testCase.pasos,
+                        url_objetivo: testCase.url_objetivo,
+                        status: testCase.status
+                    }));
+                    
+                    console.log(`Casos encontrados: ${availableCases.length}`);
+                    
+                    if (availableCases.length > 0) {
+                        console.log("Primer caso:", availableCases[0]);
+                    }
+                    
+                    renderCasesList(availableCases, selectedCases);
+                    
+                    // Actualizar conteo de casos seleccionados
+                    updateSelectedCasesCount(Array.isArray(selectedCases) ? selectedCases.length : 0);
+                } else {
+                    caseListElement.innerHTML = `
+                        <div class="text-center p-4 text-danger">
+                            <p>Error al cargar casos: ${data.error || 'Error desconocido'}</p>
+                        </div>
+                    `;
+                    console.error("Error en respuesta:", data);
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar casos:', error);
+                
+                // Intentar recuperar: usar los casos ya disponibles si los hay
+                if (availableCases && availableCases.length > 0) {
+                    console.log("Usando casos en memoria:", availableCases.length);
+                    renderCasesList(availableCases, selectedCases);
+                    
+                    // Mostrar advertencia
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'alert alert-warning mt-2';
+                    warningDiv.innerHTML = `
+                        <p><strong>Advertencia:</strong> Usando casos en caché. La lista podría estar desactualizada.</p>
+                        <p class="small text-tech-muted">Error: ${error.message || error}</p>
+                    `;
+                    caseListElement.parentNode.appendChild(warningDiv);
+                } else {
+                    caseListElement.innerHTML = `
+                        <div class="text-center p-4 text-danger">
+                            <p>Error de red al cargar casos: ${error.message || error}</p>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-primary" onclick="loadCasesList(${JSON.stringify(selectedCases)})">
+                                    <i class="fas fa-sync"></i> Reintentar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+    }
+    
+
+    
+    // Renderizar lista de casos
+    function renderCasesList(cases, selectedCases = []) {
+        const caseListElement = document.getElementById('caseSelectionList');
+        
+        if (!cases || cases.length === 0) {
+            caseListElement.innerHTML = `
+                <div class="text-center p-4 text-tech-muted">
+                    <i class="fas fa-folder-open fa-2x mb-3" style="opacity: 0.5;"></i>
+                    <p><strong>No hay casos de prueba disponibles</strong></p>
+                    <small class="d-block mb-2">Los casos mostrados aquí son solo los que <strong>NO están asignados</strong> a ninguna suite.</small>
+                    <small class="d-block">Puedes crear nuevos casos ejecutando tests desde la página principal y guardándolos como casos Playwright</small>
+                </div>
+            `;
+            return;
+        }
+        
+        try {
+            caseListElement.innerHTML = '';
+            
+            cases.forEach(caseItem => {
+                // Validar que el item tenga filename y que no sea undefined
+                if (!caseItem || typeof caseItem !== 'object' || !caseItem.filename) {
+                    console.error("Item de caso inválido o sin filename:", caseItem);
+                    return;
+                }
+                
+                const isSelected = Array.isArray(selectedCases) && selectedCases.includes(caseItem.filename);
+                const caseElement = document.createElement('div');
+                caseElement.className = `case-item ${isSelected ? 'case-selected' : ''}`;
+                caseElement.dataset.filename = caseItem.filename;
+                
+                // Extraer nombre del caso sin extensión .py de forma segura
+                const filename = caseItem.filename || '';
+                const caseName = filename.replace ? filename.replace(/\.py$/i, '') : filename;
+                
+                caseElement.innerHTML = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="case_${caseName}" 
+                               ${isSelected ? 'checked' : ''}>
+                        <label class="form-check-label" for="case_${caseName}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${caseItem.name || caseItem.filename}</strong>
+                                    ${caseItem.objetivo ? `<br><small class="text-muted">${caseItem.objetivo}</small>` : ''}
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">${caseItem.filename}</small>
+                                    ${caseItem.status ? `<br><span class="badge badge-sm bg-${caseItem.status === 'active' ? 'success' : 'secondary'}">${caseItem.status}</span>` : ''}
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                `;
+                
+                const checkbox = caseElement.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        caseElement.classList.toggle('case-selected', this.checked);
+                        
+                        // Actualizar contador de seleccionados
+                        const totalSelected = document.querySelectorAll('#caseSelectionList input[type="checkbox"]:checked').length;
+                        updateSelectedCasesCount(totalSelected);
+                    });
+                }
+                
+                caseListElement.appendChild(caseElement);
+            });
+        } catch (error) {
+            console.error("Error al renderizar casos:", error);
+            caseListElement.innerHTML = `
+                <div class="text-center p-4 text-danger">
+                    <p>Error al mostrar casos: ${error.message || error}</p>
+                </div>
+            `;
+        }
+    }
+    
+    // Función para crear nueva suite (abre el modal)
+    function createNewSuite() {
+        // Limpiar formulario del modal
+        document.getElementById('newSuiteName').value = '';
+        document.getElementById('newSuiteDescription').value = '';
+        document.getElementById('newSuiteProject').value = '';
+        document.getElementById('newSuiteStatus').value = 'active';
+        document.getElementById('autoAddCases').checked = true;
+        document.getElementById('enableNotifications').checked = false;
+        
+        // Cargar proyectos disponibles
+        loadAvailableProjects();
+        
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('createSuiteModal'));
+        modal.show();
+    }
+    
+    // Función para cargar proyectos disponibles
+    function loadAvailableProjects() {
+        const projectSelect = document.getElementById('newSuiteProject');
+        
+        // Mostrar loading
+        projectSelect.innerHTML = '<option value="">Cargando proyectos...</option>';
+        
+        fetch('/api/projects')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    projectSelect.innerHTML = '<option value="">Seleccionar proyecto...</option>';
+                    
+                    data.projects.forEach(project => {
+                        const option = document.createElement('option');
+                        option.value = project.id; // Usar UUID del proyecto
+                        option.textContent = `📁 ${project.name}`;
+                        
+                        if (project.description) {
+                            option.title = project.description;
+                        }
+                        
+                        projectSelect.appendChild(option);
+                    });
+                    
+                    // Si solo hay un proyecto, seleccionarlo automáticamente
+                    if (data.projects.length === 1) {
+                        projectSelect.value = data.projects[0].id;
+                    }
+                } else {
+                    console.error('Error cargando proyectos:', data.error);
+                    projectSelect.innerHTML = '<option value="">Error cargando proyectos</option>';
+                    showToast('Error', 'No se pudieron cargar los proyectos disponibles', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error en petición de proyectos:', error);
+                projectSelect.innerHTML = '<option value="">Error de conexión</option>';
+                showToast('Error', 'Error de conexión al cargar proyectos', 'error');
+            });
+    }
+    
+    // Función para abrir el modal de crear proyecto
+    function openCreateProjectModal() {
+        // Limpiar formulario
+        document.getElementById('newProjectName').value = '';
+        document.getElementById('newProjectDescription').value = '';
+        document.getElementById('newProjectBaseUrl').value = '';
+        document.getElementById('newProjectStatus').value = 'active';
+        
+        // Mostrar el modal
+        const modal = new bootstrap.Modal(document.getElementById('createProjectModal'));
+        modal.show();
+    }
+    
+    // Función para crear proyecto desde el modal
+    async function createProjectFromModal() {
+        const name = document.getElementById('newProjectName').value.trim();
+        const description = document.getElementById('newProjectDescription').value.trim();
+        const baseUrl = document.getElementById('newProjectBaseUrl').value.trim();
+        const status = document.getElementById('newProjectStatus').value;
+        
+        // Validación
+        if (!name) {
+            showToast('Por favor ingresa un nombre para el proyecto', 'error');
+            document.getElementById('newProjectName').focus();
+            return;
+        }
+        
+        if (name.length < 3) {
+            showToast('El nombre debe tener al menos 3 caracteres', 'error');
+            document.getElementById('newProjectName').focus();
+            return;
+        }
+        
+        // Validar URL si se proporciona
+        if (baseUrl && !isValidUrl(baseUrl)) {
+            showToast('Por favor ingresa una URL válida', 'error');
+            document.getElementById('newProjectBaseUrl').focus();
+            return;
+        }
+        
+        // Deshabilitar botón mientras se procesa
+        const createBtn = document.querySelector('#createProjectModal .tech-btn-accent');
+        const originalText = createBtn.innerHTML;
+        createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Creando...';
+        createBtn.disabled = true;
+        
+        try {
+            // Preparar datos para enviar
+            const projectData = {
+                name: name,
+                description: description,
+                base_url: baseUrl,
+                status: status,
+                metadata: {
+                    created_from: 'suites_modal'
+                }
+            };
+            
+            console.log('Creando proyecto con datos:', projectData);
+            
+            // Enviar petición al endpoint
+            const response = await fetch('/api/projects', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(projectData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Cerrar modal de proyecto
+                bootstrap.Modal.getInstance(document.getElementById('createProjectModal')).hide();
+                
+                // Mostrar mensaje de éxito
+                showToast(`Proyecto "${name}" creado exitosamente`, 'success');
+                
+                // Recargar lista de proyectos en el modal de suite
+                loadAvailableProjects();
+                
+                // Seleccionar automáticamente el nuevo proyecto
+                setTimeout(() => {
+                    const projectSelect = document.getElementById('newSuiteProject');
+                    projectSelect.value = result.project_id;
+                    
+                    // Resaltar que el proyecto fue seleccionado
+                    projectSelect.style.animation = 'pulse-success 1s ease-in-out';
+                    setTimeout(() => {
+                        projectSelect.style.animation = '';
+                    }, 1000);
+                }, 500);
+                
+            } else {
+                throw new Error(result.error || 'Error al crear el proyecto');
+            }
+            
+        } catch (error) {
+            console.error('Error al crear proyecto:', error);
+            showToast(`Error al crear proyecto: ${error.message}`, 'error');
+        } finally {
+            // Restaurar botón
+            createBtn.innerHTML = originalText;
+            createBtn.disabled = false;
+        }
+    }
+    
+    // Función para validar URLs
+    function isValidUrl(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+    
+    // Función para validar nombre de proyecto
+    function validateProjectName(input) {
+        const value = input.value.trim();
+        const feedback = input.parentNode.querySelector('.validation-feedback') || createValidationFeedback(input);
+        
+        // Limpiar clases previas
+        input.classList.remove('is-valid', 'is-invalid');
+        
+        if (value.length === 0) {
+            feedback.style.display = 'none';
+            return;
+        }
+        
+        if (value.length < 3) {
+            input.classList.add('is-invalid');
+            feedback.className = 'validation-feedback text-danger';
+            feedback.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>El nombre debe tener al menos 3 caracteres';
+            feedback.style.display = 'block';
+        } else if (value.length > 255) {
+            input.classList.add('is-invalid');
+            feedback.className = 'validation-feedback text-danger';
+            feedback.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>El nombre no puede exceder 255 caracteres';
+            feedback.style.display = 'block';
+        } else {
+            input.classList.add('is-valid');
+            feedback.className = 'validation-feedback text-success';
+            feedback.innerHTML = '<i class="fas fa-check-circle me-1"></i>Nombre válido';
+            feedback.style.display = 'block';
+        }
+    }
+    
+    // Función para crear suite desde el modal
+    async function createSuiteFromModal() {
+        const name = document.getElementById('newSuiteName').value.trim();
+        const description = document.getElementById('newSuiteDescription').value.trim();
+        const project = document.getElementById('newSuiteProject').value;
+        const status = document.getElementById('newSuiteStatus').value;
+        const autoAdd = document.getElementById('autoAddCases').checked;
+        const notifications = document.getElementById('enableNotifications').checked;
+        
+        // Validación
+        if (!name) {
+            showToast('Por favor ingresa un nombre para la suite', 'error');
+            document.getElementById('newSuiteName').focus();
+            return;
+        }
+        
+        if (name.length < 3) {
+            showToast('El nombre debe tener al menos 3 caracteres', 'error');
+            document.getElementById('newSuiteName').focus();
+            return;
+        }
+        
+        if (!project) {
+            showToast('Por favor selecciona un proyecto', 'error');
+            document.getElementById('newSuiteProject').focus();
+            return;
+        }
+        
+        // Deshabilitar botón mientras se procesa
+        const createBtn = document.querySelector('#createSuiteModal .tech-btn-accent');
+        const originalText = createBtn.innerHTML;
+        createBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Creando...';
+        createBtn.disabled = true;
+        
+        try {
+            // Preparar datos para enviar
+            const suiteData = {
+                name: name,
+                description: description || '',
+                project_id: project, // UUID del proyecto seleccionado
+                status: status,
+                metadata: {
+                    auto_add_cases: autoAdd,
+                    notifications_enabled: notifications,
+                    created_from: 'suites_modal'
+                }
+            };
+            
+            console.log('Creando suite con datos:', suiteData);
+            
+            // Usar el endpoint de creación de suites
+            const response = await fetch('/api/test_suites', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(suiteData)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success || result.status === 'success') {
+                // Cerrar modal
+                bootstrap.Modal.getInstance(document.getElementById('createSuiteModal')).hide();
+                
+                // Mostrar mensaje de éxito
+                showToast(`Suite "${name}" creada exitosamente`, 'success');
+                
+                // Recargar lista de suites
+                setTimeout(() => {
+                    loadSuitesList();
+                }, 500);
+                
+                // Si la suite fue creada con casos automáticos, mostrar info
+                if (autoAdd && result.cases_added) {
+                    setTimeout(() => {
+                        showToast(`Se agregaron ${result.cases_added} casos automáticamente`, 'info');
+                    }, 1500);
+                }
+                
+                // Opcional: abrir la suite recién creada para edición
+                const suiteId = result.suite_id || result.id;
+                if (suiteId) {
+                    setTimeout(() => {
+                        loadSuiteDetails(suiteId);
+                    }, 2000);
+                }
+                
+            } else {
+                throw new Error(result.message || result.error || 'Error al crear la suite');
+            }
+            
+        } catch (error) {
+            console.error('Error al crear suite:', error);
+            showToast(`Error al crear suite: ${error.message}`, 'error');
+        } finally {
+            // Restaurar botón
+            createBtn.innerHTML = originalText;
+            createBtn.disabled = false;
+        }
+    }
+    
+    // Función para mostrar notificaciones toast mejoradas
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toast-container') || createToastContainer();
+        
+        const toastId = 'toast-' + Date.now();
+        const iconMap = {
+            success: 'fas fa-check-circle',
+            error: 'fas fa-exclamation-triangle', 
+            warning: 'fas fa-exclamation-circle',
+            info: 'fas fa-info-circle'
+        };
+        
+        const colorMap = {
+            success: 'text-success',
+            error: 'text-danger',
+            warning: 'text-warning', 
+            info: 'text-info'
+        };
+        
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = 'toast show';
+        toast.setAttribute('role', 'alert');
+        toast.innerHTML = `
+            <div class="toast-header tech-panel-header">
+                <i class="${iconMap[type]} ${colorMap[type]} me-2"></i>
+                <strong class="me-auto">QA-Pilot</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                    </div>
+            <div class="toast-body tech-card">
+                ${message}
+                    </div>
+                `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Auto-remove después de 5 segundos
+        setTimeout(() => {
+            const toastElement = document.getElementById(toastId);
+            if (toastElement) {
+                toastElement.remove();
+            }
+        }, 5000);
+    }
+    
+    // Función para crear el contenedor de toasts si no existe
+    function createToastContainer() {
+        const container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container position-fixed top-0 end-0 p-3';
+        container.style.zIndex = '9999';
+        document.body.appendChild(container);
+        return container;
+    }
+    
+    // Función para validar el nombre de la suite en tiempo real
+    function validateSuiteName(input) {
+        const value = input.value.trim();
+        const feedback = input.parentNode.querySelector('.validation-feedback') || createValidationFeedback(input);
+        
+        // Limpiar clases previas
+        input.classList.remove('is-valid', 'is-invalid');
+        
+        if (value.length === 0) {
+            feedback.style.display = 'none';
+            return;
+        }
+        
+        if (value.length < 3) {
+            input.classList.add('is-invalid');
+            feedback.className = 'validation-feedback text-danger';
+            feedback.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>El nombre debe tener al menos 3 caracteres';
+            feedback.style.display = 'block';
+        } else if (value.length > 100) {
+            input.classList.add('is-invalid');
+            feedback.className = 'validation-feedback text-danger';
+            feedback.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>El nombre no puede exceder 100 caracteres';
+            feedback.style.display = 'block';
+        } else {
+            input.classList.add('is-valid');
+            feedback.className = 'validation-feedback text-success';
+            feedback.innerHTML = '<i class="fas fa-check-circle me-1"></i>Nombre válido';
+            feedback.style.display = 'block';
+        }
+    }
+    
+    // Función para crear elemento de validación
+    function createValidationFeedback(input) {
+        const feedback = document.createElement('div');
+        feedback.className = 'validation-feedback';
+        feedback.style.fontSize = '0.875rem';
+        feedback.style.marginTop = '0.25rem';
+        feedback.style.display = 'none';
+        
+        // Insertar después del input
+        input.parentNode.insertBefore(feedback, input.nextSibling);
+        return feedback;
+    }
+    
+    // Función para guardar suite
+    function saveSuite(e) {
+        e.preventDefault();
+        
+        const suiteId = document.getElementById('suiteId').value;
+        const suiteName = document.getElementById('suiteName').value;
+        const suiteDescription = document.getElementById('suiteDescription').value;
+        
+        if (!suiteName.trim()) {
+            alert('El nombre de la suite es obligatorio');
+            return;
+        }
+        
+        // Obtener casos seleccionados
+        const selectedCases = [];
+        document.querySelectorAll('#caseSelectionList input[type="checkbox"]:checked').forEach(checkbox => {
+            const caseItem = checkbox.closest('.case-item');
+            if (caseItem && caseItem.dataset.filename) {
+                selectedCases.push(caseItem.dataset.filename);
+                console.log(`✅ Caso seleccionado: ${caseItem.dataset.filename}`);
+            } else {
+                console.warn(`⚠️ Caso seleccionado sin filename válido:`, caseItem);
+            }
+        });
+        
+        console.log(`📋 Total casos seleccionados: ${selectedCases.length}`, selectedCases);
+        
+        const suiteData = {
+            name: suiteName,
+            description: suiteDescription,
+            cases: selectedCases
+        };
+        
+        // Mostrar indicador de carga
+        const saveBtn = document.getElementById('btnSaveSuite');
+        const originalBtnText = saveBtn.innerHTML;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        saveBtn.disabled = true;
+        
+        // Usar API local para todas las operaciones
+        let url = '';
+        let method = 'POST';
+        
+        if (suiteId) {
+            // Para actualizar usamos PUT en la API local
+            url = `/api/test_suites/${suiteId}`;
+            method = 'PUT';
+            console.log('INFO: Usando API local para actualizar suite');
+        } else {
+            // Para crear usamos POST en la API local
+            url = '/api/test_suites';
+            method = 'POST';
+            console.log('INFO: Usando API local para crear suite');
+        }
+        
+        console.log(`DEBUG: Enviando petición a ${url}`);
+        console.log(`DEBUG: Datos: ${JSON.stringify(suiteData)}`);
+        
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(suiteData)
+        })
+        .then(response => {
+            console.log(`DEBUG: Respuesta recibida, status: ${response.status}`);
+            console.log(`DEBUG: Headers: ${JSON.stringify([...response.headers.entries()])}`);
+            
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(`DEBUG: Datos recibidos: ${JSON.stringify(data)}`);
+            
+            if (data.status === 'success' || data.success) {
+                // Mostrar mensaje con más detalles
+                const caseCount = data.case_count || 0;
+                const caseText = caseCount === 1 ? 'caso' : 'casos';
+                
+                // Usar SweetAlert2 si está disponible, o alert si no
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: '¡Guardado exitoso!',
+                        html: `<p>${data.message}</p>
+                              <p><strong>${caseCount}</strong> ${caseText} asociados a esta suite</p>`,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                alert(data.message);
+                }
+                
+                // Recargar lista de suites para mostrar el conteo actualizado
+                setTimeout(() => {
+                loadSuitesList();
+                }, 500);
+                
+                // ⭐ IMPORTANTE: Recargar la lista de casos disponibles 
+                // para que los casos asignados ya no aparezcan como disponibles
+                setTimeout(() => {
+                    console.log("♻️ Recargando casos disponibles después de guardar suite...");
+                    loadCasesList([]); // Recargar con lista vacía para obtener casos frescos
+                }, 600);
+                
+                // Si es una nueva suite, cargar sus detalles
+                if (!suiteId && (data.suite_id || (data.suite && data.suite.id))) {
+                    const newSuiteId = data.suite_id || data.suite.id;
+                    setTimeout(() => {
+                    loadSuiteDetails(newSuiteId);
+                    }, 700);
+                } else if (suiteId) {
+                    // Si estamos editando, recargar los detalles para mostrar los cambios
+                    setTimeout(() => {
+                        loadSuiteDetails(suiteId);
+                    }, 700);
+                }
+            } else {
+                alert(`Error: ${data.message || data.error || 'Error desconocido'}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error al guardar suite:', error);
+            alert(`Error: ${error.message || 'Error al guardar la suite'}`);
+        })
+        .finally(() => {
+            // Restaurar botón
+            saveBtn.innerHTML = originalBtnText;
+            saveBtn.disabled = false;
+        });
+    }
+    
+    // Función para cancelar edición
+    function cancelEdit() {
+        if (currentSuiteId) {
+            loadSuiteDetails(currentSuiteId);
+        } else {
+            document.getElementById('suiteDetailContent').style.display = 'none';
+            document.getElementById('suiteDetailEmpty').style.display = 'block';
+        }
+    }
+    
+    // Función para eliminar suite
+    function deleteSuite() {
+        const suiteId = document.getElementById('suiteId').value;
+        
+        if (!suiteId) {
+            return;
+        }
+        
+        if (!confirm('¿Estás seguro de que deseas eliminar esta suite?')) {
+            return;
+        }
+        
+        const btnDelete = document.getElementById('btnDeleteSuite');
+        const originalText = btnDelete.innerHTML;
+        btnDelete.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
+        btnDelete.disabled = true;
+        
+        // Usar API local para eliminar la suite
+        console.log("INFO: Eliminando suite utilizando API local");
+        
+        fetch(`/api/test_suites/${suiteId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            console.log("DEBUG: Respuesta del servidor:", response);
+            
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("DEBUG: Datos recibidos:", data);
+            
+            if (data.success) {
+                alert(data.message);
+                
+                // Recargar lista de suites
+                loadSuitesList();
+                
+                // Resetear vista de detalle
+                document.getElementById('suiteDetailContent').style.display = 'none';
+                document.getElementById('suiteDetailEmpty').style.display = 'block';
+                currentSuiteId = null;
+                
+                // Resetear el panel de ejecución
+                document.getElementById('executionPanel').style.display = 'none';
+            } else {
+                alert(`Error: ${data.error || 'Error desconocido'}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar suite:', error);
+            alert(`Error de red al eliminar suite: ${error.message}`);
+        })
+        .finally(() => {
+            // Restaurar botón
+            btnDelete.innerHTML = originalText;
+            btnDelete.disabled = false;
+        });
+    }
+    
+    // Función para ejecutar suite
+    function runSuite(isDryRun = false) {
+        const suiteId = document.getElementById('suiteId').value;
+        
+        if (!suiteId) {
+            alert('No hay suite seleccionada para ejecutar');
+            return;
+        }
+        
+        // Activar el tab de ejecución
+        const tabItems = document.querySelectorAll('.tab-item');
+        tabItems.forEach(tab => {
+            if (tab.dataset.tab === 'run-tab') {
+                tab.click();
+            }
+        });
+        
+        const headless = document.getElementById('headlessMode').checked;
+        
+        // Mostrar panel de ejecución
+        const executionPanel = document.getElementById('executionPanel');
+        executionPanel.style.display = 'block';
+        
+        // Limpiar estado previo
+        document.getElementById('executionSuiteName').textContent = `Suite: ${document.getElementById('suiteName').value}`;
+        document.getElementById('executionStatus').textContent = isDryRun ? 'VERIFICANDO' : 'Iniciando...';
+        document.getElementById('executionStatus').className = isDryRun ? 'badge bg-info' : 'badge bg-secondary';
+        document.getElementById('executionProgress').style.width = '0%';
+        document.getElementById('executionProgress').textContent = '0%';
+        document.getElementById('successCount').textContent = '0';
+        document.getElementById('failCount').textContent = '0';
+        document.getElementById('currentCase').textContent = '-';
+        document.getElementById('executionCasesList').innerHTML = '';
+        document.getElementById('screenshotGallery').innerHTML = '<div class="text-tech-muted">No hay capturas disponibles</div>';
+        document.getElementById('executionLog').textContent = isDryRun ? 'Iniciando verificación de la suite...' : 'Iniciando ejecución de las pruebas...';
+        
+        // ID único para esta ejecución
+        executionId = 'exec_' + Date.now();
+        
+        // Deshabilitar botones durante la ejecución y mostrar botón de detener
+        const btnDryRun = document.getElementById('btnDryRun');
+        const btnRunSuite = document.getElementById('btnRunSuite');
+        const btnStopSuite = document.getElementById('btnStopSuite');
+        
+        btnDryRun.disabled = true;
+        btnRunSuite.disabled = true;
+        
+        // Mostrar botón de detener solo para ejecuciones reales (no dry run)
+        if (!isDryRun) {
+            btnStopSuite.style.display = 'inline-block';
+            btnStopSuite.disabled = false;
+        }
+        
+        // Mostrar indicador de carga en el botón
+        const originalBtnText = isDryRun ? btnDryRun.innerHTML : btnRunSuite.innerHTML;
+        if (isDryRun) {
+            btnDryRun.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+        } else {
+            btnRunSuite.innerHTML = '<i class="fas fa-play me-1"></i> Ejecutando...';
+        }
+        
+        // Preparar datos para enviar
+        const suiteData = {
+            suite_id: suiteId,
+            headless: headless,
+            is_dry_run: isDryRun
+        };
+        
+        // Ejecutar usando el servidor dedicado
+        fetch('/api/test_suites/' + suiteId + '/execute', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(suiteData)
+            })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Respuesta de ejecución:", data);
+            
+            if (!data.success) {
+                throw new Error(data.error || 'Error desconocido al ejecutar la suite');
+            }
+            
+            // Verificar si es modo dry run (verificación)
+            if (isDryRun) {
+                // Modo verificación: mostrar resultados inmediatamente
+                if (data.results) {
+            // Actualizar estado
+                    document.getElementById('executionStatus').textContent = 'VERIFICADO';
+            document.getElementById('executionStatus').className = 'badge bg-success';
+            
+                    // Actualizar contadores
+                    document.getElementById('successCount').textContent = data.results.success;
+                    document.getElementById('failCount').textContent = data.results.failed;
+                    
+                    // Mostrar casos verificados
+                    updateExecutionCasesList(data.results.cases);
+                    
+                    // Actualizar log
+                    document.getElementById('executionLog').textContent += `\n\n✅ Verificación completada: ${data.results.success} casos listos, ${data.results.failed} con problemas.\n`;
+                }
+            } else {
+                // Modo ejecución real: iniciar monitoreo de progreso
+                document.getElementById('executionStatus').textContent = 'INICIANDO';
+                document.getElementById('executionStatus').className = 'badge bg-info';
+            
+            // Actualizar log
+                document.getElementById('executionLog').textContent += `\n\n🚀 Ejecución real iniciada con ID: ${data.execution_id}\n`;
+                document.getElementById('executionLog').textContent += `📋 Total de casos: ${data.total_cases}\n`;
+                document.getElementById('executionLog').textContent += `\n⏳ Los casos se ejecutarán uno por uno...\n`;
+                document.getElementById('executionLog').textContent += `💡 Este proceso puede tomar varios minutos.\n\n`;
+                
+                // Iniciar monitoreo de progreso en tiempo real
+                startProgressMonitoring(data.execution_id);
+                
+                // No actualizar la barra de progreso a 100% aquí, se hará en el monitoreo
+            }
+            
+            // Actualizar barra de progreso solo para verificación (dry run)
+            if (isDryRun) {
+                document.getElementById('executionProgress').style.width = '100%';
+                document.getElementById('executionProgress').textContent = '100%';
+            }
+            
+            document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+        })
+        .catch(error => {
+            console.error("Error al ejecutar suite:", error);
+            
+            // Actualizar estado
+            document.getElementById('executionStatus').textContent = 'ERROR';
+            document.getElementById('executionStatus').className = 'badge bg-danger';
+            
+            // Mostrar mensaje de error
+            document.getElementById('executionLog').textContent += `\n\nERROR: ${error.message}\n`;
+            document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+            
+                            // Si es un error de red, mostrar mensaje de error
+            if (error.message.includes('network') || error.message.includes('Failed to fetch')) {
+                alert('Error de conexión con el servidor. Por favor, verifica tu conexión e intenta nuevamente.');
+            }
+        })
+        .finally(() => {
+            // Solo restaurar botones si es verificación (dry run)
+            // Para ejecución real, los botones se restauran cuando se completa
+            if (isDryRun) {
+                const btnStopSuite = document.getElementById('btnStopSuite');
+            btnDryRun.disabled = false;
+            btnRunSuite.disabled = false;
+                btnDryRun.innerHTML = '<i class="fas fa-vial me-1"></i> Verificar Suite';
+                btnRunSuite.innerHTML = '<i class="fas fa-play me-1"></i> Ejecutar Pruebas';
+                
+                // Ocultar botón de detener para dry run
+                btnStopSuite.style.display = 'none';
+                btnStopSuite.disabled = true;
+            }
+        });
+    }
+    
+    // Función para detener la ejecución de suite
+    async function stopSuiteExecution() {
+        console.log('🛑 Iniciando detención de ejecución de suite...');
+        
+        const suiteId = document.getElementById('suiteId').value;
+        if (!suiteId) {
+            alert('No hay suite en ejecución para detener');
+            return;
+        }
+        
+        // Confirmar con el usuario
+        if (!confirm('¿Estás seguro de que quieres detener la ejecución? Los casos que estén ejecutándose serán interrumpidos.')) {
+            return;
+        }
+        
+        const btnStopSuite = document.getElementById('btnStopSuite');
+        const originalText = btnStopSuite.innerHTML;
+        
+        try {
+            // Mostrar indicador de carga
+            btnStopSuite.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Deteniendo...';
+            btnStopSuite.disabled = true;
+            
+            // Detener el poller de progreso actual si existe
+            if (window.currentProgressPoller) {
+                clearInterval(window.currentProgressPoller);
+                window.currentProgressPoller = null;
+                console.log('🔄 Poller de progreso detenido');
+            }
+            
+            // Llamar al endpoint de detener ejecución
+            const response = await fetch(`/api/test_suites/${suiteId}/stop_execution`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Actualizar UI para reflejar detención
+                    document.getElementById('executionStatus').textContent = 'DETENIDO';
+                    document.getElementById('executionStatus').className = 'badge bg-warning';
+                    
+                    // Agregar mensaje al log
+                    const logElement = document.getElementById('executionLog');
+                    logElement.textContent += `\n\n🛑 Ejecución detenida por el usuario`;
+                    logElement.textContent += `\n⏱️ Detenida el: ${new Date().toLocaleString()}`;
+                    logElement.textContent += `\n📊 Estado al detener: ${data.stopped_cases || 0} casos procesados`;
+                    logElement.scrollTop = logElement.scrollHeight;
+                    
+                    console.log('✅ Ejecución detenida exitosamente');
+                    
+                    // Restaurar botones
+                    const btnDryRun = document.getElementById('btnDryRun');
+                    const btnRunSuite = document.getElementById('btnRunSuite');
+                    
+                    btnDryRun.disabled = false;
+                    btnRunSuite.disabled = false;
+                    btnStopSuite.style.display = 'none';
+                    
+                } else {
+                    throw new Error(data.error || 'Error desconocido al detener ejecución');
+                }
+                
+            } else {
+                throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ Error deteniendo ejecución:', error);
+            
+            // Mostrar error en el log
+            const logElement = document.getElementById('executionLog');
+            logElement.textContent += `\n❌ Error al detener ejecución: ${error.message}`;
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            alert(`Error al detener ejecución: ${error.message}`);
+            
+        } finally {
+            // Restaurar botón de detener
+            btnStopSuite.innerHTML = originalText;
+            btnStopSuite.disabled = false;
+        }
+    }
+    
+    // Función para actualizar la lista de casos con los resultados de ejecución
+    function updateExecutionCasesList(cases) {
+        const casesListElement = document.getElementById('executionCasesList');
+        casesListElement.innerHTML = '';
+        
+        cases.forEach((caseResult, index) => {
+            // Validar que caseResult existe y tiene las propiedades básicas
+            if (!caseResult) {
+                console.warn(`⚠️ Caso ${index + 1} es null o undefined, saltando...`);
+                return;
+            }
+            
+            const statusClass = caseResult.status === 'success' ? 'bg-success' : 
+                               (caseResult.status === 'failed' ? 'bg-danger' : 'bg-warning');
+            const statusText = caseResult.status === 'success' ? 'Éxito' : 
+                              (caseResult.status === 'failed' ? 'Fallo' : 'Error');
+            
+            // Personalizar el mensaje según si es verificación o ejecución real
+            let messageText = caseResult.message || '';
+            if (messageText === 'Verificación exitosa') {
+                messageText = 'El script está listo para ejecutarse';
+            }
+            
+            // Construir el elemento de caso con información detallada
+            const caseElement = document.createElement('div');
+            caseElement.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            // Obtener nombre del caso de forma segura
+            const caseName = caseResult.case || caseResult.name || `Caso ${index + 1}`;
+            const displayName = typeof caseName === 'string' ? caseName.replace('.py', '') : caseName;
+            
+            // HTML básico con el nombre del caso y su estado
+            let caseHtml = `
+                <div style="width: 100%;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="me-2">${index + 1}.</span>
+                            <span class="fw-semibold">${displayName}</span>
+                        </div>
+                        <span class="badge ${statusClass}">${statusText}</span>
+                    </div>
+            `;
+            
+            // Añadir mensaje principal
+            if (messageText) {
+                caseHtml += `<div class="small text-muted mt-1">${messageText}</div>`;
+            }
+            
+            // Añadir detalles adicionales (solo si existen)
+            if (caseResult.detail) {
+                caseHtml += `<div class="small text-info mt-1 font-monospace">${caseResult.detail}</div>`;
+            }
+            
+            // Añadir log si existe (para ejecuciones reales)
+            if (caseResult.log) {
+                const truncatedLog = caseResult.log.length > 200 ? 
+                    caseResult.log.substring(0, 200) + '...' : 
+                    caseResult.log;
+                    
+                caseHtml += `
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#log-${index}" 
+                                aria-expanded="false">
+                            Ver log <i class="fas fa-chevron-down ms-1"></i>
+                        </button>
+                        <div class="collapse mt-2" id="log-${index}">
+                            <div class="card card-body bg-dark text-light">
+                                <pre class="small mb-0" style="max-height: 150px; overflow-y: auto;">${truncatedLog}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Cerrar div principal
+            caseHtml += `</div>`;
+            
+            // Asignar HTML
+            caseElement.innerHTML = caseHtml;
+            casesListElement.appendChild(caseElement);
+        });
+    }
+    
+    // Función para actualizar la galería de capturas
+    function updateScreenshotGallery(cases) {
+        const galleryElement = document.getElementById('screenshotGallery');
+        
+        // Obtener todas las capturas de todos los casos
+        const screenshots = [];
+        cases.forEach(caseResult => {
+            if (caseResult.screenshots && caseResult.screenshots.length > 0) {
+                screenshots.push(...caseResult.screenshots);
+            }
+        });
+        
+        // Si no hay capturas, mostrar mensaje
+        if (screenshots.length === 0) {
+            galleryElement.innerHTML = '<div class="text-tech-muted">No hay capturas disponibles</div>';
+            return;
+        }
+        
+        // Limpiar galería
+        galleryElement.innerHTML = '';
+        
+        // Mostrar capturas
+        screenshots.forEach(screenshot => {
+            const screenshotItem = document.createElement('div');
+            screenshotItem.className = 'screenshot-item';
+            
+            // Obtener la URL relativa para la imagen
+            const imgUrl = screenshot.path;
+            
+            screenshotItem.innerHTML = `
+                <img src="${imgUrl}" alt="${screenshot.filename}" loading="lazy">
+                <div class="caption">${screenshot.filename}</div>
+            `;
+            
+            galleryElement.appendChild(screenshotItem);
+        });
+    }
+    
+            // Función para manejo de errores
+    function runSuiteSimulation(isDryRun = false) {
+        // Mostrar mensaje informativo
+        document.getElementById('executionLog').textContent += `\nAtención: Usando modo de prueba por problema de conexión.\n`;
+        document.getElementById('executionLog').textContent += `\nIdentificador: ${executionId}\n`;
+        
+        // Actualizar estado
+        document.getElementById('executionStatus').textContent = isDryRun ? 'VERIFICANDO' : 'SIMULANDO';
+        document.getElementById('executionStatus').className = isDryRun ? 'badge bg-info' : 'badge bg-primary';
+        
+        // Obtener casos seleccionados (si hay)
+        const casesElement = document.getElementById('caseSelectionList');
+        const selectedCases = [];
+        
+        if (casesElement) {
+            const checkboxes = casesElement.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                const caseItem = checkbox.closest('.case-item');
+                if (caseItem && caseItem.dataset.filename) {
+                    selectedCases.push(caseItem.dataset.filename);
+                }
+            });
+        }
+        
+        // Si no hay casos seleccionados, mostrar error
+        if (selectedCases.length === 0) {
+            alert('Por favor selecciona al menos un caso para ejecutar');
+            return;
+        }
+        
+        // Renderizar casos en el panel de ejecución
+        const casesListElement = document.getElementById('executionCasesList');
+        casesListElement.innerHTML = '';
+        
+        selectedCases.forEach((caseFile, index) => {
+            const caseElement = document.createElement('div');
+            caseElement.className = 'list-group-item d-flex justify-content-between align-items-center';
+            
+            // Mensaje personalizado según el modo
+            const messageContent = isDryRun ? 
+                `<div class="small text-muted">El script está listo para ejecutarse</div>` :
+                '';
+                
+            caseElement.innerHTML = `
+                <div>
+                    <span class="me-2">${index + 1}.</span>
+                    ${caseFile.replace('.py', '')}
+                    ${messageContent}
+                </div>
+                <span class="badge bg-secondary">Pendiente</span>
+            `;
+            casesListElement.appendChild(caseElement);
+        });
+        
+        // Simular progreso
+        let progress = 0;
+        let currentCaseIndex = 0;
+        let successCount = 0;
+        let failCount = 0;
+        
+        // Iniciar simulación de progreso
+                        if (executionInterval) {
+                            clearInterval(executionInterval);
+        }
+        
+        // Si es un dry run, hacer la simulación más rápida
+        const intervalTime = isDryRun ? 300 : 500;
+        
+        executionInterval = setInterval(() => {
+            progress += isDryRun ? 10 : 5; // Progreso más rápido en verificación
+            
+            // Actualizar barra de progreso
+                    document.getElementById('executionProgress').style.width = `${progress}%`;
+                    document.getElementById('executionProgress').textContent = `${progress}%`;
+                    
+            // Simular ejecución de casos
+            const caseProgress = Math.floor((progress / 100) * selectedCases.length);
+            
+            if (caseProgress > currentCaseIndex && currentCaseIndex < selectedCases.length) {
+                // Marcar caso actual como ejecutado
+                const caseItems = casesListElement.querySelectorAll('.list-group-item');
+                if (caseItems[currentCaseIndex]) {
+                    // En verificación, todos los casos son exitosos
+                    const isSuccess = isDryRun ? true : Math.random() > 0.3; // 70% de probabilidad de éxito en modo normal
+                    
+                    if (isSuccess) {
+                        successCount++;
+                        caseItems[currentCaseIndex].querySelector('.badge').className = 'badge bg-success';
+                        caseItems[currentCaseIndex].querySelector('.badge').textContent = 'Éxito';
+                    } else {
+                        failCount++;
+                        caseItems[currentCaseIndex].querySelector('.badge').className = 'badge bg-danger';
+                        caseItems[currentCaseIndex].querySelector('.badge').textContent = 'Fallo';
+                    }
+                    
+                    // Actualizar contadores en la interfaz
+                    document.getElementById('successCount').textContent = successCount;
+                    document.getElementById('failCount').textContent = failCount;
+                    
+                    // Añadir mensaje al log
+                    const resultMessage = isDryRun ? 
+                        `\nVerificado caso ${currentCaseIndex + 1} (${selectedCases[currentCaseIndex]}): LISTO\n` :
+                        `\nCaso ${currentCaseIndex + 1} (${selectedCases[currentCaseIndex]}): ${isSuccess ? 'ÉXITO' : 'FALLO'}\n`;
+                        
+                    document.getElementById('executionLog').textContent += resultMessage;
+                    document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+                }
+                
+                currentCaseIndex++;
+                    
+                    // Actualizar caso actual
+                if (currentCaseIndex < selectedCases.length) {
+                    document.getElementById('currentCase').textContent = selectedCases[currentCaseIndex].replace('.py', '');
+                    
+                    // Marcar el nuevo caso actual
+                    if (caseItems[currentCaseIndex]) {
+                        caseItems[currentCaseIndex].querySelector('.badge').className = 'badge bg-primary';
+                        caseItems[currentCaseIndex].querySelector('.badge').textContent = isDryRun ? 'Verificando' : 'En ejecución';
+                    }
+                    
+                    // Simular captura de pantalla para el caso completado (cada 2 casos)
+                    if (!isDryRun && currentCaseIndex > 0 && currentCaseIndex % 2 === 0) {
+                        // Generar captura simulada
+                        addSimulatedScreenshot(selectedCases[currentCaseIndex-1], currentCaseIndex);
+                    }
+                } else {
+                    document.getElementById('currentCase').textContent = 'Finalizado';
+                    
+                    // Simular captura final si no es verificación
+                    if (!isDryRun && selectedCases.length > 0) {
+                        addSimulatedScreenshot(selectedCases[selectedCases.length-1], selectedCases.length);
+                    }
+                }
+            }
+            
+            // Añadir mensaje al log cada 20%
+            if (progress % 20 === 0) {
+                const progressMessage = isDryRun ? 
+                    `\nVerificación: ${progress}% completado\n` :
+                    `\nProgreso general: ${progress}%\n`;
+                    
+                document.getElementById('executionLog').textContent += progressMessage;
+                document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+            }
+            
+            // Simular finalización
+            if (progress >= 100) {
+                        clearInterval(executionInterval);
+                document.getElementById('executionStatus').textContent = 'COMPLETADO';
+                document.getElementById('executionStatus').className = 'badge bg-success';
+                
+                const completionMessage = isDryRun ? 
+                    `\n\nVerificación completada correctamente. La suite está lista para ejecutarse.\n` :
+                    `\n\nEjecución simulada completada con éxito.\n`;
+                
+                document.getElementById('executionLog').textContent += completionMessage;
+                document.getElementById('executionLog').textContent += `\nResumen: ${successCount} éxitos, ${failCount} fallos\n`;
+                document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+            }
+        }, intervalTime);
+    }
+    
+    // Función para añadir una captura simulada al panel de capturas
+    function addSimulatedScreenshot(caseName, step) {
+        const galleryElement = document.getElementById('screenshotGallery');
+        
+        // Limpiar mensaje de "No hay capturas" si es la primera captura
+        if (galleryElement.innerHTML.includes('No hay capturas disponibles')) {
+            galleryElement.innerHTML = '';
+        }
+        
+        // Generar un color aleatorio en tonos azules para simular la captura
+        const hue = Math.floor(Math.random() * 60) + 200; // Tonos azules (200-260)
+        const saturation = Math.floor(Math.random() * 20) + 80; // Alta saturación (80-100%)
+        const lightness = Math.floor(Math.random() * 30) + 30; // Medio brillo (30-60%)
+        
+        // Crear elemento de captura
+        const screenshotItem = document.createElement('div');
+        screenshotItem.className = 'screenshot-item';
+        
+        // Placeholder visual para captura
+        screenshotItem.innerHTML = `
+            <div style="height: 100px; background: hsl(${hue}, ${saturation}%, ${lightness}%); display: flex; justify-content: center; align-items: center;">
+                <i class="fas fa-code fa-2x" style="color: rgba(255,255,255,0.7);"></i>
+                </div>
+            <div class="caption">${caseName.replace('.py', '')}: Paso ${step}</div>
+        `;
+        
+        // Añadir al gallery
+        galleryElement.appendChild(screenshotItem);
+        
+        // Actualizar mensaje en el log
+        document.getElementById('executionLog').textContent += `\nCaptura guardada para ${caseName}\n`;
+        document.getElementById('executionLog').scrollTop = document.getElementById('executionLog').scrollHeight;
+    }
+    
+    // Función para monitorear el progreso de ejecución real
+    function startProgressMonitoring(executionId) {
+        if (!executionId) return;
+        
+        console.log('🔍 Iniciando monitoreo de progreso para ejecución:', executionId);
+        
+        const pollInterval = 5000; // 5 segundos
+        let pollCount = 0;
+        const maxPolls = 360; // 30 minutos máximo (360 * 5 segundos)
+        
+        const progressPoller = setInterval(async () => {
+            pollCount++;
+            console.log(`📊 Poll #${pollCount} - Verificando estado de ${executionId.substring(0, 8)}...`);
+            
+            try {
+                const suiteId = document.getElementById('suiteId').value;
+                const response = await fetch(`/api/test_suites/${suiteId}/execution/${executionId}/status`);
+                
+                if (!response.ok) {
+                    throw new Error(`Error del servidor: ${response.status}`);
+                }
+                
+                const status = await response.json();
+                console.log(`📈 Estado recibido:`, status);
+                
+                if (status.success) {
+                    // Actualizar UI con el progreso
+                    console.log(`🔄 Actualizando UI - Estado: ${status.status}, Progreso: ${status.progress?.completed_cases}/${status.progress?.total_cases}`);
+                    updateExecutionProgress(status);
+                    
+                    // Si la ejecución terminó, detener el polling
+                    if (status.status === 'completed' || status.status === 'failed' || status.status === 'error') {
+                        console.log(`🏁 Ejecución terminada con estado: ${status.status}`);
+                        clearInterval(progressPoller);
+                        onExecutionCompleted(status);
+                    }
+                } else {
+                    console.error('❌ Error obteniendo estado de ejecución:', status.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en polling de progreso:', error);
+                
+                // Detener polling después de varios errores consecutivos
+                if (pollCount > 5) {
+                    console.warn('⚠️ Demasiados errores, deteniendo monitoreo');
+                    clearInterval(progressPoller);
+                    document.getElementById('executionLog').textContent += `\n❌ Error monitoreando progreso: ${error.message}\n`;
+                }
+            }
+            
+            // Timeout de seguridad
+            if (pollCount >= maxPolls) {
+                console.warn('⏰ Timeout de monitoreo alcanzado');
+                clearInterval(progressPoller);
+                document.getElementById('executionLog').textContent += `\n⏰ Timeout de monitoreo alcanzado (30 minutos)\n`;
+                document.getElementById('executionStatus').textContent = 'TIMEOUT';
+                document.getElementById('executionStatus').className = 'badge bg-warning';
+            }
+            
+        }, pollInterval);
+        
+        // Guardar referencia para poder cancelarlo si es necesario
+        window.currentProgressPoller = progressPoller;
+        console.log('✅ Monitoreo iniciado, poller guardado en window.currentProgressPoller');
+    }
+    
+    // Función para actualizar el progreso de ejecución en la UI
+    function updateExecutionProgress(status) {
+        console.log('🎯 updateExecutionProgress llamada con:', status);
+        const progress = status.progress || {};
+        
+        // Actualizar estado principal
+        if (status.status) {
+            const statusElement = document.getElementById('executionStatus');
+            console.log(`🏷️ Actualizando estado de "${statusElement.textContent}" a "${status.status}"`);
+            
+            switch (status.status) {
+                case 'starting':
+                    statusElement.textContent = 'INICIANDO';
+                    statusElement.className = 'badge bg-info';
+                    break;
+                case 'running':
+                    statusElement.textContent = 'EJECUTANDO';
+                    statusElement.className = 'badge bg-primary';
+                    break;
+                case 'completed':
+                    console.log('✅ Estableciendo estado COMPLETADO');
+                    statusElement.textContent = 'COMPLETADO';
+                    statusElement.className = 'badge bg-success';
+                    break;
+                case 'failed':
+                case 'error':
+                    statusElement.textContent = 'ERROR';
+                    statusElement.className = 'badge bg-danger';
+                    break;
+                default:
+                    statusElement.textContent = status.status.toUpperCase();
+                    statusElement.className = 'badge bg-secondary';
+            }
+        }
+        
+        // Actualizar barra de progreso
+        if (progress.total_cases > 0) {
+            const percentage = Math.round((progress.completed_cases / progress.total_cases) * 100);
+            console.log(`📊 Actualizando barra de progreso: ${progress.completed_cases}/${progress.total_cases} = ${percentage}%`);
+            const progressBar = document.getElementById('executionProgress');
+            progressBar.style.width = `${percentage}%`;
+            progressBar.textContent = `${percentage}%`;
+        }
+        
+        // Actualizar contadores
+        document.getElementById('successCount').textContent = progress.success_count || 0;
+        document.getElementById('failCount').textContent = progress.failed_count || 0;
+        
+        // Actualizar caso actual
+        if (progress.completed_cases && progress.total_cases) {
+            const currentCaseNum = Math.min(progress.completed_cases + 1, progress.total_cases);
+            document.getElementById('currentCase').textContent = `${progress.completed_cases}/${progress.total_cases}`;
+        }
+        
+        // Actualizar log con progreso
+        if (status.cases && status.cases.length > 0) {
+            updateExecutionCasesList(status.cases);
+        }
+        
+        // Agregar mensaje de progreso al log
+        if (progress.completed_cases !== undefined && progress.total_cases > 0) {
+            const logElement = document.getElementById('executionLog');
+            const lastLogLine = logElement.textContent.split('\n').pop();
+            
+            // Solo agregar nueva línea si no es igual a la anterior
+            const newProgressLine = `📊 Progreso: ${progress.completed_cases}/${progress.total_cases} casos completados (${progress.success_count} éxitos, ${progress.failed_count} fallos)`;
+            
+            if (!lastLogLine.includes('📊 Progreso:')) {
+                logElement.textContent += `\n${newProgressLine}`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+    }
+    
+    // Función llamada cuando la ejecución se completa
+    function onExecutionCompleted(status) {
+        console.log('🏁 Ejecución completada:', status);
+        console.log('🏁 Execution ID:', status.execution_id);
+        console.log('🏁 Status:', status.status);
+        
+        const logElement = document.getElementById('executionLog');
+        
+        if (status.status === 'completed') {
+            logElement.textContent += `\n\n🏁 Ejecución completada exitosamente!`;
+            logElement.textContent += `\n✅ Total: ${status.progress.success_count} éxitos, ${status.progress.failed_count} fallos`;
+            
+            if (status.end_time) {
+                logElement.textContent += `\n⏱️ Finalizada: ${new Date(status.end_time).toLocaleString()}`;
+            }
+            
+            // Scroll antes de agregar evidencia
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            // Agregar botón para generar evidencia
+            console.log('🔄 Iniciando proceso de evidencia...');
+            showEvidenceGenerationOption(status.execution_id);
+            
+        } else {
+            logElement.textContent += `\n\n❌ Ejecución terminada con errores`;
+            logElement.textContent += `\nEstado final: ${status.status}`;
+            console.log('❌ Ejecución falló, no se mostrará opción de evidencia');
+        }
+        
+        // Restaurar botones
+        const btnDryRun = document.getElementById('btnDryRun');
+        const btnRunSuite = document.getElementById('btnRunSuite');
+        const btnStopSuite = document.getElementById('btnStopSuite');
+        
+        btnDryRun.disabled = false;
+        btnRunSuite.disabled = false;
+        
+        // Ocultar botón de detener
+        btnStopSuite.style.display = 'none';
+        btnStopSuite.disabled = true;
+        
+        // Scroll al final del log
+        logElement.scrollTop = logElement.scrollHeight;
+        
+        // Limpiar poller si existe
+        if (window.currentProgressPoller) {
+            clearInterval(window.currentProgressPoller);
+            window.currentProgressPoller = null;
+        }
+    }
+    
+    // Función para mostrar opción de generar evidencia
+    function showEvidenceGenerationOption(executionId) {
+        console.log('📄 Mostrando opción de generar evidencia para execution:', executionId);
+        
+        // Primero, eliminar cualquier botón existente para evitar duplicados
+        const existingButton = document.getElementById('btnGenerateEvidence');
+        if (existingButton) {
+            existingButton.remove();
+            console.log('🗑️ Botón existente eliminado');
+        }
+        
+        // Crear el botón
+        const evidenceButton = document.createElement('button');
+        evidenceButton.id = 'btnGenerateEvidence';
+        evidenceButton.className = 'btn btn-success btn-lg';
+        evidenceButton.innerHTML = '<i class="fas fa-file-word me-2"></i> Generar Evidencia';
+        evidenceButton.style.cssText = 'margin: 15px 0; padding: 12px 24px; font-weight: bold;';
+        
+        // Agregar evento click
+        evidenceButton.addEventListener('click', () => generateSuiteEvidence(executionId));
+        
+        console.log('🔧 Botón de evidencia creado con ID:', evidenceButton.id);
+        
+        // Estrategia de inserción más directa
+        const logElement = document.getElementById('executionLog');
+        
+        if (logElement && logElement.parentElement) {
+            // Crear contenedor para el botón
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'text-center my-3';
+            buttonContainer.style.cssText = 'background: rgba(25, 135, 84, 0.1); padding: 15px; border-radius: 8px; border: 2px solid #198754;';
+            buttonContainer.appendChild(evidenceButton);
+            
+            // Insertar DESPUÉS del log para que sea más visible
+            logElement.parentElement.appendChild(buttonContainer);
+            
+            console.log('✅ Botón de evidencia insertado después del log');
+            console.log('✅ Contenedor padre:', logElement.parentElement.tagName);
+            console.log('✅ Botón en DOM:', document.getElementById('btnGenerateEvidence') !== null);
+        } else {
+            console.error('❌ No se pudo encontrar elemento de log o su contenedor');
+            console.log('Log element:', logElement);
+            console.log('Parent element:', logElement ? logElement.parentElement : 'N/A');
+        }
+        
+        // Agregar mensaje en el log
+        logElement.textContent += `\n\n📄 ¡Ejecución completada! Puedes generar el documento de evidencia.`;
+        logElement.textContent += `\n💡 Busca el botón verde "Generar Evidencia" debajo de este log.`;
+        logElement.scrollTop = logElement.scrollHeight;
+        
+        console.log('📄 Mensaje de evidencia agregado al log');
+        
+        // Verificación final
+        setTimeout(() => {
+            const finalCheck = document.getElementById('btnGenerateEvidence');
+            if (finalCheck) {
+                console.log('✅ VERIFICACIÓN FINAL: Botón existe en DOM');
+                console.log('✅ Botón visible:', finalCheck.offsetParent !== null);
+                console.log('✅ Posición botón:', finalCheck.getBoundingClientRect());
+            } else {
+                console.error('❌ VERIFICACIÓN FINAL: Botón NO encontrado en DOM');
+            }
+        }, 100);
+    }
+    
+    // Función para generar evidencia de la suite
+    async function generateSuiteEvidence(executionId) {
+        const suiteId = document.getElementById('suiteId').value;
+        const evidenceButton = document.getElementById('btnGenerateEvidence');
+        
+        if (!suiteId || !executionId) {
+            alert('Error: No se pudo obtener información de la suite o ejecución');
+            return;
+        }
+        
+        try {
+            // Deshabilitar botón y mostrar carga
+            evidenceButton.disabled = true;
+            evidenceButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Generando...';
+            
+            // Agregar mensaje al log
+            const logElement = document.getElementById('executionLog');
+            logElement.textContent += `\n\n📄 Generando documento de evidencia...`;
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            // Hacer petición para generar evidencia
+            const response = await fetch(`/api/test_suites/${suiteId}/execution/${executionId}/generate_evidence`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                // Si la respuesta es exitosa, descargar el archivo
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                
+                // Crear enlace de descarga
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Evidencia_Suite_${executionId.substring(0, 8)}_${new Date().toISOString().slice(0, 10)}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // Limpiar URL
+                window.URL.revokeObjectURL(url);
+                
+                // Mensaje de éxito
+                logElement.textContent += `\n✅ Documento de evidencia generado y descargado exitosamente.`;
+                
+            } else {
+                // Manejar error del servidor
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Error desconocido del servidor');
+            }
+            
+        } catch (error) {
+            console.error('Error generando evidencia:', error);
+            
+            // Mostrar error en el log
+            const logElement = document.getElementById('executionLog');
+            logElement.textContent += `\n❌ Error generando evidencia: ${error.message}`;
+            
+            alert(`Error generando evidencia: ${error.message}`);
+            
+        } finally {
+            // Restaurar botón
+            evidenceButton.disabled = false;
+            evidenceButton.innerHTML = '<i class="fas fa-file-word me-1"></i> Generar Evidencia';
+            
+            // Scroll al final del log
+            const logElement = document.getElementById('executionLog');
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+    }
+    
+    // Función para forzar verificación de estado (útil cuando la UI se atasca)
+    async function forceCheckExecutionStatus() {
+        console.log('🔄 FORZANDO verificación de estado de ejecución...');
+        
+        // Buscar el execution_id más reciente
+        try {
+            const response = await fetch('/api/debug/suite_executions');
+            if (response.ok) {
+                const debug_data = await response.json();
+                console.log('📋 Debug data obtenida:', debug_data);
+                
+                if (debug_data.files && debug_data.files.length > 0) {
+                    // Tomar el más reciente
+                    const latest_execution = debug_data.files[debug_data.files.length - 1];
+                    console.log('🔄 Forzando verificación del estado más reciente:', latest_execution);
+                    
+                    if (latest_execution.execution_id) {
+                        const suiteId = document.getElementById('suiteId').value;
+                        console.log('📝 Suite ID:', suiteId);
+                        
+                        const statusResponse = await fetch(`/api/test_suites/${suiteId}/execution/${latest_execution.execution_id}/status`);
+                        
+                        if (statusResponse.ok) {
+                            const status = await statusResponse.json();
+                            console.log('🎯 Estado forzado obtenido:', status);
+                            
+                            // Actualizar UI inmediatamente
+                            updateExecutionProgress(status);
+                            
+                            // Si está completado, ejecutar lógica de finalización
+                            if (status.status === 'completed' || status.status === 'failed' || status.status === 'error') {
+                                console.log('🏁 FORZANDO onExecutionCompleted...');
+                                onExecutionCompleted(status);
+                            }
+                            
+                            return status;
+                        } else {
+                            console.error('❌ Error en statusResponse:', statusResponse.status);
+                        }
+                    } else {
+                        console.error('❌ No se encontró execution_id en:', latest_execution);
+                    }
+                } else {
+                    console.error('❌ No se encontraron archivos de debug');
+                }
+            } else {
+                console.error('❌ Error en response debug:', response.status);
+            }
+        } catch (error) {
+            console.error('❌ Error forzando verificación:', error);
+        }
+        return null;
+    }
+    
+    // Función para forzar mostrar botón de evidencia (para testing)
+    function forceShowEvidenceButton() {
+        console.log('🧪 FORZANDO mostrar botón de evidencia...');
+        
+        // Simular execution_id para testing
+        const executionId = 'test_' + Date.now();
+        showEvidenceGenerationOption(executionId);
+        
+        console.log('✅ Botón de evidencia forzado con ID:', executionId);
+    }
+    
+    // Función alternativa para insertar botón en lugar más visible
+    function forceShowEvidenceButtonAlternative() {
+        console.log('🧪 MÉTODO ALTERNATIVO para mostrar botón de evidencia...');
+        
+        // Eliminar botón existente
+        const existing = document.getElementById('btnGenerateEvidence');
+        if (existing) existing.remove();
+        
+        // Crear botón con estilo más llamativo
+        const button = document.createElement('button');
+        button.id = 'btnGenerateEvidence';
+        button.className = 'btn btn-success btn-lg';
+        button.innerHTML = '<i class="fas fa-file-word me-2"></i> 📄 GENERAR EVIDENCIA 📄';
+        button.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: pulse 2s infinite;
+        `;
+        
+        // Agregar animación CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: translate(-50%, -50%) scale(1); }
+                50% { transform: translate(-50%, -50%) scale(1.05); }
+                100% { transform: translate(-50%, -50%) scale(1); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Agregar al body
+        document.body.appendChild(button);
+        
+        // Evento click (simulado)
+        button.addEventListener('click', () => {
+            alert('¡Botón de evidencia funcionando! (Modo test)');
+            button.remove();
+            style.remove();
+        });
+        
+        console.log('✅ Botón alternativo creado y centrado en pantalla');
+        
+        // Auto-remover después de 10 segundos
+        setTimeout(() => {
+            if (button.parentNode) {
+                button.remove();
+                style.remove();
+                console.log('🧹 Botón alternativo removido automáticamente');
+            }
+        }, 10000);
+    }
+    
+    // Exponer funciones en window para debug desde consola
+    window.forceCheckExecutionStatus = forceCheckExecutionStatus;
+    window.forceShowEvidenceButton = forceShowEvidenceButton;
+    window.forceShowEvidenceButtonAlternative = forceShowEvidenceButtonAlternative;
+    window.generateSuiteEvidence = generateSuiteEvidence;
+</script>
+{% endblock %} 

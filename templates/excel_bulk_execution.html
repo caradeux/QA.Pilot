@@ -1,0 +1,813 @@
+{% extends "base.html" %}
+
+{% block title %}Ejecución Masiva desde Excel - QA-Pilot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header de la página -->
+            <div class="tech-panel mb-4">
+                <div class="tech-panel-header">
+                    <h2 class="tech-panel-title">
+                        <i class="fas fa-file-excel"></i>
+                        Ejecución Masiva desde Excel
+                    </h2>
+                </div>
+                <div class="tech-panel-body">
+                    <p class="text-tech-muted">
+                        Carga un archivo Excel con casos de prueba, analízalos automáticamente con IA y ejecútalos en lote.
+                        El sistema validará la coherencia y completitud de cada caso antes de la ejecución.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Panel de carga de archivo -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="tech-card excel-form-card">
+                        <div class="tech-panel-header">
+                            <h5 class="tech-panel-title">
+                                <i class="fas fa-upload"></i>
+                                Cargar Archivo Excel
+                            </h5>
+                        </div>
+                        <div class="tech-panel-body excel-upload-form">
+                            <form id="excelUploadForm" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="excelFile" class="form-label">Archivo Excel (.xlsx)</label>
+                                    <input type="file" class="form-control tech-input" id="excelFile" name="excel_file" accept=".xlsx,.xls" required>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        El archivo debe contener casos de prueba con las columnas estándar.
+                                        <a href="/download_excel_template" class="text-primary me-3">
+                                            <i class="fas fa-download me-1"></i>Descargar Template Actualizado
+                                        </a>
+                                        <small class="text-muted">(Recomendado - Estructura optimizada)</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert tech-alert tech-alert-info mb-3">
+                                    <i class="fas fa-magic me-2"></i>
+                                    <strong>Análisis Inteligente:</strong> Nuestro sistema analizará automáticamente la calidad y viabilidad de tus casos de prueba, proporcionando sugerencias de mejora y validación instantánea.
+                                </div>
+
+                                <!-- Opciones de datos de prueba -->
+                                <div class="data-options-panel">
+                                    <h6 class="mb-3">
+                                        <i class="fas fa-database me-2"></i>
+                                        Datos de Prueba
+                                    </h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="dataMode" id="simulatedData" value="simulated" checked>
+                                                <label class="form-check-label" for="simulatedData">
+                                                    <strong>🎲 Datos Simulados</strong>
+                                                    <br><small class="text-muted">La IA generará datos realistas (RUTs, emails, nombres chilenos)</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="dataMode" id="userData" value="user">
+                                                <label class="form-check-label" for="userData">
+                                                    <strong>👤 Mis Datos</strong>
+                                                    <br><small class="text-muted">Proporcionaré mis propios datos de prueba</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert tech-alert tech-alert-warning mt-3" id="dataWarning" style="display: none;">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Nota:</strong> Con "Mis Datos", el sistema identificará qué datos faltan y te permitirá completarlos antes de la ejecución.
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="tech-btn tech-btn-primary">
+                                        <i class="fas fa-search me-2"></i>
+                                        Analizar Casos de Prueba
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel de instrucciones -->
+                <div class="col-md-6">
+                    <div class="tech-card excel-form-card">
+                        <div class="tech-panel-header">
+                            <h5 class="tech-panel-title">
+                                <i class="fas fa-lightbulb"></i>
+                                Instrucciones
+                            </h5>
+                        </div>
+                        <div class="tech-panel-body instructions-panel">
+                            <!-- Template Download Section -->
+                            <div class="alert tech-alert tech-alert-success mb-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <h6 class="mb-1"><i class="fas fa-download me-2"></i>Descarga el Template</h6>
+                                        <small>Utiliza nuestro template optimizado para mejores resultados</small>
+                                    </div>
+                                    <a href="/download_excel_template" class="tech-btn tech-btn-sm tech-btn-success">
+                                        <i class="fas fa-file-excel me-1"></i>Descargar
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Excel Structure Visual -->
+                            <div class="excel-structure-preview mb-3">
+                                <h6><i class="fas fa-table me-2"></i>Estructura del Excel:</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered excel-preview-table">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th style="width: 8%;">URL</th>
+                                                <th style="width: 92%;">Paso a Paso</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <small class="text-primary">
+                                                        <i class="fas fa-link"></i><br>
+                                                        Sitio web
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <div class="step-example">
+                                                        <small class="text-muted d-block">Ejemplo:</small>
+                                                        <div class="step-list">
+                                                            <div class="step-item">1. Escribe 'iPhone 16' en la barra de búsqueda y presiona Enter</div>
+                                                            <div class="step-item">2. Haz clic en el primer producto del resultado</div>
+                                                            <div class="step-item">3. Ver Detalle del producto</div>
+                                                            <div class="step-item">4. Fin del Caso</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Column Descriptions -->
+                            <div class="alert tech-alert tech-alert-info">
+                                <h6><i class="fas fa-info-circle me-2"></i>Descripción de Columnas:</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="column-info">
+                                            <strong><i class="fas fa-link text-primary me-1"></i>URL:</strong>
+                                            <p class="mb-2 small">Sitio web donde se ejecutará el caso de prueba</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="column-info">
+                                            <strong><i class="fas fa-list-ol text-success me-1"></i>Paso a Paso:</strong>
+                                            <p class="mb-2 small">Instrucciones detalladas numeradas para ejecutar el test</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tips Section -->
+                            <div class="alert tech-alert tech-alert-warning">
+                                <h6><i class="fas fa-lightbulb me-2"></i>Consejos para Mejores Resultados:</h6>
+                                <ul class="mb-0 small">
+                                    <li><strong>URLs completas:</strong> Incluye http:// o https://</li>
+                                    <li><strong>Pasos claros:</strong> Numera cada paso y sé específico</li>
+                                    <li><strong>Acciones precisas:</strong> "Haz clic en", "Escribe", "Selecciona"</li>
+                                    <li><strong>Elementos identificables:</strong> Usa nombres de botones, campos o textos visibles</li>
+                                    <li><strong>Validaciones:</strong> Incluye pasos de verificación del resultado</li>
+                                </ul>
+                            </div>
+
+                            <!-- Validation Info -->
+                            <div class="alert tech-alert tech-alert-secondary">
+                                <h6><i class="fas fa-robot me-2"></i>Análisis Automático:</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul class="mb-0 small">
+                                            <li>✅ Extracción automática de URLs</li>
+                                            <li>✅ Validación de pasos coherentes</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <ul class="mb-0 small">
+                                            <li>✅ Detección de casos incompletos</li>
+                                            <li>✅ Sugerencias de mejora con IA</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de resultados del análisis -->
+            <div id="analysisResults" class="mt-4" style="display: none;">
+                <div class="tech-card">
+                    <div class="tech-panel-header">
+                        <h5 class="tech-panel-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Resultados del Análisis
+                        </h5>
+                    </div>
+                    <div class="tech-panel-body">
+                        <!-- Resumen estadístico -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="stats-card text-center">
+                                    <div class="stats-number text-primary" id="totalCases">0</div>
+                                    <div class="stats-label">Total Casos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card text-center">
+                                    <div class="stats-number text-success" id="validCases">0</div>
+                                    <div class="stats-label">Casos Válidos</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card text-center">
+                                    <div class="stats-number text-danger" id="invalidCases">0</div>
+                                    <div class="stats-label">Casos con Problemas</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="stats-card text-center">
+                                    <div class="stats-number text-info" id="successRate">0%</div>
+                                    <div class="stats-label">Tasa de Éxito</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabs para casos válidos e inválidos -->
+                        <ul class="nav nav-pills mb-3" id="casesTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="valid-cases-tab" data-bs-toggle="pill" data-bs-target="#valid-cases" type="button" role="tab">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Casos Válidos (<span id="validCasesCount">0</span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="invalid-cases-tab" data-bs-toggle="pill" data-bs-target="#invalid-cases" type="button" role="tab">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Casos con Problemas (<span id="invalidCasesCount">0</span>)
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="all-cases-tab" data-bs-toggle="pill" data-bs-target="#all-cases" type="button" role="tab">
+                                    <i class="fas fa-list me-2"></i>
+                                    Todos los Casos
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="casesTabContent">
+                            <!-- Casos válidos -->
+                            <div class="tab-pane fade show active" id="valid-cases" role="tabpanel">
+                                <div id="validCasesList" class="cases-list">
+                                    <!-- Se llenará dinámicamente -->
+                                </div>
+                            </div>
+
+                            <!-- Casos con problemas -->
+                            <div class="tab-pane fade" id="invalid-cases" role="tabpanel">
+                                <div id="invalidCasesList" class="cases-list">
+                                    <!-- Se llenará dinámicamente -->
+                                </div>
+                            </div>
+
+                            <!-- Todos los casos -->
+                            <div class="tab-pane fade" id="all-cases" role="tabpanel">
+                                <div id="allCasesList" class="cases-list">
+                                    <!-- Se llenará dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Opciones de ejecución -->
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <h6 class="mb-3">
+                                                <i class="fas fa-cogs me-2"></i>
+                                                Opciones de Ejecución
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="executionMode" id="sequentialMode" value="sequential" checked>
+                                                <label class="form-check-label" for="sequentialMode">
+                                                    <strong>📋 Ejecución Secuencial</strong>
+                                                    <br><small class="text-muted">Ejecuta los casos uno por uno (más estable y confiable)</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="executionMode" id="parallelMode" value="parallel">
+                                                <label class="form-check-label" for="parallelMode">
+                                                    <strong>🚀 Ejecución Paralela</strong>
+                                                    <br><small class="text-muted">Ejecuta múltiples casos simultáneamente (más rápido)</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3">
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="showBrowser" id="showBrowser" value="true">
+                                                <label class="form-check-label" for="showBrowser">
+                                                    <strong>🌐 Mostrar Navegador Durante Ejecución</strong>
+                                                    <br><small class="text-muted">Ver el navegador ejecutando las pruebas en tiempo real (más lento pero visual)</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <button type="button" class="tech-btn tech-btn-success w-100" id="executeValidCases" disabled>
+                                    <i class="fas fa-play me-2"></i>
+                                    Ejecutar Solo Casos Válidos
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="tech-btn tech-btn-primary w-100" id="executeAllCases" disabled>
+                                    <i class="fas fa-rocket me-2"></i>
+                                    Ejecutar Todos los Casos
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <div class="dropdown w-100">
+                                    <button class="tech-btn tech-btn-secondary w-100 dropdown-toggle" type="button" id="editCasesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-edit me-2"></i>
+                                        Editar Casos Problemáticos
+                                    </button>
+                                    <ul class="dropdown-menu w-100" id="editCasesMenu" aria-labelledby="editCasesDropdown">
+                                        <li><a class="dropdown-item text-muted" href="#"><i class="fas fa-info-circle me-2"></i>No hay casos problemáticos</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="tech-btn tech-btn-info w-100" id="saveAsSuite">
+                                    <i class="fas fa-save me-2"></i>
+                                    Guardar como Suite
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="tech-btn tech-btn-warning w-100" id="clearResults" onclick="location.reload()">
+                                    <i class="fas fa-broom me-2"></i>
+                                    Limpiar Vista
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para progreso de ejecución -->
+<div class="modal fade" id="executionProgressModal" tabindex="-1" aria-labelledby="executionProgressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-panel-header">
+                <h5 class="modal-title tech-panel-title" id="executionProgressModalLabel">
+                    <i class="fas fa-play-circle me-2"></i>
+                    Progreso de Ejecución
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Progreso general -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">Progreso General</span>
+                        <span id="overallProgressText">0%</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             id="overallProgressBar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col-3">
+                            <div class="stats-number text-primary" id="totalCasesExecution">0</div>
+                            <div class="stats-label">Total</div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stats-number text-success" id="completedCases">0</div>
+                            <div class="stats-label">Completados</div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stats-number text-success" id="successfulCases">0</div>
+                            <div class="stats-label">Exitosos</div>
+                        </div>
+                        <div class="col-3">
+                            <div class="stats-number text-danger" id="failedCases">0</div>
+                            <div class="stats-label">Fallidos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caso actual (solo para modo secuencial) -->
+                <div id="currentCaseSection" class="mb-4" style="display: none;">
+                    <div class="tech-card p-3">
+                        <h6 class="mb-3">
+                            <i class="fas fa-play me-2"></i>
+                            Caso Actual
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span id="currentCaseName">Preparando...</span>
+                            <span id="currentCaseProgress">0%</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 15px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" 
+                                 id="currentCaseProgressBar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted" id="currentStepDescription">Iniciando...</small>
+                    </div>
+                </div>
+
+                <!-- Lista de resultados -->
+                <div class="mb-3">
+                    <h6>
+                        <i class="fas fa-list me-2"></i>
+                        Resultados de Ejecución
+                    </h6>
+                </div>
+                <div id="executionResultsList" class="execution-results-list" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="tech-btn tech-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="tech-btn tech-btn-primary" id="downloadExecutionReport" disabled>
+                    <i class="fas fa-download me-2"></i>
+                    Descargar Reporte
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar casos -->
+<div class="modal fade" id="editCaseModal" tabindex="-1" aria-labelledby="editCaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-panel-header">
+                <h5 class="modal-title tech-panel-title" id="editCaseModalLabel">
+                    <i class="fas fa-edit me-2"></i>
+                    Editar Caso de Prueba
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Información del caso -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="tech-card p-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1 text-light">
+                                        <i class="fas fa-info-circle me-2 text-info"></i>
+                                        Información del Caso
+                                    </h6>
+                                    <small class="text-muted">ID: <span id="editCaseDisplayId">-</span></small>
+                                </div>
+                                <div>
+                                    <span class="badge" id="editCaseStatus">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de edición -->
+                <form id="editCaseForm">
+                    <input type="hidden" id="editCaseId" name="case_id">
+                    
+                    <!-- Información básica -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-light mb-3">
+                                <i class="fas fa-clipboard-list me-2"></i>
+                                Información Básica
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCaseName" class="form-label tech-label">
+                                    <i class="fas fa-tag me-1"></i>
+                                    Nombre del Caso *
+                                </label>
+                                <input type="text" class="form-control tech-input" id="editCaseName" name="nombre" required 
+                                       placeholder="Ingrese el nombre descriptivo del caso">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCaseObjective" class="form-label tech-label">
+                                    <i class="fas fa-bullseye me-1"></i>
+                                    Objetivo *
+                                </label>
+                                <input type="text" class="form-control tech-input" id="editCaseObjective" name="objetivo" required
+                                       placeholder="¿Qué se quiere probar?">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Historia de usuario -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="editCaseUserStory" class="form-label tech-label">
+                                    <i class="fas fa-user-story me-1"></i>
+                                    Historia de Usuario
+                                </label>
+                                <textarea class="form-control tech-input" id="editCaseUserStory" name="historia_usuario" rows="2"
+                                          placeholder="Como [usuario], quiero [funcionalidad] para [beneficio]"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Precondición -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="editCasePrecondition" class="form-label tech-label">
+                                    <i class="fas fa-list-check me-1"></i>
+                                    Precondición
+                                </label>
+                                <textarea class="form-control tech-input" id="editCasePrecondition" name="precondicion" rows="2"
+                                          placeholder="Condiciones que deben cumplirse antes de ejecutar la prueba"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pasos de ejecución -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-light mb-3">
+                                <i class="fas fa-list-ol me-2"></i>
+                                Ejecución
+                            </h6>
+                            <div class="mb-3">
+                                <label for="editCaseSteps" class="form-label tech-label">
+                                    <i class="fas fa-tasks me-1"></i>
+                                    Pasos de Ejecución *
+                                </label>
+                                <textarea class="form-control tech-input" id="editCaseSteps" name="pasos" rows="6" required
+                                          placeholder="1. Paso uno&#10;2. Paso dos&#10;3. Paso tres..."></textarea>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-lightbulb me-1"></i>
+                                    Incluye URLs específicas y acciones detalladas para automatización
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Datos y resultados -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-light mb-3">
+                                <i class="fas fa-database me-2"></i>
+                                Datos y Resultados
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCaseData" class="form-label tech-label">
+                                    <i class="fas fa-table me-1"></i>
+                                    Datos de Prueba
+                                </label>
+                                <textarea class="form-control tech-input" id="editCaseData" name="datos_prueba" rows="4"
+                                          placeholder="Usuario: test@example.com&#10;Contraseña: 123456&#10;RUT: 12345678-9"></textarea>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Datos específicos necesarios para la prueba
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCaseExpected" class="form-label tech-label">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Resultado Esperado *
+                                </label>
+                                <textarea class="form-control tech-input" id="editCaseExpected" name="resultado_esperado" rows="4" required
+                                          placeholder="El sistema debe mostrar...&#10;Se debe redirigir a...&#10;Debe aparecer el mensaje..."></textarea>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-target me-1"></i>
+                                    Describe exactamente qué debe suceder
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Mostrar problemas y sugerencias -->
+                <div id="caseProblems" class="mt-4">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <!-- Botones de navegación (se agregan dinámicamente) -->
+                <div id="sequenceNavigationButtons" class="me-auto">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                
+                <!-- Botones de acción -->
+                <div>
+                    <button type="button" class="tech-btn tech-btn-secondary me-2" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="tech-btn tech-btn-success me-2" id="reanalyzeCaseChanges">
+                        <i class="fas fa-search me-2"></i>Re-analizar
+                    </button>
+                    <button type="button" class="tech-btn tech-btn-primary" id="saveCaseChanges">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para guardar como suite -->
+<div class="modal fade" id="saveAsSuiteModal" tabindex="-1" aria-labelledby="saveAsSuiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content tech-card">
+            <div class="modal-header tech-panel-header">
+                <h5 class="modal-title tech-panel-title" id="saveAsSuiteModalLabel">
+                    <i class="fas fa-save me-2"></i>
+                    Guardar como Suite
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="saveAsSuiteForm">
+                    <div class="mb-3">
+                        <label for="suiteName" class="form-label">Nombre de la Suite</label>
+                        <input type="text" class="form-control tech-input" id="suiteName" name="suite_name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="suiteDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control tech-input" id="suiteDescription" name="suite_description" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeInvalidCases" name="include_invalid">
+                        <label class="form-check-label" for="includeInvalidCases">
+                            Incluir casos con problemas (se marcarán como inactivos)
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="tech-btn tech-btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="tech-btn tech-btn-primary" id="confirmSaveAsSuite">
+                    <i class="fas fa-save me-2"></i>
+                    Guardar Suite
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="{{ url_for('static', filename='bulk_execution.js') }}?v=fix_blank_page_error"></script>
+
+<script>
+// Manejar cambio en modo de datos
+document.addEventListener('DOMContentLoaded', function() {
+    const dataRadios = document.querySelectorAll('input[name="dataMode"]');
+    const dataWarning = document.getElementById('dataWarning');
+    
+    dataRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'user') {
+                dataWarning.style.display = 'block';
+            } else {
+                dataWarning.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.cases-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.case-item {
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: rgba(30, 41, 59, 0.3);
+    transition: var(--tech-transition);
+}
+
+.case-item:hover {
+    border-color: var(--tech-primary);
+    background: rgba(30, 41, 59, 0.5);
+}
+
+.case-item.valid {
+    border-left: 4px solid var(--tech-success);
+}
+
+.case-item.invalid {
+    border-left: 4px solid var(--tech-danger);
+}
+
+.case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.case-title {
+    font-weight: 600;
+    color: var(--tech-light);
+}
+
+.case-id {
+    font-size: 0.875rem;
+    color: var(--tech-secondary);
+}
+
+.case-problems {
+    margin-top: 0.5rem;
+}
+
+.case-problem {
+    font-size: 0.875rem;
+    color: var(--tech-danger);
+    margin-bottom: 0.25rem;
+}
+
+.case-suggestion {
+    font-size: 0.875rem;
+    color: var(--tech-info);
+    margin-bottom: 0.25rem;
+}
+
+.stats-card {
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stats-label {
+    font-size: 0.875rem;
+    color: var(--tech-secondary);
+}
+
+.nav-pills .nav-link {
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid var(--tech-border);
+    color: var(--tech-light);
+    margin-right: 0.5rem;
+}
+
+.nav-pills .nav-link.active {
+    background: var(--tech-primary);
+    border-color: var(--tech-primary);
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,128 @@
+
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Reporte Playwright - Jose_Test</title>
+                <meta charset="utf-8">
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f8f9fa; }
+                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+                    .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: white; }
+                    .error { background: #ffebee; border-color: #f44336; }
+                    .success { background: #e8f5e8; border-color: #4CAF50; }
+                    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; border-radius: 4px; }
+                    .screenshots-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+                    .screenshot-item { border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #f9f9f9; }
+                    .screenshot-img { max-width: 100%; height: auto; border: 1px solid #ccc; border-radius: 4px; }
+                    .expandable { cursor: pointer; background: #e9ecef; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+                    .expandable:hover { background: #dee2e6; }
+                    .collapsed { display: none; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>🎭 Reporte de Ejecución Playwright</h1>
+                    <p><strong>Caso:</strong> Jose_Test</p>
+                    <p><strong>Código:</strong> AUTO-90690fb8</p>
+                    <p><strong>Fecha:</strong> 2025-07-10 18:01:12</p>
+                    <p><strong>Capturas generadas:</strong> 0</p>
+                </div>
+                
+                
+                <div class="section">
+                    <h2>📸 Capturas de Pantalla</h2>
+                    <p>⚠️ No se generaron capturas de pantalla durante la ejecución.</p>
+                </div>
+                
+                
+                <div class="section success">
+                    <h2>✅ Ejecución Exitosa</h2>
+                    <p><strong>Estado:</strong> Completado</p>
+                    <p><strong>Código de salida:</strong> 0</p>
+                </div>
+                
+                <div class="section">
+                    <h2>📋 Detalles del Caso</h2>
+                    <p><strong>Objetivo:</strong> Prueba ejecutada desde la interfaz web de QA-Pilot</p>
+                    <p><strong>Pasos:</strong></p>
+                    <pre>1. Escribe 'smartphone' en la barra de búsqueda y presiona Enter
+2. Haz clic en el primer producto
+3. Ver Detalle</pre>
+                    <p><strong>Resultado Esperado:</strong> Ejecución exitosa según las instrucciones proporcionadas</p>
+                </div>
+                
+                <div class="section">
+                    <div class="expandable" onclick="toggle('stdout')">
+                        <h2>📤 Salida del Script (click para expandir/colapsar)</h2>
+                    </div>
+                    <div id="stdout" class="collapsed">
+                        <pre>INFO     [browser_use] BrowserUse logging setup complete with level info
+INFO     [telemetry] Anonymized telemetry enabled. See https://docs.browser-use.com/development/telemetry for more information.
+DEBUG: Iniciando test...
+DEBUG: ConfiguraciÃ³n headless=False
+INFO     [agent] ðŸ§  Starting an agent with main_model=claude-3-5-sonnet-20241022, planner_model=None, extraction_model=None
+INFO     [faiss.loader] Loading faiss with AVX2 support.
+INFO     [faiss.loader] Successfully loaded faiss with AVX2 support.
+INFO     [faiss] Failed to load GPU Faiss: name 'GpuIndexIVFFlat' is not defined. Will not load constructor refs for GPU indexes. This is only an error if you're trying to use GPU Faiss.
+INFO     [mem0.vector_stores.faiss] Loaded FAISS index from /tmp/faiss/mem0.faiss with 0 vectors
+ERROR: no such column: prev_value
+TRACEBACK: Traceback (most recent call last):
+  File "C:\DEV\Buse\test_scripts\test_d0d8c216-290e-45f6-a64f-9763d4d6a9d2.py", line 74, in main
+    agent = Agent(
+            ^^^^^^
+  File "C:\DEV\Buse\browser-use\browser_use\utils.py", line 280, in wrapper
+    result = func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\DEV\Buse\browser-use\browser_use\agent\service.py", line 249, in __init__
+    self.memory = Memory(
+                  ^^^^^^^
+  File "C:\DEV\Buse\browser-use\browser_use\agent\memory\service.py", line 54, in __init__
+    self.mem0 = Mem0Memory.from_config(config_dict=self._memory_config)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jscar\AppData\Local\Programs\Python\Python311\Lib\site-packages\mem0\memory\main.py", line 74, in from_config
+    return cls(config)
+           ^^^^^^^^^^^
+  File "C:\Users\jscar\AppData\Local\Programs\Python\Python311\Lib\site-packages\mem0\memory\main.py", line 52, in __init__
+    self.db = SQLiteManager(self.config.history_db_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jscar\AppData\Local\Programs\Python\Python311\Lib\site-packages\mem0\memory\storage.py", line 10, in __init__
+    self._migrate_history_table()
+  File "C:\Users\jscar\AppData\Local\Programs\Python\Python311\Lib\site-packages\mem0\memory\storage.py", line 61, in _migrate_history_table
+    cursor.execute(
+sqlite3.OperationalError: no such column: prev_value
+
+DEBUG: Navegador cerrado
+</pre>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <div class="expandable" onclick="toggle('stderr')">
+                        <h2>⚠️ Errores (click para expandir/colapsar)</h2>
+                    </div>
+                    <div id="stderr" class="collapsed">
+                        <pre>fatal: not a git repository (or any of the parent directories): .git
+C:\DEV\Buse\browser-use\browser_use\browser\browser.py:372: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead
+  clients = [obj for obj in gc.get_objects() if isinstance(obj, httpx.AsyncClient)]
+sys:1: RuntimeWarning: coroutine 'Agent._verify_llm_connection' was never awaited
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+</pre>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>🔧 Información Técnica</h2>
+                    <p><strong>Script ejecutado:</strong> test_d0d8c216-290e-45f6-a64f-9763d4d6a9d2.py</p>
+                    <p><strong>Headless:</strong> Sí</p>
+                    <p><strong>Tiempo de ejecución:</strong> ~872 segundos</p>
+                </div>
+                
+                <script>
+                    function toggle(elementId) {
+                        const element = document.getElementById(elementId);
+                        element.classList.toggle('collapsed');
+                    }
+                </script>
+            </body>
+            </html>
+            

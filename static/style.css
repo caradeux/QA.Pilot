@@ -1,0 +1,4230 @@
+/* Estilos generales */
+body {
+    padding-top: 56px; /* Ajuste para header fijo si se usa */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto; /* Empuja el footer al final */
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 56px; /* Debajo del header */
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Detrás del navbar */
+    padding: 48px 0 0; /* Scrollable area */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    background-color: #f8f9fa; /* Color de fondo claro */
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.sidebar .nav-link.active {
+    color: #0d6efd; /* Color primario de Bootstrap */
+}
+
+main {
+    padding-top: 1.5rem; /* Espacio arriba del contenido principal */
+}
+
+/* Mejoras UI */
+.card {
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1) !important;
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Mejora de header */
+.bg-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+}
+
+/* Mejora de headers para tarjetas */
+.card-header.bg-success {
+    background: linear-gradient(135deg, #198754, #157347) !important;
+}
+
+.card-header.bg-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+}
+
+.card-header.bg-secondary {
+    background: linear-gradient(135deg, #6c757d, #5c636a) !important;
+}
+
+/* Estilo para pre y code */
+pre {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Mejorar campos de formulario */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Efecto hover para botones */
+.btn-success {
+    background: linear-gradient(135deg, #198754, #157347);
+    border-color: #157347;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #157347, #125e3a);
+    border-color: #125e3a;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    border-color: #0a58ca;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0a58ca, #084298);
+    border-color: #084298;
+}
+
+/* Mejora visual para spinner */
+.spinner-border {
+    vertical-align: middle;
+}
+
+/* Mejora visual para las capturas */
+#test-results-area img {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
+
+#test-results-area img:hover {
+    transform: scale(1.02);
+}
+
+/* Mejora para la visualización de resultados */
+.badge {
+    padding: 0.4em 0.6em;
+    font-weight: 600;
+}
+
+/* Diseño responsivo para móviles */
+@media (max-width: 767.98px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    h5 {
+        font-size: 1.1rem;
+    }
+    
+    .btn {
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+/* Específico para gestión de claves */
+.api-key-management label {
+    font-size: 0.85em;
+}
+
+/* Específico para reporte de vuelo */
+#test-results-area pre {
+    white-space: pre-wrap; /* Para que el texto largo se ajuste */
+    word-break: break-all;
+    background-color: #e9ecef;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    max-height: 200px; /* Limitar altura del log */
+    overflow-y: auto;
+}
+
+/* Estilos para historial */
+#history-area .accordion-button {
+    font-size: 0.9em;
+}
+
+/* Estilos tecnológicos para QA Pilot */
+
+/* Variables CSS para tema tecnológico */
+:root {
+    /* Paleta Elegante y Profesional */
+    --tech-primary: #2563eb;
+    --tech-primary-dark: #1d4ed8;
+    --tech-primary-light: #3b82f6;
+    --tech-primary-glow: rgba(37, 99, 235, 0.4);
+    --tech-secondary: #64748b;
+    --tech-secondary-light: #94a3b8;
+    --tech-accent: #10b981;
+    --tech-accent-dark: #059669;
+    --tech-accent-glow: rgba(16, 185, 129, 0.3);
+    
+    /* Escala de grises elegante */
+    --tech-dark: #0f172a;
+    --tech-dark-light: #1e293b;
+    --tech-dark-lighter: #334155;
+    --tech-light: #ffffff;
+    --tech-light-dark: #f8fafc;
+    --tech-light-darker: #e2e8f0;
+    --tech-border: #475569;
+    --tech-border-light: #64748b;
+    --tech-border-dark: #334155;
+    
+    /* Estados empresariales */
+    --tech-success: #22c55e;
+    --tech-warning: #f59e0b;
+    --tech-danger: #ef4444;
+    --tech-info: #0057ff;
+    
+    /* Efectos y sombras ultra elegantes */
+    --tech-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+    --tech-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+    --tech-shadow-md: 0 8px 30px rgba(0, 0, 0, 0.2), 0 4px 15px rgba(0, 0, 0, 0.12);
+    --tech-shadow-lg: 0 15px 40px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.15);
+    --tech-shadow-xl: 0 25px 60px rgba(0, 0, 0, 0.3), 0 12px 30px rgba(0, 0, 0, 0.2);
+    --tech-shadow-glow: 0 0 20px var(--tech-primary-glow), 0 0 40px var(--tech-primary-glow), 0 0 60px var(--tech-primary-glow);
+    --tech-shadow-accent: 0 0 15px var(--tech-accent-glow), 0 0 30px var(--tech-accent-glow);
+    --tech-shadow-elegant: 0 8px 32px rgba(37, 99, 235, 0.12), 0 4px 16px rgba(37, 99, 235, 0.08);
+    --tech-shadow-luxury: 0 20px 60px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    /* Gradientes ultra elegantes */
+    --tech-gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 30%, #1e40af 70%, #1e3a8a 100%);
+    --tech-gradient-primary-glow: linear-gradient(135deg, #60a5fa 0%, #3b82f6 25%, #2563eb 75%, #1d4ed8 100%);
+    --tech-gradient-secondary: linear-gradient(135deg, #64748b 0%, #475569 50%, #334155 100%);
+    --tech-gradient-accent: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+    --tech-gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #334155 70%, #475569 100%);
+    --tech-gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 100%);
+    --tech-gradient-glass-blue: linear-gradient(135deg, rgba(37,99,235,0.1) 0%, rgba(37,99,235,0.05) 50%, rgba(37,99,235,0.02) 100%);
+    --tech-gradient-luxury: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 25%, rgba(37,99,235,0.05) 75%, rgba(0,0,0,0.1) 100%);
+    --tech-gradient-mesh: radial-gradient(ellipse at 25% 25%, rgba(37, 99, 235, 0.08) 0%, transparent 60%),
+                          radial-gradient(ellipse at 75% 75%, rgba(16, 185, 129, 0.06) 0%, transparent 60%),
+                          radial-gradient(ellipse at 50% 10%, rgba(71, 85, 105, 0.04) 0%, transparent 70%);
+    
+    /* Bordes y radios elegantes */
+    --tech-radius-sm: 0.5rem;
+    --tech-radius: 0.75rem;
+    --tech-radius-md: 1rem;
+    --tech-radius-lg: 1.25rem;
+    --tech-radius-xl: 1.75rem;
+    --tech-radius-2xl: 2rem;
+    --tech-radius-elegant: 1.5rem;
+    
+    /* Espaciado */
+    --tech-space-xs: 0.25rem;
+    --tech-space-sm: 0.5rem;
+    --tech-space: 1rem;
+    --tech-space-md: 1.5rem;
+    --tech-space-lg: 2rem;
+    --tech-space-xl: 3rem;
+    
+    /* Tipografía Inovabiz */
+    --tech-font-family: 'Poppins', 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    --tech-font-mono: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+    
+    /* Transiciones ultra suaves */
+    --tech-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --tech-transition-slow: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --tech-transition-elegant: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    --tech-transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Estilos base elegantes */
+body {
+    font-family: var(--tech-font-family);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--tech-light);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #0f172a 50%, #1e293b 75%, #0f172a 100%);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Patrón elegante de fondo */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        /* Puntos sutiles elegantes */
+        radial-gradient(circle at center, rgba(37, 99, 235, 0.08) 1px, transparent 1px),
+        /* Gradientes de profundidad azul */
+        radial-gradient(ellipse at 20% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 50%, rgba(71, 85, 105, 0.06) 0%, transparent 70%);
+    background-size: 
+        60px 60px,
+        1200px 1200px,
+        800px 800px,
+        1000px 1000px;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* Efecto sutil de movimiento para el patrón */
+@keyframes subtleShift {
+    0%, 100% { background-position: 0 0, 0 0, 0 0, 0 0; }
+    50% { background-position: 25px 25px, 25px 25px, 100px 100px, 50px 50px; }
+}
+
+/* Efecto vignette elegante */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        /* Vignette sutil para profundidad */
+        radial-gradient(ellipse at center, transparent 0%, transparent 70%, rgba(15, 23, 42, 0.25) 100%),
+        /* Acentos de luz azul */
+        radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(71, 85, 105, 0.03) 0%, transparent 60%);
+    z-index: -1;
+    opacity: 0.8;
+}
+
+/* Capa adicional para efecto empresarial premium */
+body {
+    position: relative;
+}
+
+body:before {
+    animation: subtleShift 30s ease-in-out infinite;
+}
+
+/* Overlay elegante sutil */
+.tech-corporate-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        /* Cuadrícula elegante sutil */
+        linear-gradient(rgba(71, 85, 105, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71, 85, 105, 0.03) 1px, transparent 1px),
+        /* Líneas diagonales azules */
+        linear-gradient(45deg, transparent 48%, rgba(37, 99, 235, 0.01) 49%, rgba(37, 99, 235, 0.02) 50%, rgba(37, 99, 235, 0.01) 51%, transparent 52%),
+        /* Gradiente de profundidad slate */
+        radial-gradient(ellipse at center, transparent 0%, rgba(15, 23, 42, 0.2) 100%);
+    background-size: 
+        40px 40px,
+        40px 40px,
+        120px 120px,
+        100% 100%;
+    z-index: -2;
+    opacity: 0.6;
+}
+
+/* Scroll suave y efectos premium */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Efectos de selección personalizados */
+::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: white;
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+::-moz-selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: white;
+    text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+/* Efectos de focus premium */
+*:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* Efectos de hover para elementos interactivos */
+a, button, .btn, input, select, textarea, .card, .accordion-item {
+    transition: var(--tech-transition);
+}
+
+/* Efecto de ondas en clicks */
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Agregar "trama digital" de fondo */
+.tech-dark-bg::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(15, 224, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 224, 255, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: -1;
+}
+
+/* Tipografía tech */
+h1, h2, h3, h4, h5, h6,
+.tech-title, .tech-subtitle, 
+.tech-nav-item, .tech-footer-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Header ultra elegante */
+.tech-header {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: var(--tech-shadow-luxury);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    padding: 0.75rem 0;
+    transition: var(--tech-transition-elegant);
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.tech-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-luxury);
+    z-index: -1;
+    opacity: 0.6;
+}
+
+.tech-header:hover {
+    box-shadow: var(--tech-shadow-elegant), var(--tech-shadow-glow);
+    border-bottom-color: var(--tech-primary);
+}
+
+.tech-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--tech-space-sm);
+}
+
+.tech-logo i.fa-robot {
+    font-size: 2rem;
+    background: var(--tech-gradient-primary-glow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+    animation: logoFloat 3s ease-in-out infinite, logoGlow 2s ease-in-out infinite alternate;
+    transition: var(--tech-transition);
+}
+
+.tech-logo:hover i.fa-robot {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.8));
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+}
+
+@keyframes logoGlow {
+    from { filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6)); }
+    to { filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.9)); }
+}
+
+.tech-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: var(--tech-gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    letter-spacing: -0.025em;
+}
+
+.tech-subtitle {
+    font-size: 0.7rem;
+    color: var(--tech-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: -0.2rem;
+    opacity: 0.8;
+}
+
+.tech-badge {
+    background: var(--tech-gradient-accent);
+    color: var(--tech-dark);
+    padding: var(--tech-space-xs) var(--tech-space-sm);
+    border-radius: var(--tech-radius);
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: var(--tech-shadow);
+}
+
+/* Navegación tecnológica */
+.tech-card {
+    background: var(--tech-dark-light);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius-lg);
+    box-shadow: var(--tech-shadow-md);
+    transition: var(--tech-transition);
+    overflow: hidden;
+    position: relative;
+}
+
+.tech-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tech-space-xs);
+    padding: var(--tech-space);
+}
+
+.tech-nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--tech-space-sm);
+    padding: var(--tech-space-sm) var(--tech-space);
+    border-radius: var(--tech-radius);
+    color: var(--tech-light-dark);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: var(--tech-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--tech-gradient-primary);
+    opacity: 0;
+    transition: var(--tech-transition);
+    z-index: -1;
+}
+
+.tech-nav-item:hover {
+    color: var(--tech-light);
+    background: rgba(37, 99, 235, 0.1);
+    transform: translateX(4px);
+    box-shadow: var(--tech-shadow);
+}
+
+.tech-nav-item:hover::before {
+    left: 0;
+    opacity: 0.1;
+}
+
+.tech-nav-item.active {
+    color: var(--tech-light);
+    background: var(--tech-gradient-primary);
+    box-shadow: var(--tech-shadow-md);
+}
+
+.tech-nav-item.active::before {
+    opacity: 0;
+}
+
+.tech-nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+/* Footer tecnológico */
+.tech-footer {
+    background: var(--tech-gradient-dark);
+    border-top: 1px solid var(--tech-border);
+    color: var(--tech-light-dark);
+    margin-top: auto;
+    box-shadow: var(--tech-shadow-md);
+}
+
+.tech-footer-text {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: var(--tech-space-sm);
+}
+
+.tech-footer-logo {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+}
+
+/* Componentes tecnológicos */
+.tech-panel {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(15px) saturate(150%);
+    -webkit-backdrop-filter: blur(15px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--tech-radius-lg);
+    box-shadow: var(--tech-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: var(--tech-transition);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.tech-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-glass);
+    opacity: 0;
+    transition: var(--tech-transition);
+    z-index: -1;
+}
+
+.tech-panel:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.1);
+    transform: translateY(-2px);
+}
+
+.tech-panel:hover::before {
+    opacity: 1;
+}
+
+.tech-panel-header {
+    background: var(--tech-gradient-primary);
+    color: var(--tech-light);
+    padding: var(--tech-space) var(--tech-space-md);
+    border-bottom: 1px solid var(--tech-border);
+    position: relative;
+}
+
+.tech-panel-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--tech-space-sm);
+}
+
+.tech-panel-title i {
+    margin-right: 12px;
+    background: rgba(15, 224, 255, 0.1);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.tech-panel-body {
+    padding: var(--tech-space-md);
+}
+
+/* Botones tecnológicos */
+.tech-btn {
+    background-color: var(--tech-secondary);
+    color: var(--tech-light);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.tech-btn:hover {
+    background-color: var(--tech-accent);
+    color: var(--tech-dark);
+}
+
+.tech-btn-primary {
+    background: linear-gradient(90deg, var(--tech-primary), var(--tech-secondary));
+    color: var(--tech-dark);
+    border: none;
+}
+
+.tech-btn-primary:hover {
+    background: linear-gradient(90deg, var(--tech-secondary), var(--tech-primary));
+    color: var(--tech-dark);
+}
+
+.tech-btn-success {
+    background-color: var(--tech-success);
+}
+
+.tech-btn-success:hover {
+    background: linear-gradient(90deg, #00b370, var(--tech-success));
+    color: var(--tech-dark);
+}
+
+.tech-btn-danger {
+    background: linear-gradient(90deg, var(--tech-danger), #c42b48);
+    color: var(--tech-dark);
+    border: none;
+}
+
+/* Formularios tecnológicos */
+.tech-input {
+    background-color: rgba(240, 243, 245, 0.1);
+    border: 1px solid var(--tech-secondary);
+    color: var(--tech-light);
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+}
+
+.tech-input:focus {
+    background-color: rgba(240, 243, 245, 0.15);
+    border-color: var(--tech-accent);
+    color: var(--tech-light);
+    box-shadow: none;
+}
+
+.tech-label {
+    color: var(--tech-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.tech-form-group {
+    margin-bottom: 20px;
+}
+
+/* Alertas tecnológicas */
+.tech-alert {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+.tech-alert-icon {
+    margin-right: 1rem;
+}
+
+.tech-alert-success {
+    background-color: rgba(40, 167, 69, 0.2);
+    border: 1px solid var(--tech-success);
+}
+
+.tech-alert-warning {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 1px solid var(--tech-warning);
+}
+
+.tech-alert-danger {
+    background-color: rgba(220, 53, 69, 0.2);
+    border: 1px solid var(--tech-danger);
+}
+
+.tech-alert-info {
+    background-color: rgba(23, 162, 184, 0.2);
+    border: 1px solid var(--tech-info);
+}
+
+/* Efectos especiales */
+.tech-glow {
+    text-shadow: var(--tech-glow);
+}
+
+.tech-glow-border {
+    box-shadow: var(--tech-glow);
+    border: 1px solid var(--tech-primary);
+}
+
+.terminal-text {
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
+    background-color: var(--tech-darker);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(51, 255, 51, 0.2);
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Cards ultra elegantes con glassmorphism */
+.card {
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--tech-radius-elegant);
+    box-shadow: var(--tech-shadow-luxury);
+    transition: var(--tech-transition-elegant);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-luxury);
+    opacity: 0;
+    transition: var(--tech-transition-elegant);
+    z-index: -1;
+}
+
+.card:hover {
+    border-color: var(--tech-primary);
+    box-shadow: var(--tech-shadow-elegant), var(--tech-shadow-glow);
+    transform: translateY(-8px) scale(1.02);
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card-header {
+    background: linear-gradient(90deg, rgba(15, 224, 255, 0.1), rgba(86, 67, 253, 0.1));
+    border-bottom: 1px solid rgba(15, 224, 255, 0.1);
+}
+
+/* Estilos base para form-control */
+.form-control {
+    background: var(--tech-dark);
+    border: 1px solid rgba(15, 224, 255, 0.1);
+    color: var(--tech-text);
+    box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.02),
+                inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-control:focus {
+    background: var(--tech-dark);
+    border-color: var(--tech-primary);
+    box-shadow: var(--tech-glow);
+    color: var(--tech-text);
+}
+
+/* Estilos mejorados para form-select (listbox) */
+.form-select {
+    background: linear-gradient(135deg, var(--tech-dark) 0%, rgba(15, 224, 255, 0.05) 100%);
+    border: 2px solid rgba(15, 224, 255, 0.3);
+    color: #ffffff;
+    font-weight: 600;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 3px rgba(15, 224, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230fE0ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 12px;
+}
+
+.form-select:hover {
+    border-color: rgba(15, 224, 255, 0.6);
+    background: linear-gradient(135deg, var(--tech-medium) 0%, rgba(15, 224, 255, 0.1) 100%);
+    box-shadow: 0 0 10px rgba(15, 224, 255, 0.2);
+    transform: translateY(-1px);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230fE0ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 12px;
+}
+
+.form-select:focus {
+    background: linear-gradient(135deg, var(--tech-medium) 0%, rgba(15, 224, 255, 0.15) 100%);
+    border-color: var(--tech-primary);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(15, 224, 255, 0.4);
+    outline: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%235643fd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 12px;
+}
+
+/* Estilos para las opciones del select */
+.form-select option {
+    background-color: var(--tech-dark);
+    color: #ffffff;
+    font-weight: 600;
+    font-family: 'Rajdhani', sans-serif;
+    padding: 8px 12px;
+    border: none;
+}
+
+.form-select option:hover,
+.form-select option:focus {
+    background-color: rgba(15, 224, 255, 0.2);
+    color: var(--tech-primary);
+}
+
+.form-select option:checked {
+    background-color: var(--tech-primary);
+    color: var(--tech-darker);
+    font-weight: 700;
+}
+
+/* Estilos específicos para select pequeño */
+.form-select-sm {
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    min-width: 120px;
+}
+
+/* Mejora para tech-input en selects */
+.tech-input.form-select {
+    background: linear-gradient(135deg, var(--tech-dark) 0%, rgba(15, 224, 255, 0.08) 100%);
+    border: 2px solid rgba(15, 224, 255, 0.4);
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(15, 224, 255, 0.4);
+}
+
+.tech-input.form-select:hover {
+    background: linear-gradient(135deg, var(--tech-medium) 0%, rgba(15, 224, 255, 0.12) 100%);
+    border-color: rgba(15, 224, 255, 0.7);
+    box-shadow: 0 0 12px rgba(15, 224, 255, 0.3);
+}
+
+.tech-input.form-select:focus {
+    background: linear-gradient(135deg, var(--tech-medium) 0%, rgba(15, 224, 255, 0.18) 100%);
+    border-color: var(--tech-primary);
+    box-shadow: 0 0 18px rgba(15, 224, 255, 0.5);
+    color: #ffffff;
+}
+
+.form-check-input {
+    background-color: var(--tech-dark);
+    border-color: rgba(15, 224, 255, 0.3);
+}
+
+.form-check-input:checked {
+    background-color: var(--tech-primary);
+    border-color: var(--tech-primary);
+}
+
+.form-range::-webkit-slider-thumb {
+    background: var(--tech-primary);
+}
+
+.accordion {
+    --bs-accordion-bg: var(--tech-medium);
+    --bs-accordion-border-color: rgba(15, 224, 255, 0.1);
+    --bs-accordion-btn-color: var(--tech-text);
+    --bs-accordion-active-bg: rgba(15, 224, 255, 0.1);
+    --bs-accordion-active-color: var(--tech-primary);
+}
+
+.alert {
+    background: var(--tech-dark);
+    border-left: 4px solid;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 8px;
+}
+
+.alert-success {
+    border-left-color: var(--tech-success);
+    color: var(--tech-success);
+}
+
+.alert-danger {
+    border-left-color: var(--tech-danger);
+    color: var(--tech-danger);
+}
+
+.alert-info {
+    border-left-color: var(--tech-info);
+    color: var(--tech-info);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--tech-primary), var(--tech-secondary));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, var(--tech-secondary), var(--tech-primary));
+}
+
+.btn-success {
+    background: linear-gradient(90deg, var(--tech-success), #00b370);
+    border: none;
+}
+
+.btn-danger {
+    background: linear-gradient(90deg, var(--tech-danger), #c42b48);
+    border: none;
+}
+
+.badge {
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.badge.bg-success {
+    background: var(--tech-success) !important;
+    color: var(--tech-darker);
+}
+
+.badge.bg-danger {
+    background: var(--tech-danger) !important;
+    color: var(--tech-darker);
+}
+
+.badge.bg-info {
+    background: var(--tech-info) !important;
+    color: var(--tech-darker);
+}
+
+.badge.bg-warning {
+    background: var(--tech-warning) !important;
+    color: var(--tech-darker);
+}
+
+pre {
+    background: var(--tech-darker);
+    border-radius: 8px;
+    padding: 15px;
+    border: 1px solid rgba(15, 224, 255, 0.1);
+}
+
+/* Animaciones */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(15, 224, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(15, 224, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(15, 224, 255, 0);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* Estilo para textos destacados en configuración */
+.tech-highlight-text {
+    color: var(--tech-highlight-text);
+    font-weight: 500;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.config-label {
+    font-weight: 600;
+    color: var(--tech-primary);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.config-value {
+    color: var(--tech-highlight-text);
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1em;
+}
+
+/* Estilos para la telemetría y mensajes de error */
+.telemetry-error {
+    color: var(--tech-danger);
+    font-weight: 600;
+    font-family: 'Rajdhani', sans-serif;
+    padding: 8px 12px;
+    border-left: 3px solid var(--tech-danger);
+    background-color: rgba(255, 58, 94, 0.15);
+    border-radius: 0 var(--tech-border-radius) var(--tech-border-radius) 0;
+    margin: 8px 0;
+    box-shadow: 0 0 10px rgba(255, 58, 94, 0.3);
+    animation: pulse-error 2s infinite;
+    display: flex;
+    align-items: center;
+}
+
+.telemetry-error .error-icon {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.telemetry-error .error-code {
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 5px;
+    letter-spacing: 0.5px;
+    font-family: 'Courier New', monospace;
+    background-color: rgba(255, 58, 94, 0.2);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+/* Terminal mejorado para telemetría */
+.tech-terminal {
+    background-color: var(--tech-darker);
+    border: 1px solid rgba(15, 224, 255, 0.2);
+    border-radius: var(--tech-border-radius);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    max-height: 300px;
+    font-family: 'Rajdhani', 'Courier New', monospace;
+    position: relative;
+}
+
+.tech-terminal::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(to bottom, rgba(15, 224, 255, 0.1), transparent);
+    pointer-events: none;
+}
+
+/* Entradas de log normales */
+.tech-log-entry {
+    padding: 8px 12px;
+    margin: 5px 0;
+    color: var(--tech-primary);
+    font-size: 0.95em;
+    border-left: 2px solid rgba(15, 224, 255, 0.3);
+    background-color: rgba(15, 224, 255, 0.05);
+    border-radius: 0 var(--tech-border-radius) var(--tech-border-radius) 0;
+    display: flex;
+    align-items: center;
+}
+
+.tech-log-entry i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* Animaciones para telemetría */
+@keyframes pulse-error {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 58, 94, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 58, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 58, 94, 0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .tech-nav-item span {
+        display: none;
+    }
+    
+    .tech-nav-icon {
+        margin-right: 0;
+    }
+    
+    .tech-nav {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+    
+    .tech-nav-item {
+        flex: 1;
+        justify-content: center;
+        padding: 10px;
+    }
+}
+
+/* Acordeones premium con glassmorphism */
+.accordion-item {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(15px) saturate(150%);
+    -webkit-backdrop-filter: blur(15px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--tech-radius-lg);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--tech-shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: var(--tech-transition);
+    position: relative;
+}
+
+.accordion-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-glass);
+    opacity: 0;
+    transition: var(--tech-transition);
+    z-index: -1;
+}
+
+.accordion-item:hover {
+    border-color: rgba(0, 102, 255, 0.3);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(0, 102, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.accordion-item:hover::before {
+    opacity: 1;
+}
+
+.accordion-button {
+    background-color: rgba(11, 60, 93, 0.7) !important;
+    color: var(--tech-light) !important;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: rgba(50, 140, 193, 0.4) !important;
+    color: var(--tech-accent) !important;
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.25rem rgba(50, 140, 193, 0.25);
+    border-color: var(--tech-secondary);
+}
+
+.accordion-button::after {
+    background-color: rgba(217, 179, 16, 0.7);
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.accordion-body {
+    background-color: rgba(29, 39, 49, 0.8);
+    padding: 1.5rem;
+}
+
+/* Botones premium con efectos avanzados */
+.btn {
+    border-radius: var(--tech-radius-elegant);
+    padding: 0.875rem 2rem;
+    transition: var(--tech-transition-elegant);
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--tech-shadow-elegant);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: var(--tech-transition-slow);
+    z-index: 1;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transition: var(--tech-transition);
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+.btn:active {
+    transform: scale(0.98) translateY(1px);
+    box-shadow: var(--tech-shadow-sm);
+}
+
+/* Botones premium con gradientes avanzados */
+.btn-primary {
+    background: var(--tech-gradient-primary);
+    border-color: transparent;
+    box-shadow: var(--tech-shadow), 0 0 20px rgba(99, 102, 241, 0.3);
+    color: white;
+    position: relative;
+}
+
+.btn-primary:hover {
+    background: var(--tech-gradient-primary-glow);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(99, 102, 241, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    color: white;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+    border-color: transparent;
+    box-shadow: var(--tech-shadow), 0 0 20px rgba(16, 185, 129, 0.3);
+    color: white;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    color: white;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+    border-color: transparent;
+    box-shadow: var(--tech-shadow), 0 0 20px rgba(6, 182, 212, 0.3);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 50%, #0891b2 100%);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(6, 182, 212, 0.4);
+    transform: translateY(-2px) scale(1.02);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--tech-gradient-accent);
+    border-color: transparent;
+    box-shadow: var(--tech-shadow), var(--tech-shadow-accent);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #ff8c69 0%, #ff6b35 50%, #ff4500 100%);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px rgba(255, 107, 53, 0.5);
+    transform: translateY(-2px) scale(1.02);
+    color: white;
+}
+
+/* Mejoras para elementos de texto */
+.text-white {
+    color: #f8f9fa !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.text-light {
+    color: #e9ecef !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+pre.bg-dark {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(50, 140, 193, 0.3);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+    color: #e9ecef;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.editable-name {
+    cursor: pointer;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+    padding-bottom: 2px;
+    transition: all 0.3s ease;
+}
+
+.editable-name:hover {
+    color: var(--tech-accent) !important;
+    border-bottom-color: var(--tech-accent);
+}
+
+/* Badge para casos de Playwright */
+.badge-playwright {
+    background-color: #2c365e;
+    color: white;
+    padding: 0.25em 0.6em;
+    border-radius: 0.25rem;
+    font-size: 0.75em;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #3e4c80;
+    box-shadow: 0 0 5px rgba(44, 54, 94, 0.5);
+}
+
+.badge-playwright i {
+    margin-right: 0.25em;
+    color: #ff3e00;
+}
+
+/* Toast para notificaciones */
+.toast {
+    background-color: rgba(29, 39, 49, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(50, 140, 193, 0.3) !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.toast-body {
+    color: #fff !important;
+    padding: 0.75rem 1.25rem;
+}
+
+/* Modales premium con glassmorphism */
+.modal-content {
+    background: rgba(10, 15, 28, 0.9);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--tech-shadow-xl), 0 0 50px rgba(0, 102, 255, 0.2);
+    border-radius: var(--tech-radius-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-glass);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(50, 140, 193, 0.3);
+    background-color: rgba(11, 60, 93, 0.7);
+}
+
+.modal-header .modal-title {
+    color: #e9ecef;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(50, 140, 193, 0.3);
+    background-color: rgba(29, 39, 49, 0.5);
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--tech-light);
+    border-radius: var(--tech-radius);
+    transition: var(--tech-transition);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(0, 102, 255, 0.5);
+    color: var(--tech-light);
+    box-shadow: 0 0 0 0.25rem rgba(0, 102, 255, 0.15), var(--tech-shadow-glow);
+    transform: translateY(-1px);
+}
+
+.form-control::placeholder {
+    color: rgba(248, 250, 252, 0.5);
+    transition: var(--tech-transition);
+}
+
+.form-control:focus::placeholder {
+    color: rgba(248, 250, 252, 0.7);
+}
+
+.form-label {
+    color: #e9ecef;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo para campos con errores */
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Mejora para las imágenes en el historial */
+.img-thumbnail {
+    background-color: rgba(29, 39, 49, 0.5);
+    border: 1px solid rgba(50, 140, 193, 0.3);
+    transition: all 0.3s ease;
+}
+
+.img-thumbnail:hover {
+    transform: scale(1.03);
+    border-color: var(--tech-accent);
+    box-shadow: var(--tech-glow);
+}
+
+/* Mejora para scroll en pre */
+pre {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+    background-color: rgba(50, 140, 193, 0.5);
+    border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(50, 140, 193, 0.7);
+}
+
+/* Estilos para el panel de progreso del test */
+.stats-icon {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.stats-icon i {
+    font-size: 1.2rem;
+}
+
+.progress {
+    background-color: rgba(200, 200, 200, 0.2);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para los pasos del test */
+#test-steps .list-group-item {
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Animación para la barra de progreso personalizada */
+@keyframes progress-bar-stripes {
+    from { background-position: 1rem 0; }
+    to { background-position: 0 0; }
+}
+
+/* Estilos para las capturas de pantalla */
+.screenshot-item .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.screenshot-item .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.screenshot-item img {
+    max-height: 150px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animación para el spinner */
+.fa-spin {
+    animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Clase para texto muted más visible en fondos oscuros */
+.text-tech-muted {
+    color: var(--tech-muted-text);
+    opacity: 0.8;
+}
+
+.text-tech-muted i {
+    color: var(--tech-muted-text);
+    opacity: 0.9;
+}
+
+/* Clase para texto con el color de acento */
+.text-tech-accent {
+    color: var(--tech-accent);
+    text-shadow: 0 0 8px rgba(217, 179, 16, 0.6);
+}
+
+/* Correcciones para textos en secciones específicas */
+#suitesList .text-tech-muted,
+#suiteDetailEmpty .text-tech-muted,
+#caseSelectionList .text-tech-muted {
+    font-size: 0.95rem;
+    text-shadow: 0 0 3px rgba(160, 224, 255, 0.3);
+}
+
+/* ===== ANIMACIONES ADICIONALES ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* ===== SCROLLBARS PERSONALIZADOS ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--tech-dark);
+    border-radius: var(--tech-radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tech-border);
+    border-radius: var(--tech-radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--tech-border-light);
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.2), transparent);
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Efectos de carga premium */
+.premium-loader {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 20px auto;
+}
+
+.premium-loader::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 3px solid rgba(0, 102, 255, 0.1);
+    border-top: 3px solid var(--tech-primary);
+    border-radius: 50%;
+    animation: premiumSpin 1s linear infinite;
+}
+
+.premium-loader::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(100% - 12px);
+    height: calc(100% - 12px);
+    border: 2px solid rgba(255, 107, 53, 0.1);
+    border-bottom: 2px solid var(--tech-accent);
+    border-radius: 50%;
+    animation: premiumSpin 0.8s linear infinite reverse;
+}
+
+@keyframes premiumSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animaciones de entrada premium */
+.fade-in-premium {
+    animation: fadeInPremium 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInPremium {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.slide-in-premium {
+    animation: slideInPremium 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    transform: translateX(-100px);
+    opacity: 0;
+}
+
+@keyframes slideInPremium {
+    0% {
+        transform: translateX(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Efectos de texto premium */
+.text-glow {
+    text-shadow: 0 0 10px rgba(0, 102, 255, 0.5), 0 0 20px rgba(0, 102, 255, 0.3), 0 0 30px rgba(0, 102, 255, 0.1);
+    animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes textGlow {
+    from {
+        text-shadow: 0 0 10px rgba(0, 102, 255, 0.5), 0 0 20px rgba(0, 102, 255, 0.3), 0 0 30px rgba(0, 102, 255, 0.1);
+    }
+    to {
+        text-shadow: 0 0 15px rgba(0, 102, 255, 0.8), 0 0 25px rgba(0, 102, 255, 0.5), 0 0 35px rgba(0, 102, 255, 0.3);
+    }
+}
+
+/* ===== MEJORAS ESPECÍFICAS PARA ELEMENTOS EXISTENTES ===== */
+.editable-name {
+    transition: var(--tech-transition);
+    padding: var(--tech-space-xs) var(--tech-space-sm);
+    border-radius: var(--tech-radius-sm);
+}
+
+.editable-name:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--tech-primary-light);
+}
+
+.badge-playwright {
+    background: var(--tech-gradient-primary) !important;
+    color: var(--tech-light);
+    border: 1px solid var(--tech-primary);
+}
+
+.screenshot-item {
+    transition: var(--tech-transition);
+}
+
+.screenshot-item:hover {
+    transform: translateY(-2px);
+}
+
+.test-item {
+    transition: var(--tech-transition);
+    border-radius: var(--tech-radius);
+}
+
+.test-item:hover {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: var(--tech-primary);
+}
+
+.test-item.selected {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: var(--tech-primary);
+    box-shadow: var(--tech-shadow);
+}
+
+/* ===== SLIDERS ULTRA ELEGANTES ===== */
+.form-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: var(--tech-radius-elegant);
+    background: linear-gradient(90deg, var(--tech-dark) 0%, var(--tech-secondary) 100%);
+    outline: none;
+    transition: var(--tech-transition-elegant);
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.form-range:hover {
+    background: linear-gradient(90deg, var(--tech-dark) 0%, var(--tech-primary) 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 15px var(--tech-primary-glow);
+}
+
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--tech-gradient-primary-glow);
+    cursor: pointer;
+    border: 3px solid var(--tech-light);
+    box-shadow: var(--tech-shadow-elegant), 0 0 20px var(--tech-primary-glow);
+    transition: var(--tech-transition-elegant);
+    position: relative;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: var(--tech-shadow-luxury), 0 0 30px var(--tech-primary-glow);
+    border-color: var(--tech-primary);
+}
+
+.form-range::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+    box-shadow: var(--tech-shadow-elegant), 0 0 25px var(--tech-primary-glow);
+}
+
+.form-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--tech-gradient-primary-glow);
+    cursor: pointer;
+    border: 3px solid var(--tech-light);
+    box-shadow: var(--tech-shadow-elegant), 0 0 20px var(--tech-primary-glow);
+    transition: var(--tech-transition-elegant);
+}
+
+.form-range::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: var(--tech-shadow-luxury), 0 0 30px var(--tech-primary-glow);
+    border-color: var(--tech-primary);
+}
+
+/* Track para Firefox */
+.form-range::-moz-range-track {
+    height: 8px;
+    border-radius: var(--tech-radius-elegant);
+    background: linear-gradient(90deg, var(--tech-dark) 0%, var(--tech-secondary) 100%);
+    border: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Tooltip para sliders */
+.slider-tooltip {
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.slider-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--tech-primary);
+}
+
+/* Animaciones para sliders */
+@keyframes sliderHover {
+    0% { transform: scale(1.02); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1.02); }
+}
+
+@keyframes sliderPulse {
+    0%, 100% { 
+        box-shadow: var(--tech-shadow-elegant), 0 0 20px var(--tech-primary-glow);
+    }
+    50% { 
+        box-shadow: var(--tech-shadow-luxury), 0 0 40px var(--tech-primary-glow);
+    }
+}
+
+/* Efecto de progreso en el slider */
+.form-range::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--tech-gradient-primary-glow);
+    border-radius: var(--tech-radius-elegant);
+    transition: var(--tech-transition-elegant);
+    z-index: -1;
+}
+
+/* Contenedor mejorado para sliders */
+.slider-container {
+    position: relative;
+    padding: 1rem 0;
+    margin: 0.5rem 0;
+}
+
+.slider-container:hover .form-range {
+    animation: sliderPulse 2s ease-in-out infinite;
+}
+
+/* ===== MEJORAS PARA SWITCHES ===== */
+.form-switch .form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+    background-color: var(--tech-dark);
+    border: 1px solid var(--tech-border);
+    border-radius: 2rem;
+    transition: var(--tech-transition);
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--tech-primary);
+    border-color: var(--tech-primary);
+}
+
+.form-switch .form-check-input:focus {
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ===== MEJORAS PARA TABLAS ===== */
+.table {
+    color: var(--tech-light-dark);
+}
+
+.table-dark {
+    --bs-table-bg: var(--tech-dark-light);
+    --bs-table-border-color: var(--tech-border);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+/* ===== MEJORAS PARA DROPDOWNS ===== */
+.dropdown-menu {
+    background: var(--tech-dark-light);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius-lg);
+    box-shadow: var(--tech-shadow-lg);
+}
+
+.dropdown-item {
+    color: var(--tech-light-dark);
+    transition: var(--tech-transition);
+}
+
+.dropdown-item:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--tech-light);
+}
+
+/* ===== MEJORAS PARA SPINNERS ===== */
+.spinner-border {
+    border-color: var(--tech-primary);
+    border-right-color: transparent;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.125em;
+}
+
+/* ===== MEJORAS FINALES ===== */
+.text-white {
+    color: var(--tech-light) !important;
+}
+
+.text-light {
+    color: var(--tech-light-dark) !important;
+}
+
+.text-muted {
+    color: var(--tech-secondary) !important;
+}
+
+.bg-dark {
+    background-color: var(--tech-dark-light) !important;
+}
+
+.border-secondary {
+    border-color: var(--tech-border) !important;
+}
+
+/* ===== MEJORAS PARA CONTENIDO ESPECÍFICO ===== */
+.tech-terminal {
+    background: var(--tech-dark);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius);
+    font-family: var(--tech-font-mono);
+    color: #00ff00;
+    padding: var(--tech-space);
+    box-shadow: var(--tech-shadow-sm);
+}
+
+.stats-icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tech-gradient-primary);
+    color: var(--tech-light);
+    box-shadow: var(--tech-shadow);
+}
+
+.execution-card {
+    background: var(--tech-dark-light);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius-lg);
+    box-shadow: var(--tech-shadow-md);
+    transition: var(--tech-transition);
+}
+
+.execution-card:hover {
+    border-color: var(--tech-primary);
+    box-shadow: var(--tech-shadow-lg);
+    transform: translateY(-2px);
+}
+
+.execution-header {
+    background: var(--tech-gradient-primary);
+    color: var(--tech-light);
+    padding: var(--tech-space) var(--tech-space-md);
+    border-radius: var(--tech-radius-lg) var(--tech-radius-lg) 0 0;
+}
+
+.execution-body {
+    padding: var(--tech-space-md);
+}
+
+.test-selector {
+    background: var(--tech-dark);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius);
+    padding: var(--tech-space);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.execution-controls {
+    background: rgba(0, 212, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--tech-radius-lg);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    box-shadow: var(--tech-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: var(--tech-space-md);
+    margin-top: var(--tech-space);
+    position: relative;
+    overflow: hidden;
+}
+
+.execution-controls::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-glass);
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Efectos premium para estadísticas */
+.stats-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--tech-radius-elegant);
+    padding: var(--tech-space-md);
+    box-shadow: var(--tech-shadow-luxury);
+    transition: var(--tech-transition-elegant);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-glass);
+    opacity: 0;
+    transition: var(--tech-transition);
+    z-index: -1;
+}
+
+.stats-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--tech-shadow-lg), 0 0 30px var(--tech-primary-glow);
+    border-color: var(--tech-primary);
+}
+
+.stats-card:hover::before {
+    opacity: 1;
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: var(--tech-gradient-primary-glow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 20px var(--tech-primary-glow);
+    animation: numberPulse 2s ease-in-out infinite;
+}
+
+@keyframes numberPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Efectos para controles de configuración */
+.config-section {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--tech-radius-lg);
+    padding: var(--tech-space-md);
+    margin-bottom: var(--tech-space-md);
+    box-shadow: var(--tech-shadow);
+    transition: var(--tech-transition);
+}
+
+.config-section:hover {
+    border-color: var(--tech-primary);
+    box-shadow: var(--tech-shadow-md), 0 0 20px var(--tech-primary-glow);
+}
+
+.config-title {
+    color: var(--tech-light);
+    font-weight: 600;
+    margin-bottom: var(--tech-space);
+    display: flex;
+    align-items: center;
+    gap: var(--tech-space-sm);
+}
+
+.config-title i {
+    color: var(--tech-primary);
+    text-shadow: 0 0 10px var(--tech-primary-glow);
+}
+
+/* ===== ESTILOS EMPRESARIALES PROFESIONALES ===== */
+.tech-corporate-header {
+    background: linear-gradient(135deg, var(--tech-dark) 0%, var(--tech-dark-light) 100%);
+    border-bottom: 1px solid var(--tech-border);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.tech-corporate-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--tech-border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.tech-corporate-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--tech-primary);
+    box-shadow: 0 8px 32px var(--tech-primary-glow);
+}
+
+.tech-corporate-text {
+    color: var(--tech-light);
+    font-weight: 500;
+    letter-spacing: 0.025em;
+}
+
+.tech-corporate-accent {
+    color: var(--tech-primary);
+    font-weight: 600;
+}
+
+.tech-corporate-muted {
+    color: var(--tech-secondary-light);
+    font-size: 0.875rem;
+}
+
+.tech-corporate-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--tech-border) 50%, transparent 100%);
+    margin: 1.5rem 0;
+}
+
+.tech-corporate-badge {
+    background: var(--tech-gradient-primary);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--tech-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.tech-corporate-button {
+    background: var(--tech-gradient-primary);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--tech-radius);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    transition: var(--tech-transition);
+    box-shadow: 0 4px 15px var(--tech-primary-glow);
+}
+
+.tech-corporate-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--tech-primary-glow);
+}
+
+.tech-corporate-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--tech-border);
+    color: var(--tech-light);
+    padding: 0.75rem 1rem;
+    border-radius: var(--tech-radius);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.tech-corporate-input:focus {
+    border-color: var(--tech-primary);
+    box-shadow: 0 0 0 3px var(--tech-primary-glow);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tech-corporate-sidebar {
+    background: var(--tech-gradient-dark);
+    border-right: 1px solid var(--tech-border-dark);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.tech-corporate-nav-item {
+    color: var(--tech-secondary-light);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--tech-radius);
+    margin: 0.25rem 0;
+    transition: var(--tech-transition);
+    border-left: 3px solid transparent;
+}
+
+.tech-corporate-nav-item:hover {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--tech-primary-light);
+    border-left-color: var(--tech-primary);
+}
+
+.tech-corporate-nav-item.active {
+    background: rgba(0, 212, 255, 0.15);
+    color: var(--tech-primary);
+    border-left-color: var(--tech-primary);
+}
+
+.tech-corporate-table {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--tech-border);
+    border-radius: var(--tech-radius-lg);
+    overflow: hidden;
+}
+
+.tech-corporate-table th {
+    background: var(--tech-gradient-secondary);
+    color: var(--tech-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--tech-border);
+}
+
+.tech-corporate-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--tech-border-dark);
+    color: var(--tech-light);
+}
+
+.tech-corporate-table tr:hover {
+    background: rgba(0, 212, 255, 0.05);
+}
+
+/* Mejoras específicas para elementos existentes */
+.card.tech-corporate-style {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--tech-border);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.btn.tech-corporate-style {
+    background: var(--tech-gradient-primary);
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 15px var(--tech-primary-glow);
+}
+
+.form-control.tech-corporate-style {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--tech-border);
+    color: var(--tech-light);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.form-control.tech-corporate-style:focus {
+    border-color: var(--tech-primary);
+    box-shadow: 0 0 0 3px var(--tech-primary-glow);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== EFECTOS ELEGANTES ADICIONALES ===== */
+
+/* Z-INDEX HIERARCHY - Orden de capas para evitar conflictos */
+/*
+  -2: Overlays de fondo (.tech-corporate-overlay)
+  -1: Elementos de fondo (partículas, efectos)
+   0: Contenido normal
+ 100: Elementos flotantes básicos
+1030: Header fijo
+1040: Dropdowns
+1050: Modales backdrop (Bootstrap)
+1055: Modales content (Bootstrap)
+1060: Tooltips sobre modales
+9999: Elementos de debugging/testing
+*/
+
+/* Animación de entrada elegante para elementos */
+@keyframes elegantFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.elegant-entrance {
+    animation: elegantFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Efecto de cristal mejorado */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--tech-shadow-luxury);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-luxury);
+    opacity: 0.3;
+    z-index: -1;
+}
+
+/* Efecto de hover ultra elegante */
+.elegant-hover {
+    transition: var(--tech-transition-elegant);
+}
+
+.elegant-hover:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--tech-shadow-elegant), var(--tech-shadow-glow);
+    border-color: var(--tech-primary);
+}
+
+/* Texto con efecto de lujo */
+.luxury-text {
+    background: var(--tech-gradient-primary-glow);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-shadow: 0 0 30px var(--tech-primary-glow);
+}
+
+/* Separador elegante */
+.elegant-divider {
+    height: 1px;
+    background: var(--tech-gradient-primary);
+    margin: 2rem 0;
+    border-radius: 1px;
+    box-shadow: 0 0 20px var(--tech-primary-glow);
+    opacity: 0.6;
+}
+
+/* Contenedor premium */
+.premium-container {
+    background: rgba(30, 41, 59, 0.3);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--tech-radius-2xl);
+    box-shadow: var(--tech-shadow-luxury);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--tech-gradient-luxury);
+    opacity: 0.2;
+    z-index: -1;
+}
+
+/* ===== CORRECCIÓN DE MODALES - Z-INDEX HIERARCHY ===== */
+
+/* Asegurar que los modales de Bootstrap funcionen correctamente */
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-dialog {
+    z-index: 1055 !important;
+}
+
+.modal-content {
+    z-index: 1055 !important;
+    position: relative;
+}
+
+/* Tooltips sobre modales */
+.tooltip {
+    z-index: 1060 !important;
+}
+
+/* Dropdowns en modales */
+.dropdown-menu {
+    z-index: 1060 !important;
+}
+
+/* Toast notifications */
+.toast-container {
+    z-index: 1070 !important;
+}
+
+/* Elementos de debugging/testing */
+.debug-overlay,
+.test-overlay {
+    z-index: 9999 !important;
+}
+
+/* Asegurar que las partículas estén en el fondo */
+.elegant-particles {
+    z-index: -1 !important;
+    pointer-events: none !important;
+}
+
+/* Loader premium debe estar sobre todo excepto debugging */
+.premium-loader-overlay {
+    z-index: 1070 !important;
+}
+
+/* Slider tooltips deben estar sobre modales cuando sea necesario */
+.slider-tooltip {
+    z-index: 1060 !important;
+}
+
+/* ===== CORRECCIONES ADICIONALES PARA MODALES ===== */
+
+/* Asegurar que los modales sean siempre clickeables */
+.modal.show {
+    z-index: 1055 !important;
+    pointer-events: auto !important;
+}
+
+.modal-backdrop.show {
+    z-index: 1050 !important;
+    pointer-events: auto !important;
+}
+
+/* Asegurar que el contenido del modal sea interactivo */
+.modal-content {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1055 !important;
+}
+
+/* Botones en modales deben ser clickeables */
+.modal .btn,
+.modal .form-control,
+.modal .form-select,
+.modal input,
+.modal textarea,
+.modal .btn-close {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1056 !important;
+}
+
+/* Prevenir que efectos de fondo interfieran */
+body.modal-open .elegant-particles {
+    opacity: 0.2 !important;
+    pointer-events: none !important;
+}
+
+body.modal-open .premium-loader-overlay {
+    display: none !important;
+}
+
+/* Asegurar que los overlays de fondo no interfieran */
+body.modal-open::before,
+body.modal-open::after {
+    pointer-events: none !important;
+}
+
+/* Ripple effects no deben interferir con modales */
+.modal .ripple-effect::after {
+    z-index: 1057 !important;
+}
+
+/* ===== CORRECCIÓN DE MODALES - Z-INDEX HIERARCHY MEJORADA ===== */
+
+/* JERARQUÍA DE Z-INDEX DEFINITIVA:
+   -10: Efectos de fondo que nunca deben interferir
+   -1: Partículas y elementos decorativos
+   0: Contenido normal
+   100: Elementos flotantes básicos
+   1030: Header fijo
+   1040: Dropdowns normales
+   1050: Modal backdrop (Bootstrap)
+   1055: Modal content (Bootstrap)
+   1060: Tooltips y dropdowns en modales
+   1070: Toast notifications y loaders
+   9999: Elementos de debugging/testing
+*/
+
+/* CORRECCIÓN CRÍTICA: Modal backdrop debe estar DETRÁS del contenido del modal */
+.modal-backdrop {
+    z-index: 1050 !important;
+    pointer-events: none !important; /* CRÍTICO: No interceptar eventos */
+    display: none !important; /* SOLUCIÓN RADICAL: Ocultar completamente */
+}
+
+/* Forzar que NUNCA aparezca el backdrop problemático */
+.modal-backdrop.show,
+.modal-backdrop.fade,
+.modal-backdrop.fade.show {
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
+
+.modal {
+    z-index: 1060 !important; /* MÁS ALTO que backdrop */
+    pointer-events: auto !important;
+}
+
+.modal.show {
+    z-index: 1060 !important; /* MÁS ALTO que backdrop */
+    pointer-events: auto !important;
+    display: block !important;
+}
+
+.modal-dialog {
+    z-index: 1060 !important; /* MÁS ALTO que backdrop */
+    pointer-events: auto !important;
+    position: relative !important;
+}
+
+.modal-content {
+    z-index: 1060 !important; /* MÁS ALTO que backdrop */
+    position: relative !important;
+    pointer-events: auto !important;
+    background: var(--bs-modal-bg, #fff) !important;
+}
+
+/* CRÍTICO: Todos los elementos interactivos en modales */
+.modal .btn,
+.modal .form-control,
+.modal .form-select,
+.modal input,
+.modal textarea,
+.modal .btn-close,
+.modal .dropdown-toggle,
+.modal .nav-link,
+.modal .accordion-button,
+.modal .carousel-control-prev,
+.modal .carousel-control-next,
+.modal .close,
+.modal button,
+.modal a[role="button"],
+.modal [data-bs-dismiss],
+.modal [data-bs-toggle] {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 1065 !important; /* MÁS ALTO que todo */
+    cursor: pointer !important;
+}
+
+/* Tooltips sobre modales */
+.tooltip {
+    z-index: 1060 !important;
+    pointer-events: auto !important;
+}
+
+/* Dropdowns en modales */
+.modal .dropdown-menu {
+    z-index: 1060 !important;
+    pointer-events: auto !important;
+}
+
+/* Toast notifications */
+.toast-container {
+    z-index: 1070 !important;
+}
+
+/* Elementos de debugging/testing - máxima prioridad */
+.debug-overlay,
+.test-overlay,
+.test-status-overlay,
+.test-results-overlay {
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+}
+
+/* CRÍTICO: Asegurar que las partículas NUNCA interfieran */
+.elegant-particles,
+.elegant-particles * {
+    z-index: -10 !important;
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+/* CSS para modal personalizado de eliminación de capturas */
+#customDeleteModal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.8) !important;
+    z-index: 999999 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+#customDeleteModal * {
+    pointer-events: auto !important;
+    z-index: inherit !important;
+}
+
+/* Asegurar máxima visibilidad del modal personalizado */
+body:has(#customDeleteModal[style*="display: flex"]) .elegant-particles {
+    opacity: 0.1 !important;
+    z-index: -1000 !important;
+}
+
+body:has(#customDeleteModal[style*="display: flex"]) .premium-loader-overlay {
+    display: none !important;
+    z-index: -1000 !important;
+}
+
+/* Loader premium debe estar sobre contenido normal pero bajo modales */
+.premium-loader-overlay {
+    z-index: 1040 !important;
+}
+
+/* Slider tooltips - ajustar dinámicamente */
+.slider-tooltip {
+    z-index: 1060 !important;
+    pointer-events: none !important;
+}
+
+/* CORRECCIONES ADICIONALES PARA MODALES */
+
+/* Prevenir que efectos de fondo interfieran cuando hay modales abiertos */
+body.modal-open .elegant-particles,
+body.modal-open .elegant-particles * {
+    opacity: 0.1 !important;
+    z-index: -10 !important;
+    pointer-events: none !important;
+}
+
+body.modal-open .premium-loader-overlay {
+    display: none !important;
+}
+
+/* Asegurar que los overlays de fondo no interfieran */
+body.modal-open::before,
+body.modal-open::after,
+body.modal-open .tech-corporate-overlay,
+body.modal-open .glass-effect::before {
+    pointer-events: none !important;
+    z-index: -10 !important;
+}
+
+/* Ripple effects no deben interferir con modales */
+.modal .ripple-effect::after {
+    z-index: 1057 !important;
+    pointer-events: none !important;
+}
+
+/* Backdrop filters no deben bloquear interacción */
+.modal-content,
+.modal-dialog {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Asegurar que el backdrop del modal sea clickeable para cerrar */
+.modal-backdrop.show {
+    z-index: 1050 !important;
+    pointer-events: auto !important;
+    opacity: 0.5 !important;
+}
+
+/* Prevenir que elementos con backdrop-filter interfieran */
+body.modal-open [style*="backdrop-filter"]:not(.modal):not(.modal *) {
+    pointer-events: none !important;
+}
+
+/* Asegurar visibilidad de modales sobre todos los efectos */
+.modal.show .modal-dialog {
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Corrección específica para carruseles en modales */
+.modal .carousel-control-prev,
+.modal .carousel-control-next {
+    z-index: 1058 !important;
+    pointer-events: auto !important;
+}
+
+.modal .carousel-indicators {
+    z-index: 1058 !important;
+}
+
+.modal .carousel-indicators button {
+    pointer-events: auto !important;
+    z-index: 1058 !important;
+}
+
+/* Estilos para el progreso de análisis */
+.analysis-progress-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.analysis-icon i {
+    filter: drop-shadow(0 0 10px rgba(0, 123, 255, 0.5));
+}
+
+.analysis-title {
+    color: #ffffff;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.analysis-message {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.analysis-details {
+    min-height: 20px;
+}
+
+.analysis-stats {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.analysis-stats .stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.analysis-stats .stat-label {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progress {
+    border-radius: 15px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+    border-radius: 15px;
+    transition: width 0.3s ease;
+}
+
+/* Estilos para menú de edición de casos */
+.dropdown-menu {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--tech-border-light);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu .dropdown-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background: linear-gradient(135deg, var(--tech-primary-light), var(--tech-primary));
+    color: white;
+    transform: translateX(5px);
+}
+
+.dropdown-menu .dropdown-header {
+    color: var(--tech-accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+}
+
+.dropdown-menu .dropdown-divider {
+    border-color: var(--tech-border-light);
+    margin: 0.5rem 0;
+}
+
+/* Botones de navegación en secuencia */
+#sequenceNavigationButtons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#sequenceNavigationButtons .tech-btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+/* Mejoras para casos de prueba */
+.case-item {
+    border: 1px solid var(--tech-border-light);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.case-item:hover {
+    border-color: var(--tech-accent);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    transform: translateY(-2px);
+}
+
+.case-item.valid {
+    border-left: 4px solid var(--tech-success);
+}
+
+.case-item.invalid {
+    border-left: 4px solid var(--tech-danger);
+}
+
+.case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.case-title {
+    font-weight: 600;
+    color: var(--tech-light);
+    font-size: 1rem;
+}
+
+.case-id {
+    font-size: 0.875rem;
+    color: var(--tech-secondary-light);
+}
+
+.case-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.case-content {
+    padding: 1rem;
+}
+
+.case-problems, .case-suggestions {
+    margin-top: 0.75rem;
+}
+
+.case-problem, .case-suggestion {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.case-problem::before {
+    content: "•";
+    color: var(--tech-danger);
+    position: absolute;
+    left: 0;
+}
+
+.case-suggestion::before {
+    content: "•";
+    color: var(--tech-accent);
+    position: absolute;
+    left: 0;
+}
+
+/* Estilos para formulario de edición */
+.tech-label {
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tech-label i {
+    color: #10b981;
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.tech-input {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+    border: 2px solid rgba(100, 116, 139, 0.4);
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+        0 2px 4px -1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.tech-input:focus {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 1), rgba(30, 41, 59, 1));
+    border-color: var(--tech-accent);
+    box-shadow: 
+        0 0 0 3px rgba(16, 185, 129, 0.2),
+        0 10px 15px -3px rgba(0, 0, 0, 0.2),
+        0 4px 6px -2px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.tech-input::placeholder {
+    color: rgba(148, 163, 184, 0.8);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.tech-input:hover:not(:focus) {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 
+        0 6px 8px -1px rgba(0, 0, 0, 0.15),
+        0 2px 4px -1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.form-text {
+    color: rgba(148, 163, 184, 0.9);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    font-style: italic;
+}
+
+.form-text i {
+    margin-right: 0.5rem;
+    color: var(--tech-accent);
+}
+
+/* Secciones del formulario */
+.modal-body h6 {
+    color: #10b981;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    border-bottom: 2px solid rgba(16, 185, 129, 0.4);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.modal-body h6::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, transparent);
+    border-radius: 1px;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.modal-body h6 i {
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+    color: #10b981;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Información del caso */
+.tech-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(100, 116, 139, 0.2);
+    border-radius: 16px;
+    box-shadow: 
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.5), transparent);
+}
+
+#editCaseDisplayId {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #10b981;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    letter-spacing: 1px;
+}
+
+#editCaseStatus {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tech-card .text-light {
+    color: #ffffff !important;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tech-card .text-muted {
+    color: rgba(148, 163, 184, 0.9) !important;
+    font-size: 0.85rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Botones de navegación en secuencia */
+#sequenceNavigationButtons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#sequenceNavigationButtons .tech-btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+}
+
+#sequenceNavigationButtons .text-muted {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Problemas y sugerencias */
+#caseProblems {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+#caseProblems .alert {
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#caseProblems .alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    border-radius: 0 2px 2px 0;
+}
+
+#caseProblems .alert-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+#caseProblems .alert-danger::before {
+    background: linear-gradient(180deg, var(--tech-danger), #dc2626);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+
+#caseProblems .alert-info {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1));
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+#caseProblems .alert-info::before {
+    background: linear-gradient(180deg, var(--tech-accent), #059669);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+
+#caseProblems h6 {
+    color: inherit !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 0.75rem !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+    border: none !important;
+    padding: 0 !important;
+    font-weight: 600 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+#caseProblems h6 i {
+    margin-right: 0.75rem !important;
+    font-size: 1.1rem !important;
+    text-shadow: none !important;
+}
+
+#caseProblems ul {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+#caseProblems li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+#caseProblems .alert-danger li::before {
+    content: '⚠';
+    position: absolute;
+    left: 0;
+    color: var(--tech-danger);
+    font-weight: bold;
+}
+
+#caseProblems .alert-info li::before {
+    content: '💡';
+    position: absolute;
+    left: 0;
+}
+
+/* Modal de edición mejorado */
+#editCaseModal .modal-dialog {
+    max-width: 1200px;
+    margin: 1.75rem auto;
+}
+
+#editCaseModal .modal-content {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.96));
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    border-radius: 20px;
+    box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+}
+
+#editCaseModal .modal-header {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(16, 185, 129, 0.1));
+    border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+    padding: 1.5rem 2rem;
+    position: relative;
+}
+
+#editCaseModal .modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--tech-primary), var(--tech-accent), var(--tech-primary));
+}
+
+#editCaseModal .modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--tech-light);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#editCaseModal .modal-body {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.3);
+    color: #ffffff;
+}
+
+/* Asegurar contraste en todos los textos del modal */
+#editCaseModal .modal-body * {
+    color: inherit;
+}
+
+#editCaseModal .modal-body .text-light,
+#editCaseModal .modal-body .form-control,
+#editCaseModal .modal-body .tech-input,
+#editCaseModal .modal-body input,
+#editCaseModal .modal-body textarea {
+    color: #ffffff !important;
+}
+
+#editCaseModal .modal-body .text-muted {
+    color: rgba(148, 163, 184, 0.9) !important;
+}
+
+#editCaseModal .modal-body .tech-label {
+    color: #ffffff !important;
+}
+
+#editCaseModal .modal-body .form-text {
+    color: rgba(148, 163, 184, 0.9) !important;
+}
+
+#editCaseModal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+#editCaseModal .modal-body::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 4px;
+}
+
+#editCaseModal .modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--tech-accent), rgba(16, 185, 129, 0.6));
+    border-radius: 4px;
+}
+
+#editCaseModal .modal-footer {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
+    padding: 1.5rem 2rem;
+}
+
+/* Animaciones */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#editCaseModal.show .modal-dialog {
+    animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efectos de hover para campos */
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.row.mb-4 {
+    margin-bottom: 2.5rem !important;
+}
+
+/* Separadores visuales */
+.row.mb-4::after {
+    content: '';
+    position: absolute;
+    bottom: -1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent);
+}
+
+.row.mb-4:last-child::after {
+    display: none;
+}
+
+/* Efectos adicionales para el formulario */
+.tech-input:valid {
+    border-color: rgba(34, 197, 94, 0.7);
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+        0 2px 4px -1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 0 0 1px rgba(34, 197, 94, 0.2);
+}
+
+.tech-input:invalid:not(:placeholder-shown) {
+    border-color: rgba(239, 68, 68, 0.7);
+    box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.2), 
+        0 2px 4px -1px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+/* Indicador de campo requerido */
+.tech-label:has(+ .tech-input[required])::after {
+    content: '*';
+    color: var(--tech-danger);
+    margin-left: 0.25rem;
+    font-weight: bold;
+}
+
+/* Efectos de carga */
+.tech-input.loading {
+    background: linear-gradient(90deg, 
+        rgba(15, 23, 42, 0.9) 25%, 
+        rgba(30, 41, 59, 0.8) 50%, 
+        rgba(15, 23, 42, 0.9) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Mejoras para textarea */
+.tech-input[rows] {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.tech-input[rows]:focus {
+    min-height: 140px;
+}
+
+/* Contador de caracteres para campos largos */
+.char-counter {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 1rem;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.6);
+    pointer-events: none;
+}
+
+/* Efectos de grupo de campos */
+.form-group {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.form-group:hover .tech-label i {
+    transform: scale(1.1);
+    text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+/* Transiciones suaves */
+* {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-input,
+.tech-label,
+.tech-btn {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras para botones del modal */
+#editCaseModal .tech-btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+#editCaseModal .tech-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+#editCaseModal .tech-btn:hover::before {
+    left: 100%;
+}
+
+/* Indicadores de estado mejorados */
+.badge.bg-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive para móviles */
+@media (max-width: 767.98px) {
+    .case-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .case-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .dropdown-menu {
+        max-height: 300px;
+    }
+    
+    #sequenceNavigationButtons {
+        flex-wrap: wrap;
+    }
+    
+    #editCaseModal .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    #editCaseModal .modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+    }
+    
+    #editCaseModal .modal-header,
+    #editCaseModal .modal-footer {
+        padding: 1rem 1.5rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .modal-footer > div {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+    
+    #sequenceNavigationButtons {
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .tech-input {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .tech-label {
+        font-size: 0.9rem;
+    }
+}
+
+/* ========================================
+   ESTILOS ESPECÍFICOS PARA FORMULARIO DE EJECUCIÓN MASIVA
+   ======================================== */
+
+/* Contenedor principal del formulario */
+.excel-upload-form {
+    background: linear-gradient(135deg, var(--tech-dark-light), var(--tech-dark-lighter));
+    border: 1px solid var(--tech-border-dark);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.excel-upload-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(37, 99, 235, 0.05) 0%, 
+        rgba(16, 185, 129, 0.05) 50%, 
+        rgba(37, 99, 235, 0.05) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.excel-upload-form > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilos para labels del formulario */
+.excel-upload-form .form-label {
+    color: var(--tech-light);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para inputs del formulario */
+.excel-upload-form .form-control {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--tech-border);
+    color: var(--tech-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.excel-upload-form .form-control:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--tech-primary);
+    box-shadow: 0 0 0 0.25rem var(--tech-primary-glow);
+    color: var(--tech-light);
+}
+
+.excel-upload-form .form-control::placeholder {
+    color: var(--tech-secondary-light);
+    opacity: 0.7;
+}
+
+/* Texto de ayuda del formulario */
+.excel-upload-form .form-text {
+    color: var(--tech-secondary-light);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.excel-upload-form .form-text a {
+    color: var(--tech-accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.excel-upload-form .form-text a:hover {
+    color: var(--tech-accent-dark);
+    text-decoration: underline;
+}
+
+/* Alertas del formulario */
+.excel-upload-form .tech-alert {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: var(--tech-light);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.excel-upload-form .tech-alert strong {
+    color: var(--tech-accent);
+}
+
+/* Panel de opciones de datos de prueba */
+.data-options-panel {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--tech-border-dark);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    backdrop-filter: blur(5px);
+}
+
+.data-options-panel h6 {
+    color: var(--tech-light);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.data-options-panel .form-check {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--tech-border-light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.data-options-panel .form-check:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--tech-primary);
+    transform: translateY(-1px);
+}
+
+.data-options-panel .form-check-input:checked {
+    background-color: var(--tech-primary);
+    border-color: var(--tech-primary);
+}
+
+.data-options-panel .form-check-label {
+    color: var(--tech-light);
+    cursor: pointer;
+    width: 100%;
+}
+
+.data-options-panel .form-check-label strong {
+    color: var(--tech-accent);
+    font-size: 1rem;
+}
+
+.data-options-panel .form-check-label small {
+    color: var(--tech-secondary-light);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Botón principal del formulario */
+.excel-upload-form .tech-btn-primary {
+    background: linear-gradient(135deg, var(--tech-primary), var(--tech-primary-dark));
+    border: none;
+    color: var(--tech-light);
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.excel-upload-form .tech-btn-primary:hover {
+    background: linear-gradient(135deg, var(--tech-primary-dark), var(--tech-primary));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.excel-upload-form .tech-btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* Mejoras específicas para tech-card en formularios */
+.tech-card.excel-form-card {
+    background: linear-gradient(135deg, var(--tech-dark-light), var(--tech-dark-lighter));
+    border: 1px solid var(--tech-border-dark);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.tech-card.excel-form-card .tech-panel-body {
+    background: transparent;
+}
+
+/* Estilos para el panel de instrucciones */
+.instructions-panel .tech-alert {
+    background: rgba(37, 99, 235, 0.1);
+    border: 1px solid rgba(37, 99, 235, 0.3);
+    margin-bottom: 1rem;
+}
+
+.instructions-panel .tech-alert h6 {
+    color: var(--tech-primary);
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.instructions-panel .tech-alert ul {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+}
+
+.instructions-panel .tech-alert li {
+    color: var(--tech-light);
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+.instructions-panel .tech-alert li strong {
+    color: var(--tech-accent);
+}
+
+/* Alertas de advertencia en instrucciones */
+.instructions-panel .tech-alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.instructions-panel .tech-alert-warning h6 {
+    color: var(--tech-warning);
+}
+
+/* Responsive para formularios */
+@media (max-width: 767.98px) {
+    .excel-upload-form {
+        padding: 1.5rem;
+        margin: 0.5rem;
+    }
+    
+    .data-options-panel {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .data-options-panel .form-check {
+        padding: 0.75rem;
+    }
+    
+    .excel-upload-form .tech-btn-primary {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Estilos para ejecución individual de casos */
+.execute-single-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.execute-single-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.execute-single-btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.execute-single-btn .fa-spinner {
+    animation: fa-spin 1s linear infinite;
+}
+
+/* Indicador de estado de ejecución */
+[id^="executionStatus_"] {
+    animation: pulseExecution 2s ease-in-out infinite;
+}
+
+@keyframes pulseExecution {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.05);
+    }
+}
+
+/* Badge de ejecutando con efecto glowing */
+.badge.bg-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge.bg-warning .fa-spinner {
+    color: #ffffff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Efectos hover mejorados para casos */
+.case-item .case-header {
+    transition: all 0.3s ease;
+}
+
+.case-item:hover .case-header {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+    border-radius: 8px;
+    padding: 8px;
+    margin: -8px;
+}
+
+/* Estado visual para caso en ejecución */
+.case-item.executing {
+    border-left: 4px solid #f59e0b;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(217, 119, 6, 0.02));
+    animation: caseExecutingGlow 3s ease-in-out infinite;
+}
+
+@keyframes caseExecutingGlow {
+    0%, 100% { 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    50% { 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+}
+
+/* Mejoras para botones de acción */
+.case-actions .btn {
+    transition: all 0.2s ease;
+    margin-left: 4px;
+}
+
+.case-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.case-actions .btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive para indicadores */
+@media (max-width: 767.98px) {
+    .case-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .case-actions .btn {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .case-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    [id^="executionStatus_"] {
+        margin: 8px 0 0 0 !important;
+        align-self: flex-start;
+    }
+}
+
+/* Estilos para la nueva interfaz de instrucciones Excel */
+.excel-structure-preview {
+    margin-bottom: 1.5rem;
+}
+
+.excel-structure-preview h6 {
+    color: var(--tech-primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.excel-preview-table {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--tech-border-dark);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.excel-preview-table thead th {
+    background: linear-gradient(135deg, var(--tech-primary), var(--tech-primary-dark));
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    padding: 12px 8px;
+    border: none;
+    font-size: 0.9rem;
+}
+
+.excel-preview-table tbody td {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    padding: 16px 12px;
+    vertical-align: top;
+}
+
+.step-example {
+    background: rgba(37, 99, 235, 0.05);
+    border-radius: 6px;
+    padding: 12px;
+    border-left: 3px solid var(--tech-primary);
+}
+
+.step-list {
+    margin-top: 8px;
+}
+
+.step-item {
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-left: 2px solid var(--tech-primary);
+    font-size: 0.85rem;
+    color: var(--tech-light);
+    transition: all 0.2s ease;
+}
+
+.step-item:hover {
+    background: rgba(37, 99, 235, 0.15);
+    transform: translateX(2px);
+}
+
+.step-item:last-child {
+    margin-bottom: 0;
+}
+
+.column-info {
+    margin-bottom: 1rem;
+}
+
+.column-info strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+}
+
+.column-info p {
+    color: var(--tech-muted);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Estilos para alertas de instrucciones mejoradas */
+.instructions-panel .tech-alert-success {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05));
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 8px;
+}
+
+.instructions-panel .tech-alert-success h6 {
+    color: #22c55e;
+}
+
+.instructions-panel .tech-alert-secondary {
+    background: linear-gradient(135deg, rgba(100, 116, 139, 0.1), rgba(71, 85, 105, 0.05));
+    border: 1px solid rgba(100, 116, 139, 0.3);
+}
+
+.instructions-panel .tech-alert-secondary h6 {
+    color: #94a3b8;
+}
+
+/* Botón de descarga mejorado */
+.tech-btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.tech-btn-success {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tech-btn-success:hover {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive para la nueva interfaz */
+@media (max-width: 767.98px) {
+    .excel-preview-table {
+        font-size: 0.8rem;
+    }
+    
+    .excel-preview-table thead th {
+        padding: 8px 6px;
+        font-size: 0.8rem;
+    }
+    
+    .excel-preview-table tbody td {
+        padding: 12px 8px;
+    }
+    
+    .step-item {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+    
+    .column-info {
+        margin-bottom: 0.75rem;
+    }
+    
+    .instructions-panel .tech-alert {
+        margin-bottom: 0.75rem;
+    }
+    
+    .tech-alert h6 {
+        font-size: 0.9rem;
+    }
+    
+    .tech-alert ul {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animaciones para la interfaz */
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.instructions-panel .tech-alert {
+    animation: slideInFromRight 0.6s ease-out;
+}
+
+.instructions-panel .tech-alert:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.instructions-panel .tech-alert:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.instructions-panel .tech-alert:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.instructions-panel .tech-alert:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+/* Efecto hover para la tabla de ejemplo */
+.excel-preview-table:hover {
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Iconos mejorados */
+.instructions-panel .fas {
+    text-shadow: 0 0 10px currentColor;
+}
+
+.instructions-panel .tech-alert h6 .fas {
+    margin-right: 8px;
+    opacity: 0.9;
+}
+

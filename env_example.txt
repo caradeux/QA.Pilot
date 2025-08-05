@@ -1,0 +1,16 @@
+# Configuración de sistemas MCP
+USE_MCP=false
+USE_PLAYWRIGHT_MCP=true
+
+# Configuración de base de datos
+DATABASE_URL=postgresql://username:password@localhost/qa_pilot
+
+# Configuración de APIs (opcional)
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+GEMINI_API_KEY=
+
+# Configuración de Flask
+FLASK_SECRET_KEY=
+FLASK_ENV=development
+FLASK_DEBUG=true 

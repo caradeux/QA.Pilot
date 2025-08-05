@@ -1,0 +1,1325 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial - Inovabiz QA Pilot{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* Estilos mejorados para historial */
+    .history-header {
+        background: var(--tech-gradient-primary);
+        color: var(--tech-light);
+        border-radius: var(--tech-radius-lg) var(--tech-radius-lg) 0 0;
+        padding: var(--tech-space) var(--tech-space-md);
+        border-bottom: 1px solid var(--tech-border);
+    }
+    
+
+    
+    .history-item {
+        background: var(--tech-dark-light);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius-lg);
+        margin-bottom: var(--tech-space);
+        overflow: hidden;
+        transition: var(--tech-transition);
+        box-shadow: var(--tech-shadow);
+    }
+    
+    .history-item:hover {
+        border-color: var(--tech-primary);
+        box-shadow: var(--tech-shadow-lg);
+        transform: translateY(-2px);
+    }
+    
+    .history-item-header {
+        background: var(--tech-dark);
+        border-bottom: 1px solid var(--tech-border);
+        padding: var(--tech-space) var(--tech-space-md);
+        cursor: pointer;
+        transition: var(--tech-transition);
+    }
+    
+    .history-item-header:hover {
+        background: var(--tech-dark-lighter);
+    }
+    
+    .history-item-header.active {
+        background: var(--tech-gradient-primary);
+        color: var(--tech-light);
+    }
+    
+    .test-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--tech-light);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-sm);
+    }
+    
+    .test-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space);
+        font-size: 0.875rem;
+        color: var(--tech-secondary);
+        margin-top: 0.25rem;
+    }
+    
+    .editable-name {
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--tech-radius-sm);
+        transition: var(--tech-transition);
+        background: transparent;
+        border: 1px solid transparent;
+    }
+    
+    .editable-name:hover {
+        background: rgba(37, 99, 235, 0.1);
+        border-color: var(--tech-primary);
+        color: var(--tech-primary-light);
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--tech-radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    
+    .status-success {
+        background: var(--tech-success);
+        color: var(--tech-light);
+    }
+    
+    .status-error {
+        background: var(--tech-danger);
+        color: var(--tech-light);
+    }
+    
+    .badge-playwright {
+        background: var(--tech-gradient-primary) !important;
+        color: var(--tech-light);
+        border: 1px solid var(--tech-primary);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--tech-radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .history-content {
+        padding: var(--tech-space-md);
+        background: var(--tech-dark);
+    }
+    
+    .content-section {
+        margin-bottom: var(--tech-space-md);
+        padding-bottom: var(--tech-space);
+        border-bottom: 1px solid var(--tech-border);
+    }
+    
+    .content-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--tech-light);
+        margin-bottom: var(--tech-space-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--tech-space-xs);
+    }
+    
+    .instructions-block {
+        background: var(--tech-dark-light);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+        font-family: var(--tech-font-mono);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        color: var(--tech-light-dark);
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-x: auto;
+    }
+    
+    .result-text {
+        color: var(--tech-light-dark);
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+    
+    .test-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--tech-space-sm);
+    }
+    
+    .action-btn {
+        padding: var(--tech-space-xs) var(--tech-space-sm);
+        border-radius: var(--tech-radius);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        transition: var(--tech-transition);
+        border: 1px solid transparent;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--tech-shadow);
+    }
+    
+    .screenshots-section {
+        background: var(--tech-dark-light);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        padding: var(--tech-space);
+    }
+    
+    .screenshots-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--tech-space);
+        padding-bottom: var(--tech-space-sm);
+        border-bottom: 1px solid var(--tech-border);
+    }
+    
+    .screenshots-controls {
+        display: flex;
+        gap: var(--tech-space-xs);
+    }
+    
+    .screenshot-item {
+        transition: var(--tech-transition);
+        border-radius: var(--tech-radius);
+        overflow: hidden;
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        padding: var(--tech-space-xs);
+    }
+    
+    .screenshot-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--tech-shadow);
+        border-color: var(--tech-primary);
+    }
+    
+    .screenshot-item.selected {
+        border-color: var(--tech-danger);
+        background: rgba(239, 68, 68, 0.1);
+        box-shadow: var(--tech-shadow);
+    }
+    
+    .screenshot-checkbox {
+        background: var(--tech-dark);
+        border: 2px solid var(--tech-border);
+        border-radius: var(--tech-radius-sm);
+        transition: var(--tech-transition);
+    }
+    
+    .screenshot-checkbox:checked {
+        background: var(--tech-primary);
+        border-color: var(--tech-primary);
+    }
+    
+    .screenshot-image {
+        width: 100%;
+        height: auto;
+        border-radius: var(--tech-radius-sm);
+        transition: var(--tech-transition);
+    }
+    
+    .screenshot-image:hover {
+        transform: scale(1.02);
+    }
+    
+    .screenshot-name {
+        font-size: 0.75rem;
+        color: var(--tech-secondary);
+        text-align: center;
+        margin-top: var(--tech-space-xs);
+        padding: var(--tech-space-xs);
+    }
+    
+    .execution-item {
+        background: var(--tech-dark);
+        border: 1px solid var(--tech-border);
+        border-radius: var(--tech-radius);
+        margin-bottom: var(--tech-space-sm);
+        overflow: hidden;
+    }
+    
+    .execution-header {
+        padding: var(--tech-space-sm) var(--tech-space);
+        background: var(--tech-dark-light);
+        border-bottom: 1px solid var(--tech-border);
+        cursor: pointer;
+        transition: var(--tech-transition);
+    }
+    
+    .execution-header:hover {
+        background: var(--tech-dark-lighter);
+    }
+    
+    .execution-header.active {
+        background: var(--tech-gradient-primary);
+        color: var(--tech-light);
+    }
+    
+    .execution-content {
+        padding: var(--tech-space);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: var(--tech-space-xl);
+        color: var(--tech-secondary);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: var(--tech-space);
+        color: var(--tech-border);
+    }
+    
+    .empty-state h6 {
+        color: var(--tech-light-dark);
+        margin-bottom: var(--tech-space-sm);
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .search-controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-input-group {
+            max-width: none;
+        }
+        
+        .test-actions {
+            justify-content: center;
+        }
+        
+        .screenshots-header {
+            flex-direction: column;
+            gap: var(--tech-space-sm);
+            align-items: stretch;
+        }
+        
+        .screenshots-controls {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Historial de Vuelos Mejorado -->
+    <div class="tech-panel">
+        <div class="history-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="tech-panel-title mb-0">
+                    <i class="fas fa-history"></i>
+                    Historial de Vuelos
+                </h1>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="syncTestNames()" title="Sincronizar nombres con base de datos">
+                        <i class="fas fa-database me-1"></i> Sincronizar DB
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="reloadHistory()" title="Recargar historial desde base de datos">
+                        <i class="fas fa-sync-alt me-1"></i> Recargar
+                    </button>
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="debugSyncData()" title="Analizar datos de sincronización">
+                        <i class="fas fa-bug me-1"></i> Debug
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+
+            
+        <!-- Lista de historial mejorada -->
+        <div class="tech-panel-body">
+            {% if history and history|length > 0 %}
+                <div id="historyList">
+                    {% for item in history %}
+                        <div class="history-item">
+                            <div class="history-item-header" data-bs-toggle="collapse" 
+                                 data-bs-target="#history-{{ loop.index }}" aria-expanded="false">
+                                <div class="d-flex justify-content-between align-items-start w-100">
+                                    <div class="flex-grow-1">
+                                        <div class="test-title">
+                                            <i class="fas fa-globe text-primary"></i>
+                                            <span class="case-name">{{ item.name if item.name else "Test " + item.id[:8] }}</span>
+                                            <input class="case-name-input" data-case-id="{{ item.id }}" value="{{ item.name or '' }}" style="display:none; width: 60%;">
+                                            <button class="save-case-name-btn btn btn-sm btn-outline-success" data-case-id="{{ item.id }}" style="display:none;" title="Guardar">💾</button>
+                                            <button class="edit-case-name-btn btn btn-sm btn-outline-light" data-case-id="{{ item.id }}" title="Editar nombre">✏️</button>
+                                            
+                                            <!-- Indicadores de estado de BD -->
+                                            {% if item.is_in_suite %}
+                                                <span class="badge bg-warning text-dark" title="Este caso está asignado a una suite">
+                                                    <i class="fas fa-folder me-1"></i> En Suite
+                                                </span>
+                                            {% elif item.is_available_case %}
+                                                <span class="badge bg-info" title="Este caso está guardado en BD pero disponible para suites">
+                                                    <i class="fas fa-database me-1"></i> Caso BD
+                                                </span>
+                                            {% elif item.is_execution_only %}
+                                                <span class="badge bg-secondary" title="Solo ejecución histórica, no guardado como caso">
+                                                    <i class="fas fa-history me-1"></i> Solo Historial
+                                                </span>
+                                            {% endif %}
+                                            
+                                            {% if item.playwright_case %}
+                                                <span class="badge badge-playwright">
+                                                    <i class="fas fa-robot me-1"></i> Playwright
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="test-meta">
+                                            <span class="status-badge status-{{ 'success' if item.status == 'success' else 'error' }}">
+                                                <i class="fas fa-{{ 'check' if item.status == 'success' else 'times' }} me-1"></i>
+                                                {{ item.status }}
+                                            </span>
+                                            <span>
+                                                <i class="fas fa-calendar me-1"></i>
+                                                {{ item.date }}
+                                            </span>
+                                            <span>
+                                                <i class="fas fa-link me-1"></i>
+                                                {{ item.url[:50] + '...' if item.url and item.url|length > 50 else item.url }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <i class="fas fa-chevron-down text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="history-{{ loop.index }}" class="collapse">
+                                <div class="history-content">
+                                    <div class="row g-4">
+                                        <div class="col-lg-6">
+                                            <!-- Instrucciones -->
+                                            <div class="content-section">
+                                                <div class="section-title">
+                                                    <i class="fas fa-tasks"></i>
+                                                    Instrucciones de Prueba
+                                                </div>
+                                                <div class="instructions-block">{{ item.instructions }}</div>
+                                            </div>
+                                            
+                                            <!-- Resultado -->
+                                            <div class="content-section">
+                                                <div class="section-title">
+                                                    <i class="fas fa-{{ 'check-circle text-success' if item.status == 'success' else 'times-circle text-danger' }}"></i>
+                                                    Resultado de Ejecución
+                                                </div>
+                                                <div class="result-text">
+                                                    {{ item.message if item.message else "Sin resultados disponibles" }}
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Acciones del test -->
+                                            <div class="content-section">
+                                                <div class="section-title">
+                                                    <i class="fas fa-tools"></i>
+                                                    Acciones Disponibles
+                                                </div>
+                                                <div class="test-actions">
+                                                    <!-- <button class="btn btn-primary action-btn" onclick="generateReport('{{ item.id }}')" data-test-index="{{ loop.index }}">
+                                                        <i class="fas fa-file-alt me-1"></i> Reporte
+                                                    </button> -->
+                                                    
+                                                    <button class="btn btn-warning action-btn" onclick="generateWordEvidence('{{ item.id }}')">
+                                                        <i class="fas fa-file-word me-1"></i> Evidencia
+                                                    </button>
+                                                    
+                                                    {% if not item.playwright_case %}
+                                                        <!-- <button class="btn btn-success action-btn" onclick="saveAsPlaywrightCase('{{ item.id }}')">
+                                                            <i class="fas fa-save me-1"></i> Guardar Caso
+                                                        </button> -->
+                                                    {% else %}
+                                                        <button class="btn btn-success action-btn" onclick="runPlaywrightCase('{{ item.playwright_case }}')">
+                                                            <i class="fas fa-play me-1"></i> Ejecutar
+                                                        </button>
+                                                        <button class="btn btn-danger action-btn" onclick="deletePlaywrightCase('{{ item.id }}', '{{ item.playwright_case }}')">
+                                                            <i class="fas fa-trash-alt me-1"></i> Eliminar Script
+                                                        </button>
+                                                    {% endif %}
+                                                    
+                                                    <!-- <button class="btn btn-outline-danger action-btn delete-history-btn" data-testid="{{ item.id }}">
+                                                        <i class="fas fa-trash me-1"></i> Eliminar
+                                                    </button> -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="screenshots-section">
+                                                <div class="screenshots-header">
+                                                    <div class="section-title mb-0">
+                                                        <i class="fas fa-camera"></i>
+                                                        Capturas de Pantalla
+                                                    </div>
+                                                    <div class="screenshots-controls">
+                                                        <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleEditMode('{{ item.id }}')">
+                                                            <i class="fas fa-edit me-1"></i> Editar
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-danger btn-sm d-none" id="delete-selected-{{ item.id }}" onclick="deleteSelectedScreenshots('{{ item.id }}')">
+                                                            <i class="fas fa-trash-alt me-1"></i> Eliminar
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm d-none" id="cancel-edit-{{ item.id }}" onclick="cancelEditMode('{{ item.id }}')">
+                                                            <i class="fas fa-times me-1"></i> Cancelar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            <div class="accordion accordion-flush" id="ejecuciones-{{ item.id }}">
+                                                {% if item.executions and item.executions|length > 0 %}
+                                                    <!-- Historial de ejecuciones -->
+                                                    {% for execution in item.executions %}
+                                                        <div class="accordion-item bg-dark">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button collapsed bg-dark text-white" type="button" 
+                                                                        data-bs-toggle="collapse" 
+                                                                        data-bs-target="#ejecucion-{{ item.id }}-{{ loop.index }}" 
+                                                                        aria-expanded="false">
+                                                                    <i class="fas {% if execution.success %}fa-check-circle text-success{% else %}fa-times-circle text-danger{% endif %} me-2"></i>
+                                                                    Ejecución {{ execution.timestamp }}
+                                                                </button>
+                                                            </h2>
+                                                            <div id="ejecucion-{{ item.id }}-{{ loop.index }}" 
+                                                                class="accordion-collapse collapse" 
+                                                                data-bs-parent="#ejecuciones-{{ item.id }}">
+                                                                <div class="accordion-body bg-dark">
+                                                                    <p class="text-white">{{ execution.message }}</p>
+                                                                    {% if execution.screenshots and execution.screenshots|length > 0 %}
+                                                                        <div class="row row-cols-2 g-2" id="screenshots-container-{{ item.id }}-{{ loop.index }}">
+                                                                            {% for ss in execution.screenshots %}
+                                                                                <div class="col screenshot-item" data-screenshot-path="{{ ss.path if ss.path else ss.url }}">
+                                                                                    <div class="position-relative">
+                                                                                        <input type="checkbox" class="form-check-input position-absolute top-0 start-0 m-2 screenshot-checkbox d-none" 
+                                                                                               data-test-id="{{ item.id }}" data-screenshot="{{ ss.path if ss.path else ss.url }}" 
+                                                                                               style="z-index: 10;">
+                                                                                        <a href="{{ ss.url }}" target="_blank" class="d-block">
+                                                                                            <img src="{{ ss.url }}" class="img-thumbnail" alt="{{ ss.name }}">
+                                                                                        </a>
+                                                                                        <div class="text-center mt-1">
+                                                                                            <small class="text-light">{{ ss.name }}</small>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    {% else %}
+                                                                        <p class="text-light">No hay capturas disponibles para esta ejecución.</p>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% elif item.screenshots and item.screenshots|length > 0 %}
+                                                    <!-- Mostrar capturas para compatibilidad con registros antiguos -->
+                                                <div class="row row-cols-2 g-2" id="screenshots-container-{{ item.id }}">
+                                                    {% for ss in item.screenshots %}
+                                                        <div class="col screenshot-item" data-screenshot-path="{{ ss.path if ss.path else ss.url }}">
+                                                            <div class="position-relative">
+                                                                <input type="checkbox" class="form-check-input position-absolute top-0 start-0 m-2 screenshot-checkbox d-none" 
+                                                                       data-test-id="{{ item.id }}" data-screenshot="{{ ss.path if ss.path else ss.url }}" 
+                                                                       style="z-index: 10;">
+                                                                <a href="{{ ss.url }}" target="_blank" class="d-block">
+                                                                    <img src="{{ ss.url }}" class="img-thumbnail" alt="{{ ss.name }}">
+                                                                </a>
+                                                                <div class="text-center mt-1">
+                                                                    <small class="text-light">{{ ss.name }}</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% else %}
+                                                <p class="text-light">No hay capturas disponibles.</p>
+                                            {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h6>No hay vuelos registrados</h6>
+                        <p class="mb-4">Los vuelos completados aparecerán aquí automáticamente con todas sus capturas y resultados.</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                                <i class="fas fa-rocket me-1"></i> Iniciar Vuelo
+                            </a>
+                            <a href="{{ url_for('help_page') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-question-circle me-1"></i> Ayuda
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modales -->
+    <!-- MODAL DE EDICIÓN ESTILO EMPRESARIAL PROFESIONAL -->
+    <div id="editNameModal" style="
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        z-index: 999999 !important;
+        display: none !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        backdrop-filter: blur(4px) !important;
+    ">
+        <div style="
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+            max-width: 540px !important;
+            width: 95% !important;
+            border: 1px solid #e2e8f0 !important;
+            overflow: hidden !important;
+            position: relative !important;
+            animation: modalSlideIn 0.25s ease-out !important;
+        ">
+            <!-- Header Profesional -->
+            <div style="
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+                color: #f8fafc !important;
+                padding: 20px 24px !important;
+                border-bottom: 1px solid #475569 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            ">
+                <div style="display: flex; align-items: center;">
+                    <div style="
+                        background: #0f172a !important;
+                        color: #64748b !important;
+                        border-radius: 6px !important;
+                        width: 36px !important;
+                        height: 36px !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        margin-right: 12px !important;
+                        font-size: 16px !important;
+                        border: 1px solid #475569 !important;
+                    ">
+                        <i class="fas fa-edit" style="font-size: 14px; color: #94a3b8;"></i>
+                    </div>
+                    <div>
+                        <h3 style="
+                            margin: 0 !important; 
+                            font-size: 1.125rem !important; 
+                            font-weight: 600 !important;
+                            color: #f8fafc !important;
+                            letter-spacing: 0.025em !important;
+                        ">
+                            Modificar Identificador de Test
+                        </h3>
+                        <p style="
+                            margin: 4px 0 0 0 !important; 
+                            font-size: 0.8125rem !important; 
+                            color: #94a3b8 !important;
+                            font-weight: 400 !important;
+                        ">
+                            Actualizar nombre para gestión de casos de prueba
+                        </p>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" style="
+                    background: rgba(148, 163, 184, 0.1) !important;
+                    border: 1px solid #475569 !important;
+                    color: #cbd5e1 !important;
+                    font-size: 16px !important;
+                    cursor: pointer !important;
+                    padding: 0 !important;
+                    border-radius: 4px !important;
+                    width: 28px !important;
+                    height: 28px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    transition: all 0.15s ease !important;
+                    font-weight: 400 !important;
+                " onmouseover="this.style.background='rgba(148, 163, 184, 0.2)'; this.style.color='#f1f5f9'" onmouseout="this.style.background='rgba(148, 163, 184, 0.1)'; this.style.color='#cbd5e1'">
+                    ×
+                </button>
+            </div>
+            
+            <!-- Cuerpo del Modal -->
+            <div style="padding: 24px !important; background: #ffffff !important;">
+                <input type="hidden" id="edit-test-id">
+                
+                <div style="margin-bottom: 20px !important;">
+                    <label style="
+                        display: block !important;
+                        margin-bottom: 8px !important;
+                        color: #1e293b !important;
+                        font-weight: 500 !important;
+                        font-size: 0.875rem !important;
+                        text-transform: uppercase !important;
+                        letter-spacing: 0.05em !important;
+                    ">
+                        <i class="fas fa-tag" style="margin-right: 6px; color: #64748b; font-size: 0.75rem;"></i>
+                        Nombre del Test
+                    </label>
+                    <input type="text" id="edit-test-name" style="
+                        width: 100% !important;
+                        padding: 12px 16px !important;
+                        background: #f8fafc !important;
+                        border: 1px solid #cbd5e1 !important;
+                        border-radius: 6px !important;
+                        color: #1e293b !important;
+                        font-size: 0.9375rem !important;
+                        font-weight: 400 !important;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+                        transition: all 0.15s ease !important;
+                        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+                        outline: none !important;
+                    " 
+                    placeholder="Ingrese el nombre del test" 
+                    maxlength="150"
+                    onfocus="this.style.borderColor='#475569'; this.style.background='#ffffff'; this.style.boxShadow='inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 0 0 2px rgba(71, 85, 105, 0.1)'"
+                    onblur="this.style.borderColor='#cbd5e1'; this.style.background='#f8fafc'; this.style.boxShadow='inset 0 1px 2px rgba(0, 0, 0, 0.05)'"
+                    onkeypress="if(event.key==='Enter') updateTestName()"
+                    oninput="updateCharCounter(this.value)">
+                    
+                    <div style="
+                        margin-top: 6px !important;
+                        display: flex !important;
+                        justify-content: space-between !important;
+                        align-items: center !important;
+                    ">
+                        <span style="
+                            font-size: 0.75rem !important;
+                            color: #64748b !important;
+                            font-weight: 400 !important;
+                        ">Máximo 150 caracteres</span>
+                        <span id="char-counter" style="
+                            color: #64748b !important;
+                            font-size: 0.75rem !important;
+                            font-weight: 500 !important;
+                        ">0/150</span>
+                    </div>
+                </div>
+                
+                <!-- Vista Previa del Nombre (requerida por editTestName) -->
+                <div style="
+                    margin-bottom: 16px !important;
+                    padding: 12px 16px !important;
+                    background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important;
+                    border: 2px solid #2563eb !important;
+                    border-radius: 6px !important;
+                    min-height: 48px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                ">
+                    <div style="
+                        background: #2563eb !important;
+                        color: #ffffff !important;
+                        border-radius: 4px !important;
+                        width: 24px !important;
+                        height: 24px !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        margin-right: 12px !important;
+                        font-size: 11px !important;
+                        font-weight: 600 !important;
+                        flex-shrink: 0 !important;
+                    ">
+                        <i class="fas fa-eye" style="font-size: 10px;"></i>
+                    </div>
+                    <div>
+                        <div style="
+                            font-size: 0.75rem !important;
+                            color: #1e40af !important;
+                            font-weight: 600 !important;
+                            text-transform: uppercase !important;
+                            letter-spacing: 0.05em !important;
+                            margin-bottom: 2px !important;
+                        ">Vista Previa</div>
+                        <div id="name-preview" style="
+                            color: #111827 !important;
+                            font-size: 0.9375rem !important;
+                            font-weight: 700 !important;
+                            word-wrap: break-word !important;
+                            line-height: 1.2 !important;
+                        ">Escribe un nombre para ver la vista previa...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Empresarial -->
+            <div style="
+                background: #f8fafc !important;
+                padding: 16px 24px !important;
+                display: flex !important;
+                gap: 12px !important;
+                justify-content: flex-end !important;
+                border-top: 1px solid #e2e8f0 !important;
+            ">
+                <button onclick="closeEditModal()" style="
+                    background: #ffffff !important;
+                    color: #475569 !important;
+                    border: 1px solid #cbd5e1 !important;
+                    padding: 8px 16px !important;
+                    border-radius: 6px !important;
+                    font-size: 0.8125rem !important;
+                    font-weight: 500 !important;
+                    cursor: pointer !important;
+                    transition: all 0.15s ease !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.025em !important;
+                    min-width: 80px !important;
+                " onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#94a3b8'; this.style.color='#1e293b'" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#cbd5e1'; this.style.color='#475569'">
+                    Cancelar
+                </button>
+                
+                <button onclick="updateTestName()" style="
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+                    color: #ffffff !important;
+                    border: 1px solid #1e293b !important;
+                    padding: 8px 16px !important;
+                    border-radius: 6px !important;
+                    font-size: 0.8125rem !important;
+                    font-weight: 600 !important;
+                    cursor: pointer !important;
+                    transition: all 0.15s ease !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.025em !important;
+                    min-width: 100px !important;
+                    box-shadow: 0 2px 4px rgba(30, 41, 59, 0.2) !important;
+                " onmouseover="this.style.background='linear-gradient(135deg, #0f172a 0%, #1e293b 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 8px rgba(30, 41, 59, 0.3)'" onmouseout="this.style.background='linear-gradient(135deg, #1e293b 0%, #334155 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(30, 41, 59, 0.2)'">
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para guardar como caso de Playwright -->
+    <div class="modal fade" id="savePlaywrightModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Guardar como caso de Playwright</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="save-test-id">
+                    <div class="mb-3">
+                        <label for="save-case-name" class="form-label">Nombre del caso</label>
+                        <input type="text" class="form-control" id="save-case-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="save-case-description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="save-case-description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="savePlaywrightCase()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para ejecutar caso de Playwright -->
+    <div class="modal fade" id="runPlaywrightModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ejecutar caso de Playwright</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="run-case-name">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="run-headless" checked>
+                        <label class="form-check-label" for="run-headless">Ejecutar en modo headless (sin navegador visible)</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="executePlaywrightCase()">Ejecutar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para confirmar eliminación de script -->
+    <div class="modal fade" id="deleteScriptModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Eliminar script</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="delete-test-id">
+                    <input type="hidden" id="delete-case-name">
+                    <p>¿Estás seguro que deseas eliminar el script <span id="delete-script-name" class="fw-bold"></span>?</p>
+                    <p class="text-danger">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDeleteScript()">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PERSONALIZADO PURO - SIN BOOTSTRAP -->
+    <div id="customDeleteModal" style="
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        z-index: 999999 !important;
+        display: none !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    ">
+        <div style="
+            background: white !important;
+            border-radius: 10px !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important;
+            max-width: 600px !important;
+            width: 90% !important;
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            position: relative !important;
+            animation: modalSlideIn 0.3s ease-out !important;
+        ">
+            <!-- Header -->
+            <div style="
+                background: linear-gradient(135deg, #dc3545, #c82333) !important;
+                color: white !important;
+                padding: 20px !important;
+                border-radius: 10px 10px 0 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+            ">
+                <h3 style="margin: 0 !important; font-size: 1.3em !important;">
+                    🗑️ Confirmar Eliminación de Capturas
+                </h3>
+                <button onclick="closeCustomDeleteModal()" style="
+                    background: none !important;
+                    border: none !important;
+                    color: white !important;
+                    font-size: 24px !important;
+                    cursor: pointer !important;
+                    padding: 5px !important;
+                    border-radius: 50% !important;
+                    width: 35px !important;
+                    height: 35px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                " onmouseover="this.style.background='rgba(255,255,255,0.2)'" 
+                   onmouseout="this.style.background='none'">
+                    ✕
+                </button>
+            </div>
+            
+            <!-- Body -->
+            <div style="padding: 25px !important;">
+                <input type="hidden" id="custom-delete-test-id">
+                
+                <!-- Warning Box -->
+                <div style="
+                    background: linear-gradient(135deg, #fff3cd, #ffeaa7) !important;
+                    border: 2px solid #ffc107 !important;
+                    border-radius: 8px !important;
+                    padding: 20px !important;
+                    margin-bottom: 20px !important;
+                    text-align: center !important;
+                ">
+                    <div style="font-size: 3em !important; margin-bottom: 10px !important;">⚠️</div>
+                    <p style="
+                        margin: 0 !important; 
+                        font-weight: bold !important; 
+                        color: #856404 !important;
+                        font-size: 1.1em !important;
+                    ">
+                        ¿Estás seguro que deseas eliminar las 
+                        <span id="custom-delete-count" style="
+                            color: #dc3545 !important;
+                            font-size: 1.3em !important;
+                            background: white !important;
+                            padding: 2px 8px !important;
+                            border-radius: 4px !important;
+                            border: 1px solid #dc3545 !important;
+                        ">0</span> 
+                        capturas seleccionadas?
+                    </p>
+                </div>
+                
+                <!-- Danger Warning -->
+                <div style="
+                    background: linear-gradient(135deg, #f8d7da, #f5c6cb) !important;
+                    border: 2px solid #dc3545 !important;
+                    border-radius: 8px !important;
+                    padding: 15px !important;
+                    margin-bottom: 20px !important;
+                    text-align: center !important;
+                ">
+                    <p style="
+                        margin: 0 !important; 
+                        color: #721c24 !important; 
+                        font-weight: bold !important;
+                        font-size: 1em !important;
+                    ">
+                        🚨 Esta acción <u>NO SE PUEDE DESHACER</u> y eliminará permanentemente los archivos de imagen.
+                    </p>
+                </div>
+                
+                <!-- Lista de capturas -->
+                <div style="
+                    background: #f8f9fa !important;
+                    border: 1px solid #dee2e6 !important;
+                    border-radius: 8px !important;
+                    padding: 15px !important;
+                    max-height: 200px !important;
+                    overflow-y: auto !important;
+                ">
+                    <h6 style="margin: 0 0 10px 0 !important; color: #495057 !important;">
+                        📸 Capturas que serán eliminadas:
+                    </h6>
+                    <div id="custom-delete-list">
+                        <!-- Lista de capturas se carga aquí -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="
+                background: #f8f9fa !important;
+                padding: 20px !important;
+                border-radius: 0 0 10px 10px !important;
+                display: flex !important;
+                gap: 15px !important;
+                justify-content: center !important;
+                border-top: 1px solid #dee2e6 !important;
+            ">
+                <button onclick="closeCustomDeleteModal()" style="
+                    background: #6c757d !important;
+                    color: white !important;
+                    border: none !important;
+                    padding: 12px 25px !important;
+                    border-radius: 6px !important;
+                    font-size: 1em !important;
+                    font-weight: 500 !important;
+                    cursor: pointer !important;
+                    transition: all 0.2s !important;
+                " onmouseover="this.style.background='#5a6268'" 
+                   onmouseout="this.style.background='#6c757d'">
+                    Cancelar
+                </button>
+                
+                <button onclick="executeCustomDelete()" style="
+                    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+                    color: white !important;
+                    border: none !important;
+                    padding: 12px 25px !important;
+                    border-radius: 6px !important;
+                    font-size: 1em !important;
+                    font-weight: 500 !important;
+                    cursor: pointer !important;
+                    transition: all 0.2s !important;
+                " onmouseover="this.style.background='linear-gradient(135deg, #c82333, #a02622)'" 
+                   onmouseout="this.style.background='linear-gradient(135deg, #dc3545, #c82333)'">
+                    🗑️ ELIMINAR CAPTURAS
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    // --- Toast Notification System ---
+    function showToast(message, type = 'info') {
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-tech toast-tech-${type}`;
+        toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-times-circle'} me-2"></i> ${message}`;
+        
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+
+    // --- History Deletion Logic (Simplified, no modal) ---
+    let pendingDelete = null; // Stores the button that is awaiting confirmation
+    let pendingDeleteTimeout = null;
+
+    function resetDeleteButton(button) {
+        if (!button) return;
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-outline-danger');
+        button.innerHTML = '<i class="fas fa-trash me-1"></i> Eliminar';
+        if (button === pendingDelete) {
+            pendingDelete = null;
+        }
+    }
+
+    function handleDeleteClick(event) {
+        const button = event.currentTarget;
+        const testId = button.dataset.testid;
+
+        if (pendingDelete && pendingDelete === button) {
+            // This is the second click (confirmation)
+            clearTimeout(pendingDeleteTimeout);
+            executeDelete(testId, button);
+        } else {
+            // This is the first click
+            // Reset any other button that might be in a pending state
+            if (pendingDelete) {
+                resetDeleteButton(pendingDelete);
+            }
+
+            // Set this button to pending state
+            pendingDelete = button;
+            button.classList.remove('btn-outline-danger');
+            button.classList.add('btn-danger');
+            button.innerHTML = '<i class="fas fa-question-circle me-1"></i> ¿Confirmar?';
+
+            // Set a timeout to revert the button if not clicked again
+            pendingDeleteTimeout = setTimeout(() => {
+                resetDeleteButton(button);
+            }, 4000); // Reverts after 4 seconds
+        }
+    }
+
+    function executeDelete(testId, button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Eliminando...';
+
+        fetch('/delete_test_from_history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ id: testId })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw new Error(err.message || `Error del servidor: ${response.status}`) });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                showToast('Test eliminado con éxito.', 'success');
+                const historyItem = button.closest('.history-item');
+                if (historyItem) {
+                    historyItem.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+                    historyItem.style.transform = 'scale(0.95)';
+                    historyItem.style.opacity = '0';
+                    setTimeout(() => historyItem.remove(), 300);
+                }
+            } else {
+                showToast(data.message || 'Ocurrió un error inesperado.', 'danger');
+                resetDeleteButton(button); // Reset on failure
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error al eliminar el test:', error);
+            showToast(error.message || 'Error de conexión.', 'danger');
+            resetDeleteButton(button); // Reset on error
+            button.disabled = false;
+        });
+        
+        pendingDelete = null;
+    }
+
+    // --- Name Editing Logic ---
+    function guardarNombre(element) {
+        const header = element.closest('.history-item-header');
+        if (!header) return;
+
+        const input = header.querySelector('.case-name-input');
+        const caseId = input.dataset.caseId;
+        const nuevoNombre = input.value.trim();
+
+        if (!nuevoNombre) {
+            showToast('El nombre no puede estar vacío.', 'danger');
+            return;
+        }
+
+        fetch('/update_test_name', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ test_id: caseId, new_name: nuevoNombre })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                header.querySelector('.case-name').textContent = nuevoNombre;
+                showToast('Nombre actualizado con éxito.', 'success');
+            } else {
+                showToast(data.message || 'Ocurrió un error.', 'danger');
+            }
+        })
+        .catch(error => showToast('Error de conexión.', 'danger'))
+        .finally(() => {
+            const nameSpan = header.querySelector('.case-name');
+            const editBtn = header.querySelector('.edit-case-name-btn');
+            const saveBtn = header.querySelector('.save-case-name-btn');
+            input.style.display = 'none';
+            saveBtn.style.display = 'none';
+            nameSpan.style.display = 'inline';
+            editBtn.style.display = 'inline-block';
+        });
+    }
+
+    // --- Main Event Listener Setup ---
+    function attachAllListeners() {
+        // Edit name listeners
+        document.querySelectorAll('.edit-case-name-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const header = this.closest('.history-item-header');
+                const nameSpan = header.querySelector('.case-name');
+                const input = header.querySelector('.case-name-input');
+                const saveBtn = header.querySelector('.save-case-name-btn');
+                nameSpan.style.display = 'none';
+                this.style.display = 'none';
+                input.style.display = 'inline-block';
+                saveBtn.style.display = 'inline-block';
+                input.focus();
+            });
+        });
+
+        document.querySelectorAll('.save-case-name-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                guardarNombre(e.currentTarget);
+            });
+        });
+
+        document.querySelectorAll('.case-name-input').forEach(input => {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    guardarNombre(e.currentTarget);
+                }
+            });
+            input.addEventListener('click', e => e.stopPropagation());
+        });
+
+        // Delete history item listeners
+        document.querySelectorAll('.delete-history-btn').forEach(btn => {
+            btn.addEventListener('click', handleDeleteClick);
+        });
+    }
+
+    // Attach initial listeners
+    attachAllListeners();
+
+    // Reset delete button if user clicks anywhere else
+    document.body.addEventListener('click', function(e) {
+        if (pendingDelete && !pendingDelete.contains(e.target)) {
+            clearTimeout(pendingDeleteTimeout);
+            resetDeleteButton(pendingDelete);
+        }
+    }, true); // Use capture phase to catch all clicks
+
+});
+</script>
+
+<style>
+/* Estilos para las notificaciones Toast */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.toast-tech {
+    background-color: #334155;
+    color: #f1f5f9;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.toast-tech.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+.toast-tech.toast-tech-success {
+    background-color: #16a34a;
+    color: white;
+}
+.toast-tech.toast-tech-danger {
+    background-color: #dc2626;
+    color: white;
+}
+</style>
+{% endblock %}

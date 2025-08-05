@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Ejecución Playwright - QA-Pilot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="tech-panel mb-4">
+                <div class="tech-panel-header">
+                    <h2 class="tech-panel-title">
+                        <i class="fas fa-rocket"></i>
+                        Ejecución de Suites con Playwright
+                    </h2>
+                </div>
+                <div class="tech-panel-body">
+                    <p class="text-tech-muted">
+                        Ejecuta tus suites y casos de prueba usando Playwright. Cada ejecución generará un documento de evidencia HTML.
+                    </p>
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" id="headlessCheck" checked>
+                        <label class="form-check-label" for="headlessCheck">Ejecución Headless (sin mostrar navegador)</label>
+                    </div>
+                </div>
+            </div>
+            <div id="playwright-suites-list">
+                <!-- Aquí se cargarán las suites y casos dinámicamente -->
+            </div>
+            <div id="playwright-execution-result" class="mt-4">
+                <!-- Aquí se mostrarán los resultados y enlaces a evidencias -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    cargarSuites();
+});
+
+function cargarSuites() {
+    fetch('/api/playwright_suites')
+        .then(resp => resp.json())
+        .then(data => {
+            if (!data.success) {
+                document.getElementById('playwright-suites-list').innerHTML = '<div class="alert alert-danger">No se pudieron cargar las suites.</div>';
+                return;
+            }
+            let html = '';
+            if (data.suites.length === 0) {
+                html = '<div class="alert alert-info">No hay suites registradas.</div>';
+            } else {
+                data.suites.forEach(suite => {
+                    html += `<div class='card mb-3'>
+                        <div class='card-header d-flex justify-content-between align-items-center'>
+                            <span><b>${suite.name}</b> <small class='text-muted'>(${suite.test_cases.length} casos)</small></span>
+                            <button class='btn btn-sm btn-success' onclick='ejecutarSuite("${suite.id}")'>Ejecutar Suite</button>
+                        </div>
+                        <ul class='list-group list-group-flush'>`;
+                    if (suite.test_cases.length === 0) {
+                        html += `<li class='list-group-item text-muted'>Sin casos</li>`;
+                    } else {
+                        suite.test_cases.forEach(caso => {
+                            html += `<li class='list-group-item d-flex justify-content-between align-items-center'>
+                                <span>${caso.nombre} <small class='text-muted'>(${caso.codigo})</small></span>
+                                <button class='btn btn-sm btn-outline-primary' onclick='ejecutarCaso("${caso.id}")'>Ejecutar Caso</button>
+                            </li>`;
+                        });
+                    }
+                    html += `</ul></div>`;
+                });
+            }
+            document.getElementById('playwright-suites-list').innerHTML = html;
+        });
+}
+
+function getHeadless() {
+    return document.getElementById('headlessCheck').checked;
+}
+
+function ejecutarSuite(suiteId) {
+    mostrarResultado('Ejecutando suite...');
+    fetch(`/api/playwright_run_suite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ suite_id: suiteId, headless: getHeadless() })
+    })
+    .then(resp => resp.json())
+    .then(data => mostrarResultadoEjecucion(data))
+    .catch(() => mostrarResultado('Error al ejecutar la suite', true));
+}
+
+function ejecutarCaso(casoId) {
+    mostrarResultado('Ejecutando caso...');
+    fetch(`/api/playwright_run_case`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ case_id: casoId, headless: getHeadless() })
+    })
+    .then(resp => resp.json())
+    .then(data => mostrarResultadoEjecucion(data))
+    .catch(() => mostrarResultado('Error al ejecutar el caso', true));
+}
+
+function mostrarResultado(mensaje, error) {
+    document.getElementById('playwright-execution-result').innerHTML = `<div class='alert ${error ? 'alert-danger' : 'alert-info'}'>${mensaje}</div>`;
+}
+
+function mostrarResultadoEjecucion(data) {
+    if (!data.success) {
+        mostrarResultado(data.error || 'Error en la ejecución', true);
+        return;
+    }
+    let html = `<div class='alert alert-success'>Ejecución completada.<br>`;
+    if (data.evidence_url) {
+        html += `<a href='${data.evidence_url}' target='_blank' class='btn btn-sm btn-primary mt-2'>Ver Evidencia Playwright</a>`;
+    }
+    html += `</div>`;
+    document.getElementById('playwright-execution-result').innerHTML = html;
+}
+</script>
+{% endblock %} 
