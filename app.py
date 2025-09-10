@@ -5328,7 +5328,13 @@ def ejecutar_caso_playwright_real(case, headless=True):
         
         try:
             logger.info(f"🚀 Ejecutando script Playwright con capturas: {script_path}")
-            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600, cwd=os.getcwd())
+            logger.info(f"🔧 Parámetros: headless={headless}")
+            
+            # Pasar el parámetro headless como variable de entorno
+            env = os.environ.copy()
+            env['HEADLESS'] = str(headless).lower()
+            
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=600, cwd=os.getcwd(), env=env)
             
             logger.info(f"📊 Código de salida: {result.returncode}")
             if result.stdout:

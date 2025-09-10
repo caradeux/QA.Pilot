@@ -1,8 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 import sys, os, asyncio, base64, traceback, re, time, random, json, pyautogui
 from dotenv import load_dotenv
-from langchain_anthropic import ChatAnthropic
-from browser_use import Agent, Browser, BrowserConfig
+from playwright.async_api import async_playwright
 
 load_dotenv()
 
@@ -23,7 +22,7 @@ import os
 import time
 import re
 
-async def tomar_captura_navegador(agent, descripcion, paso_num=None):
+async def tomar_captura_navegador(page, descripcion, paso_num=None):
     try:
         timestamp = int(time.time())
         safe_desc = re.sub(r'[^a-zA-Z0-9_]', '_', descripcion[:30])
@@ -36,8 +35,7 @@ async def tomar_captura_navegador(agent, descripcion, paso_num=None):
         screenshot_subdir = os.path.join(os.getcwd(), "test_screenshots", task_id)
         os.makedirs(screenshot_subdir, exist_ok=True)
         screenshot_path = os.path.join(screenshot_subdir, filename)
-        page = agent.browser_context.pages[0]
-        await page.screenshot(path=screenshot_path)
+        await page.screenshot(path=screenshot_path, full_page=True)
         print(f"✅ Captura guardada en: {screenshot_path}")
         return screenshot_path
     except Exception as e:
@@ -46,58 +44,69 @@ async def tomar_captura_navegador(agent, descripcion, paso_num=None):
 
 async def main():
     try:
-        print("DEBUG: Iniciando test...")
-        print(f"DEBUG: Configuración headless={False}")
-        anthropic_key = os.getenv('ANTHROPIC_API_KEY')
-        if not anthropic_key:
-            env_path = os.path.join(os.getcwd(), '.env')
-            if os.path.exists(env_path):
-                try:
-                    with open(env_path, 'r', encoding='utf-8') as f:
-                        for line in f:
-                            if line.strip() and not line.startswith('#'):
-                                key, value = line.strip().split('=', 1)
-                                if key == 'ANTHROPIC_API_KEY':
-                                    anthropic_key = value.strip('"').strip("'")
-                                    os.environ['ANTHROPIC_API_KEY'] = anthropic_key
-                                    break
-                except Exception as e:
-                    print(f"Error leyendo .env: {e}")
-        if not anthropic_key:
-            raise Exception("ANTHROPIC_API_KEY no encontrada")
-        llm = ChatAnthropic(
-            model="claude-3-5-sonnet-20241022",
-            api_key=anthropic_key,
-            temperature=0.1,
-            max_tokens=4000
-        )
-        agent = Agent(
-            task="Navega a https://www.mercadolibre.cl/ y luego: 1. Escribe 'smartphone' en la barra de b?squeda y presiona Enter",
-            llm=llm,
-            browser=browser
-        )
-        print("DEBUG: Agente creado")
-        await agent.run(max_steps=15)
-        print("DEBUG: Test completado exitosamente")
-
-        # --- Captura después de navegar ---
-        await tomar_captura_navegador(agent, 'Página cargada', paso_num=0)
-
-        # --- Captura después de cada paso numerado ---
-        await tomar_captura_navegador(agent, "Escribe 'smartphone' en la barra de búsqueda y presiona Enter", paso_num=1)
-
-        # --- Captura final ---
-        await tomar_captura_navegador(agent, 'Test completado', paso_num=999)
+                # Leer configuración headless desde variable de entorno
+        headless_str = os.environ.get('HEADLESS', 'true').lower()
+        headless = headless_str in ['true', '1', 'yes', 'on']
+        
+        print("DEBUG: Iniciando test con Playwright directo...")
+        print(f"DEBUG: Configuración headless={headless})
+        
+        async with async_playwright() as p:
+            # Lanzar navegador
+            browser = await p.chromium.launch(headless=headless)
+            context = await browser.new_context()
+            page = await context.new_page()
+            
+            print("DEBUG: Navegador iniciado")
+            
+            # Navegar a MercadoLibre
+            print("🌐 Navegando a MercadoLibre...")
+            await page.goto('https://www.mercadolibre.cl/')
+            await page.wait_for_load_state('domcontentloaded')
+            
+            # Captura después de navegar
+            await tomar_captura_navegador(page, 'Página cargada', paso_num=0)
+            
+            # Buscar "smartphone"
+            print("🔍 Buscando 'smartphone'...")
+            try:
+                search_box = await page.wait_for_selector('input[name="as_word"]', timeout=10000)
+                await search_box.fill('smartphone')
+                await search_box.press('Enter')
+                await page.wait_for_load_state('domcontentloaded')
+                
+                # Captura después de buscar
+                await tomar_captura_navegador(page, "Escribe 'smartphone' en la barra de búsqueda y presiona Enter", paso_num=1)
+                
+                # Hacer clic en el primer producto
+                print("🖱️ Haciendo clic en el primer producto...")
+                first_product = await page.wait_for_selector('h2.ui-search-item__title', timeout=10000)
+                await first_product.click()
+                await page.wait_for_load_state('domcontentloaded')
+                
+                # Captura después de hacer clic
+                await tomar_captura_navegador(page, "Haz clic en el **título** del **primer producto**", paso_num=2)
+                
+                # Esperar a que cargue
+                print("⏳ Esperando a que cargue...")
+                await page.wait_for_timeout(3000)
+                
+                # Captura final
+                await tomar_captura_navegador(page, 'Test completado', paso_num=3)
+                
+            except Exception as e:
+                print(f"Error durante la ejecución: {e}")
+                # Tomar captura de error
+                await tomar_captura_navegador(page, 'Error durante ejecución', paso_num=999)
+            
+            print("DEBUG: Test completado")
+            
+            await browser.close()
+            print("DEBUG: Navegador cerrado")
 
     except Exception as e:
         print(f"ERROR: {str(e)}")
         print(f"TRACEBACK: {traceback.format_exc()}")
-    finally:
-        try:
-            await browser.close()
-            print("DEBUG: Navegador cerrado")
-        except Exception as e:
-            print(f"Error al cerrar navegador: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
